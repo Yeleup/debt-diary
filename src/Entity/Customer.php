@@ -35,14 +35,9 @@ class Customer
     private $contact;
 
     /**
-     * @ORM\OneToMany(targetEntity=Market::class, mappedBy="customers")
+     * @ORM\ManyToOne(targetEntity=Market::class, inversedBy="customers")
      */
-    private $markets;
-
-    public function __construct()
-    {
-        $this->markets = new ArrayCollection();
-    }
+    private $market;
 
     public function getId(): ?int
     {
@@ -85,32 +80,14 @@ class Customer
         return $this;
     }
 
-    /**
-     * @return Collection|Market[]
-     */
-    public function getMarkets(): Collection
+    public function getMarket(): ?Market
     {
-        return $this->markets;
+        return $this->market;
     }
 
-    public function addMarket(Market $market): self
+    public function setMarket(?Market $market): self
     {
-        if (!$this->markets->contains($market)) {
-            $this->markets[] = $market;
-            $market->setCustomers($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMarket(Market $market): self
-    {
-        if ($this->markets->removeElement($market)) {
-            // set the owning side to null (unless already changed)
-            if ($market->getCustomers() === $this) {
-                $market->setCustomers(null);
-            }
-        }
+        $this->market = $market;
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MarketRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,9 +25,14 @@ class Market
     private $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="markets")
+     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="market")
      */
     private $customers;
+
+    public function __construct()
+    {
+        $this->customers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,14 +51,38 @@ class Market
         return $this;
     }
 
-    public function getCustomers(): ?Customer
+    public function __toString()
+    {
+        // TODO: Implement __toString() method.
+        return $this->title;
+    }
+
+    /**
+     * @return Collection|Customer[]
+     */
+    public function getCustomers(): Collection
     {
         return $this->customers;
     }
 
-    public function setCustomers(?Customer $customers): self
+    public function addCustomer(Customer $customer): self
     {
-        $this->customers = $customers;
+        if (!$this->customers->contains($customer)) {
+            $this->customers[] = $customer;
+            $customer->setMarket($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomer(Customer $customer): self
+    {
+        if ($this->customers->removeElement($customer)) {
+            // set the owning side to null (unless already changed)
+            if ($customer->getMarket() === $this) {
+                $customer->setMarket(null);
+            }
+        }
 
         return $this;
     }
