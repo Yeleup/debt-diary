@@ -3,7 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Customer;
+use App\Entity\CustomerOrder;
 use App\Entity\Market;
+use App\Entity\Payment;
+use App\Entity\Type;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -29,7 +32,10 @@ class DefaultController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('The Label', 'fas fa-list', Market::class);
-        yield MenuItem::linkToCrud('The Label', 'fas fa-list', Customer::class);
+        yield MenuItem::linkToCrud('Market', 'fas fa-list', Market::class);
+        yield MenuItem::linkToCrud('Customer', 'fas fa-list', Customer::class);
+        yield MenuItem::linkToCrud('CustomerOrder', 'fas fa-list', CustomerOrder::class);
+        yield MenuItem::linkToCrud('Payment', 'fas fa-list', Payment::class);
+        yield MenuItem::linkToCrud('Type', 'fas fa-list', Type::class);
     }
 }

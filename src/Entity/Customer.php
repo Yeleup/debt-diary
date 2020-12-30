@@ -39,6 +39,16 @@ class Customer
      */
     private $market;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CustomerOrder::class, mappedBy="customer", cascade={"remove"})
+     */
+    private $customerOrders;
+
+    public function __construct()
+    {
+        $this->customerOrders = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,5 +100,41 @@ class Customer
         $this->market = $market;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|CustomerOrder[]
+     */
+    public function getCustomerOrders(): Collection
+    {
+        return $this->customerOrders;
+    }
+
+    public function addCustomerOrder(CustomerOrder $customerOrder): self
+    {
+        if (!$this->customerOrders->contains($customerOrder)) {
+            $this->customerOrders[] = $customerOrder;
+            $customerOrder->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomerOrder(CustomerOrder $customerOrder): self
+    {
+        if ($this->customerOrders->removeElement($customerOrder)) {
+            // set the owning side to null (unless already changed)
+            if ($customerOrder->getCustomer() === $this) {
+                $customerOrder->setCustomer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        // TODO: Implement __toString() method.
+        return $this->name;
     }
 }
