@@ -39,6 +39,12 @@ class CustomerOrder
      */
     private $customer;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
+     * @var DateTime
+     */
+    private $created;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,5 +96,22 @@ class CustomerOrder
         $this->customer = $customer;
 
         return $this;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(?\DateTimeInterface $created): self
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    public function __construct()
+    {
+        $this->created = new \DateTime();
     }
 }
