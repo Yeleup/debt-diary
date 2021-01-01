@@ -29,6 +29,11 @@ class Type
      */
     private $customerOrders;
 
+    /**
+     * @ORM\Column(type="string", length=3, nullable=true)
+     */
+    private $prefix;
+
     public function __construct()
     {
         $this->customerOrders = new ArrayCollection();
@@ -85,5 +90,17 @@ class Type
     {
         // TODO: Implement __toString() method.
         return $this->title;
+    }
+
+    public function getPrefix(): ?string
+    {
+        return $this->prefix;
+    }
+
+    public function setPrefix(?string $prefix): self
+    {
+        $this->prefix = $prefix;
+
+        return $this;
     }
 }

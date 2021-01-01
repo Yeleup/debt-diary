@@ -4,6 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\Type;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class TypeCrudController extends AbstractCrudController
 {
@@ -12,14 +15,11 @@ class TypeCrudController extends AbstractCrudController
         return Type::class;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
             TextField::new('title'),
-            TextEditorField::new('description'),
+            ChoiceField::new('prefix')->setChoices(['minus' => '-', 'plus' => '+']),
         ];
     }
-    */
 }
