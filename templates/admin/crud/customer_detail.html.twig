@@ -59,13 +59,21 @@
         {{ _self.close_content_panel() }}
     {% endblock %}
 
-    <table class="table table-dark">
+    <table class="table">
     {% for order in orders %}
+        {% if order.type.prefix == '+' %}
         <tr>
-            <td>{{ order.amount }}</td>
-            <td>{{ order.type.title }}</td>
-            <td>{{ order.payment.title }}</td>
+            <td>{{ order.created | date('d.m.Y') }} {{ order.type.title }}</td>
+            <td class="text-success">{{ order.type.prefix }}{{ order.amount }}</td>
+            <td></td>
         </tr>
+        {% else %}
+        <tr>
+            <td></td>
+            <td class="text-danger">{{ order.type.prefix }}{{ order.amount }}</td>
+            <td>{{ order.created | date('d.m.Y') }} {{ order.type.title }} ({{ order.payment.title }})</td>
+        </tr>
+        {% endif %}
     {% endfor %}
     </table>
 
