@@ -81,7 +81,12 @@ class CustomerOrder
 
     public function setPayment(?Payment $payment): self
     {
-        $this->payment = $payment;
+
+        if ($this->getType()->getPaymentStatus()) {
+            $this->payment = $payment;
+        } else {
+            $this->payment = null;
+        }
 
         return $this;
     }
@@ -113,10 +118,5 @@ class CustomerOrder
     public function __construct()
     {
         $this->created = new \DateTime();
-
-        //Если не выбран Приход, вид оплаты не нужно
-        if ($this->type != 3) {
-            $this->payment = null;
-        }
     }
 }

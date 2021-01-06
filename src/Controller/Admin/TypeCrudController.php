@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Type;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,6 +21,7 @@ class TypeCrudController extends AbstractCrudController
         return [
             TextField::new('title'),
             ChoiceField::new('prefix')->setChoices(['minus' => '-', 'plus' => '+']),
+            BooleanField::new('payment_status', 'Показывать оплаты')->onlyOnForms()
         ];
     }
 }

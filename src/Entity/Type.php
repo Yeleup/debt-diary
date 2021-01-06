@@ -34,6 +34,11 @@ class Type
      */
     private $prefix;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $payment_status;
+
     public function __construct()
     {
         $this->customerOrders = new ArrayCollection();
@@ -100,6 +105,18 @@ class Type
     public function setPrefix(?string $prefix): self
     {
         $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?bool
+    {
+        return $this->payment_status;
+    }
+
+    public function setPaymentStatus(bool $payment_status): self
+    {
+        $this->payment_status = $payment_status;
 
         return $this;
     }
