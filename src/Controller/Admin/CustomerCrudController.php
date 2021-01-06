@@ -29,6 +29,15 @@ class CustomerCrudController extends AbstractCrudController
         return Customer::class;
     }
 
+    public function showPayment(AdminContext $context)
+    {
+        $json['success'] = false;
+        if ($context->getRequest()->get('type')) {
+            $json['success'] = $this->getDoctrine()->getRepository(Type::class)->find($context->getRequest()->get('type'))->getPaymentStatus();
+        }
+        return new JsonResponse($json);
+    }
+
     public function showMore(AdminContext $context)
     {
         if ($context->getRequest()->get('offset')) {
