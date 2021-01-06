@@ -90,22 +90,13 @@
     {{ form_end(form) }}
 
 
-
-    <table class="table col-6 offset-2">
+    <div class="col-6 offset-2 text-center p-4"><button id="show-more" class="btn btn-primary">Show more</button></div>
+    <table id="order-list" class="table col-6 offset-2">
     {% for order in orders %}
-        {% if order.type.prefix == '+' %}
-        <tr>
-            <td>{{ order.created | date('d.m.Y') }} {{ order.type.title }}</td>
-            <td class="text-success">{{ order.type.prefix }}{{ order.amount }}</td>
-            <td></td>
+        <tr class="{{ order.type.prefix == '+' ? 'text-success' : 'text-danger' }}">
+            <td>{{ order.created | date('d.m.Y') }} {{ order.type.title }} {{ order.payment ? '('~order.payment.title~')' : '' }}</td>
+            <td>{{ order.type.prefix }}{{ order.amount }}</td>
         </tr>
-        {% else %}
-        <tr>
-            <td></td>
-            <td class="text-danger">{{ order.type.prefix }}{{ order.amount }}</td>
-            <td>{{ order.created | date('d.m.Y') }} {{ order.type.title }} ({{ order.payment.title }})</td>
-        </tr>
-        {% endif %}
     {% endfor %}
     </table>
 
@@ -138,6 +129,34 @@
                   $('#payment').addClass('d-none');
                 }
             });
+
+            var i = 1;
+            $('#show-more').click(function() {
+                $.ajax({
+                    method: "GET",
+                    url: "{{  ea_url().setAction('showMore').generateUrl()|raw }}",
+                    data: { offset: (i * 5)},
+                    success: function(orders) {
+                        html = '';
+                        for (order of orders) {
+                            html += '<tr class="'+ (order.type_prefix == '+' ? 'text-success' : 'text-danger') + '">';
+                            html += '<td>';
+                            html += order.created + ' ' + order.type_title;
+                            if (order.payment_title) {
+                                html += ' (' + order.payment_title + ')';
+                            }
+                            html += '</td>';
+                            html += '<td>';
+                            html += order.type_prefix + order.amount;
+                            html += '</td>';
+                            html += '</tr>';
+                        }
+
+                        $('#order-list').prepend(html);
+                    }
+                });
+              i++;
+            })
         });
     </script>
 {% endblock %}

@@ -20,12 +20,35 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\CrudUrlGenerator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CustomerCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
         return Customer::class;
+    }
+
+    public function showMore(AdminContext $context)
+    {
+        if ($context->getRequest()->get('offset')) {
+            $offset = $context->getRequest()->get('offset');
+            $customer_id = $context->getRequest()->get('entityId');
+            $results = array_reverse($this->getDoctrine()->getRepository(CustomerOrder::class)->findBy(['customer' => $customer_id], ['id' => 'DESC'], 5, $offset));
+            $orders = array();
+            foreach ($results as $result) {
+                $orders[] = array(
+                    'id' => $result->getId(),
+                    'type_prefix' => $result->getType()->getPrefix(),
+                    'type_title' => $result->getType()->getTitle(),
+                    'payment_title' => ($result->getPayment() != null ? $result->getPayment()->getTitle() : ''),
+                    'amount' => $result->getAmount(),
+                    'created' => $result->getCreated()->format('d.m.Y'),
+                );
+            }
+            return new JsonResponse($orders);
+        }
+        return new JsonResponse(array());
     }
 
     public function detail(AdminContext $context)
@@ -37,7 +60,7 @@ class CustomerCrudController extends AbstractCrudController
             $customer = $this->getDoctrine()->getRepository(Customer::class)->find($responseParameters->get('entity')->getPrimaryKeyValue());
 
             //Order List
-            $responseParameters->set('orders', $this->getDoctrine()->getRepository(Customer::class)->find($responseParameters->get('entity')->getPrimaryKeyValue())->getCustomerOrders());
+            $orders = array_reverse($this->getDoctrine()->getRepository(CustomerOrder::class)->findBy(['customer' => $customer->getId()], ['id' => 'DESC'], 5, 0));
 
             //Form Added
             $customerOrder = new CustomerOrder();
@@ -61,6 +84,7 @@ class CustomerCrudController extends AbstractCrudController
             }
 
             $responseParameters->set('form', $form->createView());
+            $responseParameters->set('orders', $orders);
         }
 
         return $responseParameters;
