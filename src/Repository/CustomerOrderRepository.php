@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,17 @@ class CustomerOrderRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CustomerOrder::class);
+    }
+
+    public function getCustomerTotal(Customer $customer)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('SUM(c.amount) as total');
+        $qb->where($qb->expr()->andX(
+            $qb->expr()->eq('c.customer', ':customer_id')
+        ));
+        $qb->setParameter('customer_id', $customer->getId());
+        return $qb->getQuery()->getSingleResult()['total'];
     }
 
     // /**

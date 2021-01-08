@@ -81,11 +81,12 @@ class CustomerOrder
 
     public function setPayment(?Payment $payment): self
     {
+        $this->payment = null;
 
-        if ($this->getType()->getPaymentStatus()) {
-            $this->payment = $payment;
-        } else {
-            $this->payment = null;
+        if ($this->getType()) {
+            if ($this->getType()->getPaymentStatus()) {
+                $this->payment = $payment;
+            }
         }
 
         return $this;

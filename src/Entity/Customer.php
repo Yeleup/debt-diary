@@ -44,6 +44,16 @@ class Customer
      */
     private $customerOrders;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $total;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $last_transaction;
+
     public function __construct()
     {
         $this->customerOrders = new ArrayCollection();
@@ -136,5 +146,29 @@ class Customer
     {
         // TODO: Implement __toString() method.
         return $this->name;
+    }
+
+    public function getTotal(): ?float
+    {
+        return $this->total;
+    }
+
+    public function setTotal(float $total): self
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    public function getLastTransaction(): ?\DateTimeInterface
+    {
+        return $this->last_transaction;
+    }
+
+    public function setLastTransaction(?\DateTimeInterface $last_transaction): self
+    {
+        $this->last_transaction = $last_transaction;
+
+        return $this;
     }
 }

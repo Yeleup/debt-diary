@@ -6,15 +6,11 @@ use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use App\Entity\Type;
 use App\Form\CustomerOrderType;
-use phpDocumentor\Reflection\Types\Collection;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -84,9 +80,31 @@ class CustomerCrudController extends AbstractCrudController
 
             if ($form->isSubmitted() && $form->isValid()) {
 
+                //Плюсуем или минусуем, смотря по префиксу
+                if ($customerOrder->getType()) {
+                    if ($customerOrder->getType()->getPrefix() == '-') {
+                        $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
+                    } else {
+                        $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
+                    }
+                }
+
+                //Добавляем заказ пользователя
                 $customerOrder->setCustomer($customer);
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($customerOrder);
+                $entityManager->flush();
+
+                //Общая сумма
+                $total = $this->getDoctrine()->getRepository(CustomerOrder::class)->getCustomerTotal($customer);
+                $customer->setTotal($total);
+
+                //Последняя оплата клиента
+                if ($customerOrder->getPayment()) {
+                    $customer->setLastTransaction(new \DateTime());
+                }
+
+                $entityManager->persist($customer);
                 $entityManager->flush();
 
                 return $this->redirect($this->get(CrudUrlGenerator::class)->build()->generateUrl());
@@ -119,7 +137,9 @@ class CustomerCrudController extends AbstractCrudController
             TextField::new('name'),
             TextField::new('place'),
             TextField::new('contact'),
-            AssociationField::new('market')
+            AssociationField::new('market'),
+            NumberField::new('total')->onlyOnIndex(),
+            DateField::new('last_transaction')->onlyOnIndex(),
         ];
     }
 }
