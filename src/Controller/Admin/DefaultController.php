@@ -7,6 +7,7 @@ use App\Entity\CustomerOrder;
 use App\Entity\Market;
 use App\Entity\Payment;
 use App\Entity\Type;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -37,5 +38,6 @@ class DefaultController extends AbstractDashboardController
         yield MenuItem::linkToCrud('CustomerOrder', 'fas fa-list', CustomerOrder::class);
         yield MenuItem::linkToCrud('Payment', 'fas fa-list', Payment::class);
         yield MenuItem::linkToCrud('Type', 'fas fa-list', Type::class);
+        yield MenuItem::linkToCrud('User', 'fas fa-user', User::class);
     }
 }
