@@ -54,24 +54,27 @@ class UserCrudController extends AbstractCrudController implements EventSubscrib
     public static function getSubscribedEvents()
     {
         return [
-            BeforeEntityPersistedEvent::class => 'encodePassword',
-            BeforeEntityUpdatedEvent::class => 'encodePassword',
+            BeforeEntityPersistedEvent::class => 'beforeEntity',
+            BeforeEntityUpdatedEvent::class => 'beforeEntity',
         ];
     }
 
     /** @internal */
-    public function encodePassword($event)
+    public function beforeEntity($event)
     {
-        if ($this::getEntityFqcn() == User::class) {
-            $user = $event->getEntityInstance();
-            if ($user->getPlainPassword()) {
-                $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()));
-            }
+        $user = $event->getEntityInstance();
 
-            if ($user->getMarkets()) {
-                foreach ($user->getMarkets()->toArray() as $item) {
-                    $item->setUser($user);
-                }
+        if (!($user instanceof User)) {
+            return;
+        }
+
+        if ($user->getPlainPassword()) {
+            $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()));
+        }
+
+        if ($user->getMarkets()) {
+            foreach ($user->getMarkets()->toArray() as $item) {
+                $item->setUser($user);
             }
         }
     }
