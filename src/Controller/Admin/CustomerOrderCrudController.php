@@ -21,6 +21,7 @@ class CustomerOrderCrudController extends AbstractCrudController
             AssociationField::new('payment'),
             AssociationField::new('type'),
             AssociationField::new('customer'),
+            AssociationField::new('user'),
         ];
     }
 

@@ -31,6 +31,7 @@ class Market
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="markets")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $user;
 
