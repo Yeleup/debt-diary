@@ -79,6 +79,7 @@ class CustomerCrudController extends AbstractCrudController
             $form->handleRequest($context->getRequest());
 
             if ($form->isSubmitted() && $form->isValid()) {
+                $customerOrder->setUser($this->getUser());
 
                 //Плюсуем или минусуем, смотря по префиксу
                 if ($customerOrder->getType()) {
@@ -111,6 +112,7 @@ class CustomerCrudController extends AbstractCrudController
             }
 
             $responseParameters->set('form', $form->createView());
+            $responseParameters->set('customer', $customer);
             $responseParameters->set('orders', $orders);
         }
 

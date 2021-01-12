@@ -93,11 +93,14 @@
     <div class="col-6 offset-2 text-center p-4"><button id="show-more" class="btn btn-primary">Show more</button></div>
     <table id="order-list" class="table col-6 offset-2">
     {% for order in orders %}
-        <tr class="{{ order.type.prefix == '+' ? 'text-success' : 'text-danger' }}">
+        <tr>
             <td>{{ order.created | date('d.m.Y') }} {{ order.type.title }} {{ order.payment ? '('~order.payment.title~')' : '' }}</td>
-            <td>{{ order.type.prefix }}{{ order.amount }}</td>
+            <td class="text-right">{{ order.amount }}</td>
         </tr>
     {% endfor %}
+        <tr>
+            <td colspan="2" class="text-right font-weight-bold">{{ customer.total }}</td>
+        </tr>
     </table>
 
     {% block delete_form %}
@@ -146,15 +149,15 @@
                     success: function(orders) {
                         html = '';
                         for (order of orders) {
-                            html += '<tr class="'+ (order.type_prefix == '+' ? 'text-success' : 'text-danger') + '">';
+                            html += '<tr>';
                             html += '<td>';
                             html += order.created + ' ' + order.type_title;
                             if (order.payment_title) {
                                 html += ' (' + order.payment_title + ')';
                             }
                             html += '</td>';
-                            html += '<td>';
-                            html += order.type_prefix + order.amount;
+                            html += '<td class="text-right">';
+                            html += order.amount;
                             html += '</td>';
                             html += '</tr>';
                         }
