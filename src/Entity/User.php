@@ -3,9 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -36,6 +37,16 @@ class User implements UserInterface
     private $password;
 
     private $plainPassword = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Market::class, mappedBy="user")
+     */
+    private $markets;
+
+    public function __construct()
+    {
+        $this->markets = new ArrayCollection();
+    }
 
     public function getPlainPassword(): ?string
     {
@@ -123,5 +134,35 @@ class User implements UserInterface
     public function __toString(): string
     {
         return $this->username;
+    }
+
+    /**
+     * @return Collection|Market[]
+     */
+    public function getMarkets(): Collection
+    {
+        return $this->markets;
+    }
+
+    public function addMarket(Market $market): self
+    {
+        if (!$this->markets->contains($market)) {
+            $this->markets[] = $market;
+            $market->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMarket(Market $market): self
+    {
+        if ($this->markets->removeElement($market)) {
+            // set the owning side to null (unless already changed)
+            if ($market->getUser() === $this) {
+                $market->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -29,6 +29,11 @@ class Market
      */
     private $customers;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="markets")
+     */
+    private $user;
+
     public function __construct()
     {
         $this->customers = new ArrayCollection();
@@ -83,6 +88,18 @@ class Market
                 $customer->setMarket(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
