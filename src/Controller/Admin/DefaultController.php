@@ -26,6 +26,10 @@ class DefaultController extends AbstractDashboardController
 
     public function configureDashboard(): Dashboard
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->generateUrl('user');
+        }
+
         return Dashboard::new()
             ->setTitle('Tender');
     }

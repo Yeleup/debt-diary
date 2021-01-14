@@ -6,6 +6,7 @@ use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use App\Entity\Type;
 use App\Form\CustomerOrderType;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -119,9 +120,15 @@ class CustomerCrudController extends AbstractCrudController
         return $responseParameters;
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters->add('market');
+    }
+
     public function configureActions(Actions $actions): Actions
     {
         return $actions
+            ->setPermission(Action::DELETE,'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
