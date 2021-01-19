@@ -36,10 +36,23 @@ class DefaultController extends AbstractDashboardController
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Market', 'fas fa-list', Market::class)->setPermission("ROLE_ADMIN");
-        yield MenuItem::linkToCrud('Покупатели', 'fas fa-users', Customer::class);
+
+        // Market
+        $markets = $this->getUser()->getMarkets()->toArray();
+
+        $subitems = array();
+        foreach ($markets as $item) {
+            $subitems[] = MenuItem::linkToCrud($item->getTitle(), 'fas fa-users', Customer::class)->setQueryParameter('market', $item->getId());
+        }
+
+        $market = MenuItem::subMenu('Магазины','fas fa-list')->setSubItems($subitems);
+        yield $market;
+
+
+        yield MenuItem::linkToCrud('Все Покупатели', 'fas fa-users', Customer::class)->setPermission("ROLE_ADMIN");
         yield MenuItem::linkToCrud('CustomerOrder', 'fas fa-list', CustomerOrder::class)->setPermission("ROLE_ADMIN");
         yield MenuItem::linkToCrud('Payment', 'fas fa-list', Payment::class)->setPermission("ROLE_ADMIN");
         yield MenuItem::linkToCrud('Type', 'fas fa-list', Type::class)->setPermission("ROLE_ADMIN");
-        yield MenuItem::linkToCrud('User', 'fas fa-user', User::class);
+        yield MenuItem::linkToCrud('User', 'fas fa-user', User::class)->setPermission("ROLE_ADMIN");
     }
 }

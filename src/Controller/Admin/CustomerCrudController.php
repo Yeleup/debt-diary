@@ -6,7 +6,11 @@ use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use App\Entity\Type;
 use App\Form\CustomerOrderType;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -120,9 +124,15 @@ class CustomerCrudController extends AbstractCrudController
         return $responseParameters;
     }
 
-    public function configureFilters(Filters $filters): Filters
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
-        return $filters->add('market');
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        if ($searchDto->getRequest()->get('market')) {
+            $queryBuilder->andWhere('entity.market = ' . (int) $searchDto->getRequest()->get('market'));
+        }
+
+        return $queryBuilder;
     }
 
     public function configureActions(Actions $actions): Actions
