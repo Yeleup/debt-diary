@@ -20,12 +20,13 @@ final class Version20210101112900 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE type CHANGE prefix prefix VARCHAR(3) DEFAULT NULL');
+
+        $this->addSql('ALTER TABLE type ADD COLUMN prefix VARCHAR(3) NULL DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE type CHANGE prefix prefix VARCHAR(255) CHARACTER SET utf8mb4 DEFAULT NULL COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('ALTER TABLE type DROP COLUMN prefix');
     }
 }
