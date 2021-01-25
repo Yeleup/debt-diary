@@ -32,14 +32,14 @@ class Market
     private $customers;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="markets")
-     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="markets")
      */
-    private $user;
+    private $users;
 
     public function __construct()
     {
         $this->customers = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,6 +103,30 @@ class Market
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        $this->users->removeElement($user);
 
         return $this;
     }

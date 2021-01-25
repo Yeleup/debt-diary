@@ -43,7 +43,7 @@ class User implements UserInterface
     private $plainPassword = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=Market::class, mappedBy="user")
+     * @ORM\ManyToMany(targetEntity=Market::class, inversedBy="users", cascade={"persist"})
      */
     private $markets;
 

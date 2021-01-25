@@ -71,11 +71,5 @@ class UserCrudController extends AbstractCrudController implements EventSubscrib
         if ($user->getPlainPassword()) {
             $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()));
         }
-
-        if ($user->getMarkets()) {
-            foreach ($user->getMarkets()->toArray() as $item) {
-                $item->setUser($user);
-            }
-        }
     }
 }
