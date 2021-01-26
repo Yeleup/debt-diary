@@ -5,25 +5,14 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
-use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
-class UserCrudController extends AbstractCrudController implements EventSubscriberInterface
+class UserCrudController extends AbstractCrudController
 {
-    /** @var UserPasswordEncoderInterface */
-    private $passwordEncoder;
-
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-    {
-        $this->passwordEncoder = $passwordEncoder;
-    }
 
     public static function getEntityFqcn(): string
     {
@@ -49,27 +38,5 @@ class UserCrudController extends AbstractCrudController implements EventSubscrib
             }
             return $f;
         }, $fields);
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            BeforeEntityPersistedEvent::class => 'beforeEntity',
-            BeforeEntityUpdatedEvent::class => 'beforeEntity',
-        ];
-    }
-
-    /** @internal */
-    public function beforeEntity($event)
-    {
-        $user = $event->getEntityInstance();
-
-        if (!($user instanceof User)) {
-            return;
-        }
-
-        if ($user->getPlainPassword()) {
-            $user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPlainPassword()));
-        }
     }
 }
