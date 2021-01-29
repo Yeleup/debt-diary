@@ -10,9 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ApiResource(
- *     collectionOperations={"get"}, itemOperations={"get"}
- * )
+ * @ApiResource(attributes={"pagination_enabled"=false})
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface

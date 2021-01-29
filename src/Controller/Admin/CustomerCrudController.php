@@ -158,7 +158,7 @@ class CustomerCrudController extends AbstractCrudController
             TextField::new('contact'),
             AssociationField::new('market'),
             NumberField::new('total')->onlyOnIndex(),
-            DateField::new('last_transaction')->onlyOnIndex(),
+            DateField::new('last_transaction')->setFormat('y-MM-d H:m:s')->onlyOnIndex(),
         ];
     }
 }

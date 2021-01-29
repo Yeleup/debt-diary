@@ -5,3 +5,8 @@
 admin:
     path: /admin
     controller: App\Controller\Admin\DefaultController::index
+
+login:
+    path:       /login
+    controller: App\Controller\SecurityController::login
+    methods: POST
