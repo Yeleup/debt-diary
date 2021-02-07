@@ -4,4 +4,4 @@
 
 admin:
     path: /admin
-    controller: App\Controller\Admin\DefaultController::index
+    controller: App\Controller\Admin\DefaultDashboardController::index
