@@ -137,9 +137,10 @@ class CustomerCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $customerOrder = Action::new('customerOrder', 'История заказов')->linkToRoute('admin_customer_order_list', function (Customer $customer): array {return ['id' => $customer->getId()];});
         return $actions
             ->setPermission(Action::DELETE,'ROLE_ADMIN')
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $customerOrder)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::EDIT);
     }

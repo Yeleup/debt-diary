@@ -28,7 +28,14 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $qb->expr()->eq('c.customer', ':customer_id')
         ));
         $qb->setParameter('customer_id', $customer->getId());
-        return $qb->getQuery()->getSingleResult()['total'];
+
+        $total = 0;
+
+        if ($qb->getQuery()->getSingleResult()['total']) {
+            $total = $qb->getQuery()->getSingleResult()['total'];
+        }
+
+        return $total;
     }
 
     // /**
