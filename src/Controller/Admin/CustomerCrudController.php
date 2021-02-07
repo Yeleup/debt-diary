@@ -28,8 +28,10 @@ class CustomerCrudController extends AbstractCrudController
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        if ($searchDto->getRequest()->get('market')) {
-            $queryBuilder->andWhere('entity.market = ' . (int) $searchDto->getRequest()->get('market'));
+        if ($this->getUser()->getMarkets()) {
+            foreach ($this->getUser()->getMarkets()->toArray() as $market) {
+                $queryBuilder->orWhere('entity.market = ' . $market->getId());
+            }
         }
 
         return $queryBuilder;
@@ -53,11 +55,19 @@ class CustomerCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $users = $this->getUser();
+
+        if ($this->isGranted("ROLE_USER")) {
+            $marketField = AssociationField::new('market')->setFormTypeOptions(["choices" => $users->getMarkets()->toArray()]);
+        } else {
+            $marketField = AssociationField::new('market');
+        }
+
         return [
             TextField::new('name'),
             TextField::new('place'),
             TextField::new('contact'),
-            AssociationField::new('market'),
+            $marketField,
             NumberField::new('total')->onlyOnIndex(),
             DateField::new('last_transaction')->setFormat('y-MM-d H:m:s')->onlyOnIndex(),
         ];
