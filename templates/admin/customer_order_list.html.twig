@@ -30,6 +30,7 @@
     <table class="table table-sm">
         <thead>
             <tr>
+                <th>User</th>
                 <th>Created</th>
                 <th>Тип операции</th>
                 <th>Вид оплаты</th>
@@ -40,6 +41,7 @@
         <tbody>
         {% for customer_order in customer_orders %}
             <tr>
+                <td>{{ customer_order.user ?? customer_order.user.username }}</td>
                 <td>{{ customer_order.created ? customer_order.created|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ customer_order.type ? customer_order.type.title : '' }}</td>
                 <td>{{ customer_order.payment ? customer_order.payment.title : '' }}</td>
