@@ -42,11 +42,14 @@ class CustomerCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $customerOrder = Action::new('customerOrder', 'История заказов')->linkToRoute('admin_customer_order_list', function (Customer $customer): array {return ['id' => $customer->getId()];});
+
+        if (!$this->getUser()->getMarkets()->toArray()) {
+            $actions->setPermission(Action::NEW,'ROLE_ADMIN');
+        }
+
         return $actions
             ->setPermission(Action::DELETE,'ROLE_ADMIN')
-            ->add(Crud::PAGE_INDEX, $customerOrder)
-            ->remove(Crud::PAGE_DETAIL, Action::DELETE)
-            ->remove(Crud::PAGE_DETAIL, Action::EDIT);
+            ->add(Crud::PAGE_INDEX, $customerOrder);
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -63,6 +66,10 @@ class CustomerCrudController extends AbstractCrudController
             $marketField = AssociationField::new('market')->setFormTypeOptions(["choices" => $users->getMarkets()->toArray()]);
         } else {
             $marketField = AssociationField::new('market');
+        }
+
+        if ($pageName == 'index') {
+            $marketField = TextField::new('market');
         }
 
         return [
