@@ -45,9 +45,15 @@ class User implements UserInterface
      */
     private $markets;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Payment::class, inversedBy="users")
+     */
+    private $payments;
+
     public function __construct()
     {
         $this->markets = new ArrayCollection();
+        $this->payments = new ArrayCollection();
     }
 
     public function getPlainPassword(): ?string
@@ -164,6 +170,30 @@ class User implements UserInterface
                 $market->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Payment[]
+     */
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
+    public function addPayment(Payment $payment): self
+    {
+        if (!$this->payments->contains($payment)) {
+            $this->payments[] = $payment;
+        }
+
+        return $this;
+    }
+
+    public function removePayment(Payment $payment): self
+    {
+        $this->payments->removeElement($payment);
 
         return $this;
     }

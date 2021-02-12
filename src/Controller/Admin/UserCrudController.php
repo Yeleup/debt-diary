@@ -27,6 +27,8 @@ class UserCrudController extends AbstractCrudController
             ->setChoices(['Администратор' => 'ROLE_ADMIN', 'Пользователь' => 'ROLE_USER'])
             ->allowMultipleChoices(true);
 
+        $fields[] = AssociationField::new('payments');
+
         return array_map(function ($f) use ($pageName) {
             if ($f->getAsDto()->getProperty() === 'password') {
                 $field = TextField::new('plain_password', Crud::PAGE_NEW === $pageName ? 'Password' : 'Change password')

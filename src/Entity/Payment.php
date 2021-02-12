@@ -31,9 +31,15 @@ class Payment
      */
     private $customerOrders;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="payments")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->customerOrders = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,5 +93,32 @@ class Payment
     {
         // TODO: Implement __toString() method.
         return $this->title;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addPayment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removePayment($this);
+        }
+
+        return $this;
     }
 }

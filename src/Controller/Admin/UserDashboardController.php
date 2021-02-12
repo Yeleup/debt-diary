@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\CustomerOrder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -35,6 +36,6 @@ class UserDashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Главная', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+        yield MenuItem::linkToCrud('Заказы', 'fas fa-list', CustomerOrder::class);
     }
 }
