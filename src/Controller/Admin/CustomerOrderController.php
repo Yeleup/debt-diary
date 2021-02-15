@@ -22,9 +22,9 @@ class CustomerOrderController extends AbstractController
      */
     public function index(Customer $customer, CustomerOrderRepository $customerOrderRepository)
     {
-        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer]);
+        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['updated' => 'ASC']);
 
-        return $this->render('admin/customer_order_list.html.twig', [
+        return $this->render('admin/customer_order/index.html.twig', [
             'customer' => $customer,
             'customer_orders' => $customer_orders,
         ]);
@@ -75,7 +75,7 @@ class CustomerOrderController extends AbstractController
             return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
 
-        return $this->render('admin/customer_order_form.html.twig', [
+        return $this->render('admin/customer_order/new.html.twig', [
             'customer' => $customer,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),
@@ -127,7 +127,7 @@ class CustomerOrderController extends AbstractController
             return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
 
-        return $this->render('admin/customer_order_form.html.twig', [
+        return $this->render('admin/customer_order/edit.html.twig', [
             'customer' => $customer,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),

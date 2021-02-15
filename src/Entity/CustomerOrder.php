@@ -48,6 +48,12 @@ class CustomerOrder
     private $created;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var DateTime
+     */
+    private $updated;
+
+    /**
      * @ORM\ManyToOne(targetEntity=User::class)
      */
     private $user;
@@ -116,6 +122,18 @@ class CustomerOrder
         return $this;
     }
 
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
     public function getCreated(): ?\DateTimeInterface
     {
         return $this->created;
@@ -131,6 +149,7 @@ class CustomerOrder
     public function __construct()
     {
         $this->created = new \DateTime();
+        $this->updated = new \DateTime();
     }
 
     public function getUser(): ?User

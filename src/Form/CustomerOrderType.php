@@ -15,6 +15,7 @@ class CustomerOrderType extends AbstractType
             ->add('amount')
             ->add('type')
             ->add('payment')
+            ->add('updated')
         ;
     }
 

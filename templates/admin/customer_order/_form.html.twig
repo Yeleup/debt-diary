@@ -24,5 +24,14 @@
             {{ form_widget(form.payment) }}
         </div>
     </div>
+
+    {% if new is defined %}
+    <div class="field-text form-group">
+        {{ form_label(form.updated) }}
+        <div class="form-widget">
+            {{ form_widget(form.updated) }}
+        </div>
+    </div>
+    {% endif %}
 </div>
-{{ form_end(form) }}
+{{ form_end(form, {'render_rest': false}) }}

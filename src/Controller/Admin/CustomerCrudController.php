@@ -78,7 +78,7 @@ class CustomerCrudController extends AbstractCrudController
             TextField::new('contact'),
             $marketField,
             NumberField::new('total')->onlyOnIndex(),
-            DateField::new('last_transaction')->setFormat('y-MM-d H:m:s')->onlyOnIndex(),
+            DateField::new('last_transaction')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
         ];
     }
 }

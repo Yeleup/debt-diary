@@ -1,0 +1,31 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title customer.name~' '~customer.place %}
+
+{% block content_header %}
+    <section class="content-header">
+        <div class="d-flex flex-row justify-content-between align-content-center w-100">
+            <div class="content-header-title">
+                <h1 class="title">
+                    {{ customer.name }} <small>({{ customer.place }})</small>
+                </h1>
+            </div>
+
+            <div class="page-actions">
+                <a class="action-saveAndContinue btn btn-secondary action-save" href="{{ path('admin_customer_order_list', app.request.query.all|merge({ id: customer.id })) }}">
+                    <span class="btn-label"><i class="action-icon far fa-arrow-alt-circle-left"></i> back to list</span>
+                </a>
+
+                <button class="action-saveAndReturn btn btn-primary action-save" type="submit" name="ea[newForm][btn]" value="saveAndReturn" form="form_customer_order_edit">
+                    <span class="btn-label">Сохранить</span>
+                </button>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block page_content %}
+    {{ include('customer_order/_form.html.twig', {'new': true}) }}
+{% endblock %}
