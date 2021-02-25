@@ -25,6 +25,9 @@
         </div>
     </div>
 
+
+    {{ form_widget(form._token) }}
+
     {% if new is defined %}
     <div class="field-text form-group">
         {{ form_label(form.updated) }}

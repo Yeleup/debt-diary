@@ -38,6 +38,63 @@ class CustomerOrderRepository extends ServiceEntityRepository
         return $total;
     }
 
+    public function addOrder(CustomerOrder $customerOrder)
+    {
+        $customer = $customerOrder->getCustomer();
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($customerOrder);
+        $entityManager->flush();
+
+        // Общая сумма клиента
+        $total = $this->getCustomerTotal($customer);
+        $customer->setTotal($total);
+
+        // Последняя оплата клиента, если приход
+        if ($customerOrder->getPayment()) {
+            $customer->setLastTransaction(new \DateTime());
+        }
+
+        $entityManager->persist($customer);
+        $entityManager->flush();
+    }
+
+    public function editOrder(CustomerOrder $customerOrder)
+    {
+        $customer = $customerOrder->getCustomer();
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($customerOrder);
+        $entityManager->flush();
+
+        // Общая сумма клиента
+        $total = $this->getCustomerTotal($customer);
+        $customer->setTotal($total);
+
+        // Последняя оплата клиента, если приход
+        if ($customerOrder->getPayment()) {
+            $customer->setLastTransaction(new \DateTime());
+        }
+
+        $entityManager->persist($customer);
+        $entityManager->flush();
+    }
+
+    public function deleteOrder(CustomerOrder $customerOrder)
+    {
+        $customer = $customerOrder->getCustomer();
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($customerOrder);
+        $entityManager->flush();
+
+        // Общая сумма клиента
+        $total = $this->getCustomerTotal($customer);
+        $customer->setTotal($total );
+        $entityManager->persist($customer);
+        $entityManager->flush();
+    }
+
     // /**
     //  * @return CustomerOrder[] Returns an array of CustomerOrder objects
     //  */

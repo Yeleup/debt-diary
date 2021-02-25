@@ -9,7 +9,6 @@ use App\Repository\CustomerOrderRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/customer_order", name="admin_customer_order")
@@ -56,21 +55,8 @@ class CustomerOrderController extends AbstractController
             // Добавляем заказ пользователя
             $customerOrder->setCustomer($customer);
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($customerOrder);
-            $entityManager->flush();
-
-            // Общая сумма клиента
-            $total = $this->getDoctrine()->getRepository(CustomerOrder::class)->getCustomerTotal($customer);
-            $customer->setTotal($total);
-
-            // Последняя оплата клиента, если приход
-            if ($customerOrder->getPayment()) {
-                $customer->setLastTransaction(new \DateTime());
-            }
-
-            $entityManager->persist($customer);
-            $entityManager->flush();
+            // Добавления реализации
+            $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($customerOrder);
 
             return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
@@ -108,21 +94,8 @@ class CustomerOrderController extends AbstractController
             // Добавляем заказ пользователя
             $customerOrder->setCustomer($customer);
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($customerOrder);
-            $entityManager->flush();
-
-            // Общая сумма клиента
-            $total = $this->getDoctrine()->getRepository(CustomerOrder::class)->getCustomerTotal($customer);
-            $customer->setTotal($total);
-
-            // Последняя оплата клиента, если приход
-            if ($customerOrder->getPayment()) {
-                $customer->setLastTransaction(new \DateTime());
-            }
-
-            $entityManager->persist($customer);
-            $entityManager->flush();
+            // Редактирование реализации
+            $this->getDoctrine()->getRepository(CustomerOrder::class)->editOrder($customerOrder);
 
             return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
@@ -143,15 +116,7 @@ class CustomerOrderController extends AbstractController
         $customer = $customerOrder->getCustomer();
 
         if ($this->isCsrfTokenValid('delete'.$customerOrder->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($customerOrder);
-            $entityManager->flush();
-
-            // Общая сумма клиента
-            $total = $this->getDoctrine()->getRepository(CustomerOrder::class)->getCustomerTotal($customer);
-            $customer->setTotal($total );
-            $entityManager->persist($customer);
-            $entityManager->flush();
+            $this->getDoctrine()->getRepository(CustomerOrder::class)->deleteOrder($customerOrder);
         }
 
         if ($request->query->get('eaContext')) {
