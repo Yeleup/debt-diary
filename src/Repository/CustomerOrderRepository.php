@@ -43,20 +43,30 @@ class CustomerOrderRepository extends ServiceEntityRepository
         $customer = $customerOrder->getCustomer();
 
         $entityManager = $this->getEntityManager();
-        $entityManager->persist($customerOrder);
-        $entityManager->flush();
 
-        // Общая сумма клиента
-        $total = $this->getCustomerTotal($customer);
-        $customer->setTotal($total);
+        $entityManager->getConnection()->beginTransaction();
 
-        // Последняя оплата клиента, если приход
-        if ($customerOrder->getPayment()) {
-            $customer->setLastTransaction(new \DateTime());
+        try {
+            $entityManager->persist($customerOrder);
+            $entityManager->flush();
+
+            // Общая сумма клиента
+            $total = $this->getCustomerTotal($customer);
+            $customer->setTotal($total);
+
+            // Последняя оплата клиента, если приход
+            if ($customerOrder->getPayment()) {
+                $customer->setLastTransaction(new \DateTime());
+            }
+
+            $entityManager->persist($customer);
+            $entityManager->flush();
+
+            $entityManager->getConnection()->commit();
+        } catch (\Exception $exception) {
+            $entityManager->getConnection()->rollBack();
+            throw $exception;
         }
-
-        $entityManager->persist($customer);
-        $entityManager->flush();
     }
 
     public function editOrder(CustomerOrder $customerOrder)
@@ -64,20 +74,30 @@ class CustomerOrderRepository extends ServiceEntityRepository
         $customer = $customerOrder->getCustomer();
 
         $entityManager = $this->getEntityManager();
-        $entityManager->persist($customerOrder);
-        $entityManager->flush();
 
-        // Общая сумма клиента
-        $total = $this->getCustomerTotal($customer);
-        $customer->setTotal($total);
+        $entityManager->getConnection()->beginTransaction();
 
-        // Последняя оплата клиента, если приход
-        if ($customerOrder->getPayment()) {
-            $customer->setLastTransaction(new \DateTime());
+        try {
+            $entityManager->persist($customerOrder);
+            $entityManager->flush();
+
+            // Общая сумма клиента
+            $total = $this->getCustomerTotal($customer);
+            $customer->setTotal($total);
+
+            // Последняя оплата клиента, если приход
+            if ($customerOrder->getPayment()) {
+                $customer->setLastTransaction(new \DateTime());
+            }
+
+            $entityManager->persist($customer);
+            $entityManager->flush();
+
+            $entityManager->getConnection()->commit();
+        } catch (\Exception $exception) {
+            $entityManager->getConnection()->rollBack();
+            throw $exception;
         }
-
-        $entityManager->persist($customer);
-        $entityManager->flush();
     }
 
     public function deleteOrder(CustomerOrder $customerOrder)
@@ -85,42 +105,22 @@ class CustomerOrderRepository extends ServiceEntityRepository
         $customer = $customerOrder->getCustomer();
 
         $entityManager = $this->getEntityManager();
-        $entityManager->remove($customerOrder);
-        $entityManager->flush();
 
-        // Общая сумма клиента
-        $total = $this->getCustomerTotal($customer);
-        $customer->setTotal($total );
-        $entityManager->persist($customer);
-        $entityManager->flush();
-    }
+        $entityManager->getConnection()->beginTransaction();
+        try {
+            $entityManager->remove($customerOrder);
+            $entityManager->flush();
 
-    // /**
-    //  * @return CustomerOrder[] Returns an array of CustomerOrder objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+            // Общая сумма клиента
+            $total = $this->getCustomerTotal($customer);
+            $customer->setTotal($total );
+            $entityManager->persist($customer);
+            $entityManager->flush();
 
-    /*
-    public function findOneBySomeField($value): ?CustomerOrder
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            $entityManager->getConnection()->commit();
+        } catch (\Exception $exception) {
+            $entityManager->getConnection()->rollBack();
+            throw $exception;
+        }
     }
-    */
 }
