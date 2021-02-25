@@ -26,8 +26,6 @@
     </div>
 
 
-    {{ form_widget(form._token) }}
-
     {% if new is defined %}
     <div class="field-text form-group">
         {{ form_label(form.updated) }}
@@ -37,4 +35,4 @@
     </div>
     {% endif %}
 </div>
-{{ form_end(form, {'render_rest': false}) }}
+{{ form_end(form) }}

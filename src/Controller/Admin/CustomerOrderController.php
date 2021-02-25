@@ -77,7 +77,7 @@ class CustomerOrderController extends AbstractController
     {
         $customer = $customerOrder->getCustomer();
 
-        $form = $this->createForm(CustomerOrderType::class, $customerOrder);
+        $form = $this->createForm(CustomerOrderType::class, $customerOrder)->remove('updated');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
