@@ -35,7 +35,7 @@ class UserDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linktoDashboard('Покупатели', 'fas fa-users');
-        yield MenuItem::linkToCrud('Заказы', 'fas fa-shopping-cart', CustomerOrder::class);
+        yield MenuItem::linktoDashboard('dashboard.customer', 'fas fa-users');
+        yield MenuItem::linkToCrud('dashboard.order', 'fas fa-shopping-cart', CustomerOrder::class);
     }
 }

@@ -41,17 +41,17 @@ class DefaultDashboardController extends AbstractDashboardController
     {
 
         return Dashboard::new()
-            ->setTitle('Қарыздар кітапшасы');
+            ->setTitle('Книга долгов');
     }
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linktoDashboard('Главная', 'fa fa-home');
-        yield MenuItem::linkToCrud('Точки продаж', 'fas fa-sitemap', Market::class);
-        yield MenuItem::linkToCrud('Покупатели', 'fas fa-users', Customer::class);
-        yield MenuItem::linkToCrud('Заказы', 'fas fa-shopping-cart', CustomerOrder::class);
-        yield MenuItem::linkToCrud('Оплаты', 'fas fa-credit-card', Payment::class);
-        yield MenuItem::linkToCrud('Операции', 'fas fa-check-square', Type::class);
-        yield MenuItem::linkToCrud('Пользователи', 'fas fa-user', User::class);
+        yield MenuItem::linktoDashboard('dashboard.home', 'fa fa-home');
+        yield MenuItem::linkToCrud('dashboard.market', 'fas fa-sitemap', Market::class);
+        yield MenuItem::linkToCrud('dashboard.customer', 'fas fa-users', Customer::class);
+        yield MenuItem::linkToCrud('dashboard.order', 'fas fa-shopping-cart', CustomerOrder::class);
+        yield MenuItem::linkToCrud('dashboard.payment', 'fas fa-credit-card', Payment::class);
+        yield MenuItem::linkToCrud('dashboard.type', 'fas fa-check-square', Type::class);
+        yield MenuItem::linkToCrud('dashboard.user', 'fas fa-user', User::class);
     }
 }

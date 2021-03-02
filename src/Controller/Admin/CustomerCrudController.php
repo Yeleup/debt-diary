@@ -41,7 +41,7 @@ class CustomerCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $customerOrder = Action::new('customerOrder', 'История заказов')->linkToRoute('admin_customer_order_list', function (Customer $customer): array {return ['id' => $customer->getId()];});
+        $customerOrder = Action::new('customerOrder', 'history')->linkToRoute('admin_customer_order_list', function (Customer $customer): array {return ['id' => $customer->getId()];});
 
         if (!$this->getUser()->getMarkets()->toArray()) {
             $actions->setPermission(Action::NEW,'ROLE_ADMIN');
