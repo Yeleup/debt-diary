@@ -44,15 +44,6 @@ class CustomerOrderController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $customerOrder->setUser($this->getUser());
 
-            // Плюсуем или минусуем, смотря по префиксу
-            if ($customerOrder->getType()) {
-                if ($customerOrder->getType()->getPrefix() == '-') {
-                    $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
-                } else {
-                    $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
-                }
-            }
-
             // Добавляем заказ пользователя
             $customerOrder->setCustomer($customer);
 
@@ -82,15 +73,6 @@ class CustomerOrderController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $customerOrder->setUser($this->getUser());
-
-            // Плюсуем или минусуем, смотря по префиксу
-            if ($customerOrder->getType()) {
-                if ($customerOrder->getType()->getPrefix() == '-') {
-                    $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
-                } else {
-                    $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
-                }
-            }
 
             // Добавляем заказ пользователя
             $customerOrder->setCustomer($customer);

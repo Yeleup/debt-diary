@@ -69,6 +69,15 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
     public function addOrder(CustomerOrder $customerOrder)
     {
+        // Плюсуем или минусуем, смотря по префиксу
+        if ($customerOrder->getType()) {
+            if ($customerOrder->getType()->getPrefix() == '-') {
+                $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
+            } else {
+                $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
+            }
+        }
+
         $customer = $customerOrder->getCustomer();
 
         $entityManager = $this->getEntityManager();
@@ -100,6 +109,15 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
     public function editOrder(CustomerOrder $customerOrder)
     {
+        // Плюсуем или минусуем, смотря по префиксу
+        if ($customerOrder->getType()) {
+            if ($customerOrder->getType()->getPrefix() == '-') {
+                $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
+            } else {
+                $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
+            }
+        }
+
         $customer = $customerOrder->getCustomer();
 
         $entityManager = $this->getEntityManager();
