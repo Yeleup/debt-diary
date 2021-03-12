@@ -5,9 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CustomerOrderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\Api\CustomerOrderController;
 
 /**
- * @ApiResource()
+ * @ApiResource(collectionOperations={"get","post"={"method"="POST","route_name"="api_customer_order_collection"}})
  * @ORM\Entity(repositoryClass=CustomerOrderRepository::class)
  */
 class CustomerOrder
