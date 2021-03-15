@@ -19,9 +19,9 @@ class TypeCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('title'),
-            ChoiceField::new('prefix')->setChoices(['minus' => '-', 'plus' => '+']),
-            BooleanField::new('payment_status', 'Показывать оплаты')->onlyOnForms()
+            TextField::new('title', 'type.title'),
+            ChoiceField::new('prefix', 'type.prefix')->setChoices(['type.minus' => '-', 'type.plus' => '+']),
+            BooleanField::new('payment_status', 'type.payment_status')->onlyOnForms()
         ];
     }
 }

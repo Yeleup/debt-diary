@@ -35,17 +35,17 @@ class CustomerOrderCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $confirmed = BooleanField::new('confirmed')->onlyOnIndex();
+        $confirmed = BooleanField::new('confirmed', 'customer_order.confirmed')->onlyOnIndex();
 
         if ($this->isGranted("ROLE_ADMIN")) {
             return [
-                TextField::new('amount'),
-                AssociationField::new('payment'),
-                AssociationField::new('type'),
-                AssociationField::new('customer'),
-                AssociationField::new('user'),
+                TextField::new('amount','customer_order.amount'),
+                AssociationField::new('payment','customer_order.payment'),
+                AssociationField::new('type','customer_order.type'),
+                AssociationField::new('customer','customer_order.customer'),
+                AssociationField::new('user','customer_order.user'),
                 $confirmed,
-                DateField::new('updated')->setFormat('y-MM-dd HH:mm:ss'),
+                DateField::new('updated','customer_order.updated')->setFormat('y-MM-dd HH:mm:ss'),
             ];
         } else {
 
@@ -65,13 +65,13 @@ class CustomerOrderCrudController extends AbstractCrudController
             });
 
             return [
-                TextField::new('amount'),
-                TextField::new('payment'),
-                TextField::new('type'),
-                TextField::new('customer'),
-                TextField::new('user'),
+                TextField::new('amount','customer_order.amount'),
+                TextField::new('payment','customer_order.payment'),
+                TextField::new('type','customer_order.type'),
+                TextField::new('customer','customer_order.customer'),
+                TextField::new('user','customer_order.user'),
                 $confirmed,
-                DateField::new('updated')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
+                DateField::new('updated','customer_order.updated')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
             ];
         }
     }

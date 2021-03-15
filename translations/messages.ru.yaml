@@ -1,23 +1,52 @@
+header:
+  name: Книга долгов
+# Customer Order
 Customer: Клиент
-
-# Customer
-Name: Имя
-Place: Место (Адрес)
-Contact: Контакты
+customer:
+  history: История заказов
+  market: Точки продаж
+  name: Имя
+  place: Место (Адрес)
+  contact: Контакты
+  total: Сумма реализации
+  last_transaction: Последняя оплата
+# Market
 Market: Точки продаж
-Total: Сумма реализации
-Last Transaction: Последняя оплата
-history: История заказов
-
+market:
+  title: Названия
+# Payment
+Payment: Оплата
+payment:
+  title: Названия
+# Type
+Type: Тип операции
+type:
+  title: Названия
+  prefix: Операция
+  payment_status: Показать оплату
+  plus: Добавляем к клиенту
+  minus: Убираем из клиента
+# User
+User: Пользователи
+user:
+  username: Логин
+  password: Пароль
+  change_password: Новый пароль
+  market: Точки продаж
+  payment: Оплаты
+  role: Роль
+  role_admin: Администратор
+  role_user: Пользователь
 # Customer Order
 CustomerOrder: Заказ клиента
-Amount: Сумма
-Payment: Оплата
-Type: Тип операции
-User: Пользователь
-Confirmed: Оплата подтверждена
-Updated: Заказ обновился
-
+customer_order:
+  amount: Сумма
+  payment: Оплата
+  type: Тип операции
+  customer: Клиенты
+  user: Пользователь
+  confirmed: Оплата подтверждена
+  updated: Заказ обновился
 dashboard:
   home: Главная
   market: Точки продаж

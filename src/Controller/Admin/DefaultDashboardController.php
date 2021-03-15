@@ -40,8 +40,7 @@ class DefaultDashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
 
-        return Dashboard::new()
-            ->setTitle('Книга долгов');
+        return Dashboard::new()->setTitle('<i class="fa fa-book"></i> Книга долгов');
     }
 
     public function configureMenuItems(): iterable

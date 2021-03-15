@@ -41,7 +41,7 @@ class CustomerCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $customerOrder = Action::new('customerOrder', 'history')->linkToRoute('admin_customer_order_list', function (Customer $customer): array {return ['id' => $customer->getId()];});
+        $customerOrder = Action::new('customerOrder', 'customer.history')->linkToRoute('admin_customer_order_list', function (Customer $customer): array {return ['id' => $customer->getId()];});
 
         if (!$this->getUser()->getMarkets()->toArray()) {
             $actions->setPermission(Action::NEW,'ROLE_ADMIN');
@@ -63,22 +63,22 @@ class CustomerCrudController extends AbstractCrudController
         $users = $this->getUser();
 
         if ($this->isGranted("ROLE_USER")) {
-            $marketField = AssociationField::new('market')->setFormTypeOptions(["choices" => $users->getMarkets()->toArray()]);
+            $marketField = AssociationField::new('market','customer.market')->setFormTypeOptions(["choices" => $users->getMarkets()->toArray()]);
         } else {
-            $marketField = AssociationField::new('market');
+            $marketField = AssociationField::new('market','customer.market');
         }
 
         if ($pageName == 'index') {
-            $marketField = TextField::new('market');
+            $marketField = TextField::new('market','customer.market');
         }
 
         return [
-            TextField::new('name'),
-            TextField::new('place'),
-            TextField::new('contact'),
+            TextField::new('name','customer.name'),
+            TextField::new('place','customer.place'),
+            TextField::new('contact','customer.contact'),
             $marketField,
-            NumberField::new('total')->onlyOnIndex(),
-            DateField::new('last_transaction')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
+            NumberField::new('total','customer.total')->onlyOnIndex(),
+            DateField::new('last_transaction','customer.last_transaction')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Payment;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class PaymentCrudController extends AbstractCrudController
 {
@@ -12,14 +13,10 @@ class PaymentCrudController extends AbstractCrudController
         return Payment::class;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            TextField::new('title')->setLabel('payment.title'),
         ];
     }
-    */
 }
