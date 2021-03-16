@@ -15,9 +15,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\CrudUrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DefaultDashboardController extends AbstractDashboardController
 {
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * @Route("/admin", name="admin")
      */
@@ -39,8 +47,8 @@ class DefaultDashboardController extends AbstractDashboardController
 
     public function configureDashboard(): Dashboard
     {
-
-        return Dashboard::new()->setTitle('<i class="fa fa-book"></i> Книга долгов');
+        $title = $this->translator->trans('header.name');
+        return Dashboard::new()->setTitle($title);
     }
 
     public function configureMenuItems(): iterable

@@ -14,11 +14,11 @@
 
             <div class="page-actions">
                 <a class="action-saveAndContinue btn btn-secondary action-save" href="{{ path('admin_customer_order_list', app.request.query.all|merge({ id: customer.id })) }}">
-                    <span class="btn-label"><i class="action-icon far fa-arrow-alt-circle-left"></i> back to list</span>
+                    <span class="btn-label"><i class="action-icon far fa-arrow-alt-circle-left"></i> {{ lang.return|trans }}</span>
                 </a>
 
                 <button class="action-saveAndReturn btn btn-primary action-save" type="submit" name="ea[newForm][btn]" value="saveAndReturn" form="form_customer_order_edit">
-                    <span class="btn-label">Сохранить</span>
+                    <span class="btn-label">{{ lang.add|trans }}</span>
                 </button>
 
             </div>

@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @Route("/admin/customer_order", name="admin_customer_order")
@@ -22,11 +23,25 @@ class CustomerOrderController extends AbstractController
      */
     public function index(Customer $customer, CustomerOrderRepository $customerOrderRepository)
     {
+        // Text
+        $lang['user'] = new TranslatableMessage('customer_order.user');
+        $lang['created'] = new TranslatableMessage('customer_order.created');
+        $lang['type'] = new TranslatableMessage('customer_order.type');
+        $lang['payment'] = new TranslatableMessage('customer_order.payment');
+        $lang['amount'] = new TranslatableMessage('customer_order.amount');
+        $lang['action'] = new TranslatableMessage('customer_order.action');
+        $lang['edit'] = new TranslatableMessage('edit');
+        $lang['delete'] = new TranslatableMessage('delete');
+        $lang['add'] = new TranslatableMessage('add');
+        $lang['return'] = new TranslatableMessage('return');
+        $lang['no_records_found'] = new TranslatableMessage('no_records_found');
+
         $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['updated' => 'ASC']);
 
         return $this->render('admin/customer_order/index.html.twig', [
             'customer' => $customer,
             'customer_orders' => $customer_orders,
+            'lang' => $lang,
         ]);
     }
 
@@ -35,6 +50,10 @@ class CustomerOrderController extends AbstractController
      */
     public function new(Request $request, Customer $customer)
     {
+        // Text
+        $lang['add'] = new TranslatableMessage('add');
+        $lang['return'] = new TranslatableMessage('return');
+
         $customerOrder = new CustomerOrder();
         $customerOrder->setCustomer($customer);
         $customerOrder->setUser($this->getUser());
@@ -57,6 +76,7 @@ class CustomerOrderController extends AbstractController
             'customer' => $customer,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),
+            'lang' => $lang,
         ]);
     }
 
@@ -66,6 +86,10 @@ class CustomerOrderController extends AbstractController
      */
     public function edit(Request $request, CustomerOrder $customerOrder)
     {
+        // Text
+        $lang['save'] = new TranslatableMessage('save');
+        $lang['return'] = new TranslatableMessage('return');
+
         $customer = $customerOrder->getCustomer();
 
         $form = $this->createForm(CustomerOrderType::class, $customerOrder)->remove('updated');
@@ -87,6 +111,7 @@ class CustomerOrderController extends AbstractController
             'customer' => $customer,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),
+            'lang' => $lang,
         ]);
     }
 

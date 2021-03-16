@@ -1,5 +1,5 @@
 header:
-  name: Книга долгов
+  name: <i class="fa fa-book"></i> Книга долгов
 # Customer Order
 Customer: Клиент
 customer:
@@ -44,6 +44,8 @@ customer_order:
   payment: Оплата
   type: Тип операции
   customer: Клиенты
+  created: Дата создания
+  action: Действия
   user: Пользователь
   confirmed: Оплата подтверждена
   updated: Заказ обновился
@@ -55,3 +57,10 @@ dashboard:
   order: Заказы
   customer: Клиенты
   user: Пользователи
+# Global variables
+no_records_found: записей не найдено
+add: Добавить
+save: Сохранить
+return: Назад
+edit: Редактировать
+delete: Удалить
