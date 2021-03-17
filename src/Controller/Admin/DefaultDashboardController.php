@@ -31,15 +31,6 @@ class DefaultDashboardController extends AbstractDashboardController
      */
     public function index(): Response
     {
-        if (!$this->isGranted("ROLE_ADMIN")) {
-            $request = Request::createFromGlobals();
-
-            return $this->redirectToRoute('admin_user_dashboard', [
-                // you had to keep this parameter in all your URLs
-                'eaContext' => $request->query->get('eaContext'),
-            ]);
-        }
-
         $routeBuilder = $this->get(CrudUrlGenerator::class)->build();
 
         return $this->redirect($routeBuilder->setController(CustomerCrudController::class)->generateUrl());

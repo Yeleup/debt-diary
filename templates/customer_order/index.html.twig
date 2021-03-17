@@ -17,7 +17,7 @@
                     <span class="btn-label"><i class="action-icon far fa-arrow-alt-circle-left"></i> {{ lang.return|trans }}</span>
                 </a>
 
-                <a class="action-saveAndReturn btn btn-success action-save" href="{{ path('admin_customer_order_new', app.request.query.all|merge({ id: customer.id })) }}">
+                <a class="action-saveAndReturn btn btn-success action-save" href="{{ path('customer_order_new', app.request.query.all|merge({ id: customer.id })) }}">
                     <span class="btn-label"><i class="action-icon far fa-edit"></i> {{ lang.add|trans }}</span>
                 </a>
 
@@ -47,9 +47,9 @@
                 <td>{{ customer_order.payment ? customer_order.payment.title : '' }}</td>
                 <th class="text-center">{{ customer_order.amount }}</th>
                 <td class="actions">
-                    <a class="btn btn-primary float-left mr-1" href="{{ path('admin_customer_order_edit', app.request.query.all|merge({ id: customer_order.id })) }}">{{ lang.edit|trans }}</a>
+                    <a class="btn btn-primary float-left mr-1" href="{{ path('customer_order_edit', app.request.query.all|merge({ id: customer_order.id })) }}">{{ lang.edit|trans }}</a>
 
-                    <form class="float-left" method="post" action="{{ path('admin_customer_order_delete', app.request.query.all|merge({ id: customer_order.id })) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <form class="float-left" method="post" action="{{ path('customer_order_delete', app.request.query.all|merge({ id: customer_order.id })) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
                         <input type="hidden" name="_method" value="DELETE">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ customer_order.id) }}">
                         <button class="btn btn-danger">{{ lang.delete|trans }}</button>

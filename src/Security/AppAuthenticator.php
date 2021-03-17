@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
@@ -30,13 +31,15 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $authChecker;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, AuthorizationCheckerInterface $authChecker)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->authChecker = $authChecker;
     }
 
     public function supports(Request $request)
@@ -94,6 +97,10 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
+        } elseif ($this->authChecker->isGranted("ROLE_USER")) {
+            return new RedirectResponse('user');
+        } elseif ($this->authChecker->isGranted("ROLE_ADMIN")) {
+            return new RedirectResponse('admin');
         }
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));

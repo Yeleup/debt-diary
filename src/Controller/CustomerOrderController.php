@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\CustomerOrder;
@@ -13,13 +13,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
- * @Route("/admin/customer_order", name="admin_customer_order")
+ * @Route("/customer_order", name="customer_order")
  */
 class CustomerOrderController extends AbstractController
 {
 
     /**
-     * @Route("/list/{id}", name="_list", requirements={"id"="\d+"})
+     * @Route("/{id}", name="_index", requirements={"id"="\d+"})
      */
     public function index(Customer $customer, CustomerOrderRepository $customerOrderRepository)
     {
@@ -38,7 +38,7 @@ class CustomerOrderController extends AbstractController
 
         $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['updated' => 'ASC']);
 
-        return $this->render('admin/customer_order/index.html.twig', [
+        return $this->render('customer_order/index.html.twig', [
             'customer' => $customer,
             'customer_orders' => $customer_orders,
             'lang' => $lang,
@@ -69,10 +69,10 @@ class CustomerOrderController extends AbstractController
             // Добавления реализации
             $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($customerOrder);
 
-            return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
+            return $this->redirectToRoute('customer_order_index', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
 
-        return $this->render('admin/customer_order/new.html.twig', [
+        return $this->render('customer_order/new.html.twig', [
             'customer' => $customer,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),
@@ -104,10 +104,10 @@ class CustomerOrderController extends AbstractController
             // Редактирование реализации
             $this->getDoctrine()->getRepository(CustomerOrder::class)->editOrder($customerOrder);
 
-            return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
+            return $this->redirectToRoute('customer_order_index', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
 
-        return $this->render('admin/customer_order/edit.html.twig', [
+        return $this->render('customer_order/edit.html.twig', [
             'customer' => $customer,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),
@@ -128,7 +128,7 @@ class CustomerOrderController extends AbstractController
         }
 
         if ($request->query->get('eaContext')) {
-            return $this->redirectToRoute('admin_customer_order_list', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
+            return $this->redirectToRoute('customer_order_index', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
         }
     }
 }

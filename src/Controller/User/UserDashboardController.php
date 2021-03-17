@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\User;
 
+use App\Controller\Admin\CustomerCrudController;
 use App\Entity\CustomerOrder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -21,7 +22,7 @@ class UserDashboardController extends AbstractDashboardController
     }
 
     /**
-     * @Route("/admin/user", name="admin_user_dashboard")
+     * @Route("/user", name="user")
      */
     public function index(): Response
     {

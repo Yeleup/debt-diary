@@ -13,7 +13,7 @@
             </div>
 
             <div class="page-actions">
-                <a class="action-saveAndContinue btn btn-secondary action-save" href="{{ path('admin_customer_order_list', app.request.query.all|merge({ id: customer.id })) }}">
+                <a class="action-saveAndContinue btn btn-secondary action-save" href="{{ path('customer_order_index', app.request.query.all|merge({ id: customer.id })) }}">
                     <span class="btn-label"><i class="action-icon far fa-arrow-alt-circle-left"></i> {{ lang.return|trans }}</span>
                 </a>
 
@@ -27,5 +27,5 @@
 {% endblock %}
 
 {% block page_content %}
-    {{ include('admin/customer_order/_form.html.twig', {'new': true}) }}
+    {{ include('customer_order/_form.html.twig', {'new': true}) }}
 {% endblock %}
