@@ -37,6 +37,7 @@ user:
   role: Роль
   role_admin: Администратор
   role_user: Пользователь
+  role_control: Подтверждающий
 # Customer Order
 CustomerOrder: Заказ клиента
 customer_order:

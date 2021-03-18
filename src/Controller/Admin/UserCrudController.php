@@ -25,7 +25,7 @@ class UserCrudController extends AbstractCrudController
         $fields[] = TextField::new('username', 'user.username');
         $fields[] = AssociationField::new('markets', 'user.market')->onlyOnForms();
         $fields[] = ChoiceField::new('roles', 'user.role')
-            ->setChoices(['user.role_admin' => 'ROLE_ADMIN', 'user.role_user' => 'ROLE_USER'])
+            ->setChoices(['user.role_admin' => 'ROLE_ADMIN', 'user.role_user' => 'ROLE_USER', 'user.role_control' => 'ROLE_CONTROL'])
             ->allowMultipleChoices(true);
 
         $fields[] = AssociationField::new('payments')->setLabel('user.payment');

@@ -51,6 +51,7 @@ security:
     access_control:
          - { path: ^/admin, roles: [ROLE_ADMIN] }
          - { path: ^/user, roles: [ROLE_USER] }
+         - { path: ^/control, roles: [ROLE_CONTROL] }
          - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api_login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

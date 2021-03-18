@@ -37,17 +37,15 @@ class CustomerOrderCrudController extends AbstractCrudController
     {
         $confirmed = BooleanField::new('confirmed', 'customer_order.confirmed')->onlyOnIndex();
 
+        yield TextField::new('amount','customer_order.amount');
+        yield AssociationField::new('payment','customer_order.payment');
+        yield AssociationField::new('type','customer_order.type');
+        yield AssociationField::new('customer','customer_order.customer');
+        yield AssociationField::new('user','customer_order.user');
+
         if ($this->isGranted("ROLE_ADMIN")) {
-            return [
-                TextField::new('amount','customer_order.amount'),
-                AssociationField::new('payment','customer_order.payment'),
-                AssociationField::new('type','customer_order.type'),
-                AssociationField::new('customer','customer_order.customer'),
-                AssociationField::new('user','customer_order.user'),
-                $confirmed,
-                DateField::new('updated','customer_order.updated')->setFormat('y-MM-dd HH:mm:ss'),
-            ];
-        } else {
+            yield $confirmed;
+        } elseif ($this->isGranted("ROLE_CONTROL")) {
 
             $confirmed->formatValue(function ($value, $entity) {
 
@@ -64,16 +62,10 @@ class CustomerOrderCrudController extends AbstractCrudController
                 return '';
             });
 
-            return [
-                TextField::new('amount','customer_order.amount'),
-                TextField::new('payment','customer_order.payment'),
-                TextField::new('type','customer_order.type'),
-                TextField::new('customer','customer_order.customer'),
-                TextField::new('user','customer_order.user'),
-                $confirmed,
-                DateField::new('updated','customer_order.updated')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
-            ];
+            yield $confirmed;
         }
+
+        yield DateField::new('updated','customer_order.updated')->setFormat('y-MM-dd HH:mm:ss');
     }
 
 }
