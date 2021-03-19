@@ -26,14 +26,14 @@ class CustomerCrudController extends AbstractCrudController
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
+        $user_id = $this->getUser()->getId();
+
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        if ($this->getUser()->getMarkets()->toArray()) {
-            foreach ($this->getUser()->getMarkets()->toArray() as $market) {
-                $queryBuilder->orWhere('entity.market = ' . $market->getId());
-            }
-        } elseif (!$this->isGranted("ROLE_ADMIN")) {
-            $queryBuilder->orWhere('entity.market = 0');
+        if ($this->isGranted("ROLE_USER")) {
+            $queryBuilder->join('entity.market', 'm');
+            $queryBuilder->join('m.users', 'u');
+            $queryBuilder->andWhere(':user MEMBER OF m.users')->setParameter('user', $user_id);
         }
 
         return $queryBuilder;

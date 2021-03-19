@@ -38,10 +38,13 @@ class CustomerOrderCrudController extends AbstractCrudController
 
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        // Показывать ROLE_CONTROL только те заказы которые привязаны к нему
         if ($this->isGranted("ROLE_CONTROL")) {
+            // Показывать ROLE_CONTROL только те заказы которые привязаны к оплате
             $queryBuilder->join('entity.payment', 'p');
             $queryBuilder->andWhere(':user MEMBER OF p.users')->setParameter('user', $user_id);
+        } elseif ($this->isGranted("ROLE_USER")) {
+            // Показывать ROLE_USER только те заказы которые привязаны к нему
+            $queryBuilder->andWhere('entity.user = :user')->setParameter('user', $user_id);
         }
 
         return $queryBuilder;
