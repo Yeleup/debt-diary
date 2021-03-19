@@ -3,10 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Entity\CustomerOrder;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -27,6 +32,21 @@ class CustomerOrderCrudController extends AbstractCrudController
             ->setPermission(Action::NEW, "ROLE_ADMIN");
     }
 
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $user_id = $this->getUser()->getId();
+
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        // Показывать ROLE_CONTROL только те заказы которые привязаны к нему
+        if ($this->isGranted("ROLE_CONTROL")) {
+            $queryBuilder->join('entity.payment', 'p');
+            $queryBuilder->andWhere(':user MEMBER OF p.users')->setParameter('user', $user_id);
+        }
+
+        return $queryBuilder;
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(['updated' => "ASC"]);
@@ -43,25 +63,9 @@ class CustomerOrderCrudController extends AbstractCrudController
         yield AssociationField::new('customer','customer_order.customer');
         yield AssociationField::new('user','customer_order.user');
 
-        if ($this->isGranted("ROLE_ADMIN")) {
-            yield $confirmed;
-        } elseif ($this->isGranted("ROLE_CONTROL")) {
-
-            $confirmed->formatValue(function ($value, $entity) {
-
-                if ($entity->getPayment() && $this->getUser()->getPayments()) {
-                    foreach ($this->getUser()->getPayments() as $payment) {
-                        if ($entity->getPayment()) {
-                            if ($payment->getId() == $entity->getPayment()->getId()) {
-                                return $value;
-                            }
-                        }
-                    }
-                }
-
-                return '';
-            });
-
+        if ($this->isGranted("ROLE_USER")) {
+            yield $confirmed->renderAsSwitch(false);
+        } else {
             yield $confirmed;
         }
 
