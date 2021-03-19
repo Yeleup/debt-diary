@@ -9,8 +9,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
-
+/**
+ * @IsGranted("ROLE_ADMIN")
+ */
 class UserCrudController extends AbstractCrudController
 {
 

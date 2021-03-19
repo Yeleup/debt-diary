@@ -28,6 +28,8 @@ class CustomerOrderCrudController extends AbstractCrudController
     {
         return $actions
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
+            ->setPermissions([Action::EDIT => "ROLE_ADMIN", Action::EDIT => "ROLE_CONTROL"])
+            ->setPermission(Action::DETAIL, "ROLE_ADMIN")
             ->setPermission(Action::DELETE, "ROLE_ADMIN")
             ->setPermission(Action::NEW, "ROLE_ADMIN");
     }
