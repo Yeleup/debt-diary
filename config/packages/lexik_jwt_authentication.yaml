@@ -7,5 +7,5 @@ lexik_jwt_authentication:
     token_extractors:
         # check token in query string parameter
         query_parameter:
-            enabled: true
+            enabled: false
             name:    token
