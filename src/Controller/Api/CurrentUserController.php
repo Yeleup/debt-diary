@@ -7,13 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends AbstractController
+class CurrentUserController extends AbstractController
 {
     /**
-     * @Route(name="api_user", path="/api/user", methods={"GET"},
+     * @Route(name="api_current_user", path="/api/user", methods={"GET"},
      * defaults={
      *      "_api_resource_class"=User::class,
-     *      "_api_collection_operation_name"="get"
+     *      "_api_collection_operation_name"="current_user"
      *     }
      * )
      */

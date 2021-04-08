@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(attributes={"pagination_enabled"=false})
+ * @ApiResource(attributes={"pagination_enabled"=false}, itemOperations={"get_market"={"method"="GET", "route_name"="api_get_market"}})
  * @ORM\Entity(repositoryClass=MarketRepository::class)
  */
 class Market
