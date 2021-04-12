@@ -40,41 +40,45 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
     public function checkOrder(CustomerOrder $customerOrder)
     {
-        $result = $this->createQueryBuilder('c');
-        $result->select('count(c) as counter')
-            ->where($result->expr()->andX(
-                $result->expr()->eq('c.amount', ':amount'),
-                $result->expr()->eq('c.customer', ':customer'),
-                $result->expr()->eq('c.user', ':user'),
-                $result->expr()->eq('c.created', ':created')
-            ));
+        // Плюсуем или минусуем, смотря по префиксу
+        if ($customerOrder->getType()) {
+            $amount = (float) (abs($customerOrder->getAmount()));
+            if ($customerOrder->getType()->getPrefix() == '-') {
+                $amount = -1 * $amount;
+                $customerOrder->setAmount($amount);
+            } else {
+                $customerOrder->setAmount($amount);
+            }
+        }
+
+        $criteria = array(
+            'amount' => $customerOrder->getAmount(),
+            'customer' => $customerOrder->getCustomer(),
+            'user' => $customerOrder->getUser(),
+            'created' => $customerOrder->getCreated(),
+        );
 
         if ($customerOrder->getType()) {
-            $result->andWhere($result->expr()->andX($result->expr()->eq('c.type', ':type')));
-            $result->setParameter('type', $customerOrder->getType());
+            $criteria['type'] = $customerOrder->getType();
         }
 
         if ($customerOrder->getPayment()) {
-            $result->andWhere($result->expr()->andX($result->expr()->eq('c.payment', ':payment')));
-            $result->setParameter('payment', $customerOrder->getPayment());
+            $criteria['payment'] = $customerOrder->getPayment();
         }
 
-        $result->setParameter('amount', $customerOrder->getAmount());
-        $result->setParameter('customer', $customerOrder->getCustomer());
-        $result->setParameter('user', $customerOrder->getUser());
-        $result->setParameter('created', $customerOrder->getCreated());
-
-        return $result->getQuery()->getSingleResult();
+        return $this->findOneBy($criteria);
     }
 
     public function addOrder(CustomerOrder $customerOrder)
     {
         // Плюсуем или минусуем, смотря по префиксу
         if ($customerOrder->getType()) {
+            $amount = (float) (abs($customerOrder->getAmount()));
             if ($customerOrder->getType()->getPrefix() == '-') {
-                $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
+                $amount = -1 * $amount;
+                $customerOrder->setAmount($amount);
             } else {
-                $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
+                $customerOrder->setAmount($amount);
             }
         }
 
@@ -111,10 +115,12 @@ class CustomerOrderRepository extends ServiceEntityRepository
     {
         // Плюсуем или минусуем, смотря по префиксу
         if ($customerOrder->getType()) {
+            $amount = (float) (abs($customerOrder->getAmount()));
             if ($customerOrder->getType()->getPrefix() == '-') {
-                $customerOrder->setAmount((float) ('-'.abs($customerOrder->getAmount())));
+                $amount = -1 * $amount;
+                $customerOrder->setAmount($amount);
             } else {
-                $customerOrder->setAmount((float) (abs($customerOrder->getAmount())));
+                $customerOrder->setAmount($amount);
             }
         }
 

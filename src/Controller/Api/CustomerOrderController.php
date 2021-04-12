@@ -22,11 +22,11 @@ class CustomerOrderController extends AbstractController
      *     }
      * )
      */
-    public function __invoke(CustomerOrder $data)
+    public function post(CustomerOrder $data)
     {
         if ($data->getCustomer() && $data->getUser()) {
             $checkOrder = $this->getDoctrine()->getRepository(CustomerOrder::class)->checkOrder($data);
-            if (!$checkOrder['counter']) {
+            if (!$checkOrder) {
                 $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($data);
                 return new JsonResponse(['success' => 'Success'], 200,[]);
             } else {

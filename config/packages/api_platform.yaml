@@ -1,4 +1,5 @@
 api_platform:
+    allow_plain_identifiers: true
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     patch_formats:
