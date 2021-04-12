@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GetMarketController extends AbstractController
+class MarketController extends AbstractController
 {
     /**
      * @Route(name="api_get_market", path="/api/market/{id}", methods={"GET"},
