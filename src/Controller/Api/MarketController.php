@@ -17,7 +17,7 @@ class MarketController extends AbstractController
      *     }
      * )
      */
-    public function __invoke(Market $data)
+    public function getMarket(Market $data)
     {
         $market = [];
         $market['id'] = $data->getId();

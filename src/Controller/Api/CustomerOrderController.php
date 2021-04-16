@@ -22,7 +22,7 @@ class CustomerOrderController extends AbstractController
      *     }
      * )
      */
-    public function post(CustomerOrder $data)
+    public function postCustomerOrder(CustomerOrder $data)
     {
         if ($data->getCustomer() && $data->getUser()) {
             $checkOrder = $this->getDoctrine()->getRepository(CustomerOrder::class)->checkOrder($data);

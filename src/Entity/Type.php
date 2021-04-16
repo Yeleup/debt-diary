@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(collectionOperations={"get"}, itemOperations={"get"})
+ * @ApiResource(attributes={"pagination_enabled"=false}, collectionOperations={"get_types"={"method"="GET","route_name"="api_get_types"}})
  * @ORM\Entity(repositoryClass=TypeRepository::class)
  */
 class Type

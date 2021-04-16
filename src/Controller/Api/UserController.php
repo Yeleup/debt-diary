@@ -10,14 +10,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route(name="api_current_user", path="/api/user", methods={"GET"},
+     * @Route(name="api_get_current_user", path="/api/user", methods={"GET"},
      * defaults={
      *      "_api_resource_class"=User::class,
-     *      "_api_collection_operation_name"="current_user"
+     *      "_api_collection_operation_name"="get_current_user"
      *     }
      * )
      */
-    public function __invoke()
+    public function getCurrentUser()
     {
         // Виды оплаты
         $payments = [];

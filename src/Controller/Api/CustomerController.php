@@ -17,7 +17,7 @@ class CustomerController extends AbstractController
      *     }
      * )
      */
-    public function __invoke(Customer $data)
+    public function getCustomer(Customer $data)
     {
         $customer_orders = [];
         if ($data->getCustomerOrders()) {
