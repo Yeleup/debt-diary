@@ -3,7 +3,6 @@
 namespace App\Controller\Api;
 
 use App\Entity\Customer;
-use App\Repository\CustomerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -72,5 +71,23 @@ class CustomerController extends AbstractController
         } else {
             return new JsonResponse(['error' => 'Error'], 200,[]);
         }
+    }
+
+    /**
+     * @Route(
+     *     name="api_patch_customer",
+     *     path="/api/customer/{id}",
+     *     methods={"PATCH"},
+     *     defaults={
+     *         "_api_resource_class"=Customer::class,
+     *         "_api_item_operation_name"="patch"
+     *     }
+     * )
+     */
+    public function patchCustomer(Customer $data)
+    {
+        $repository =$this->getDoctrine()->getRepository(Customer::class);
+        $repository->addCustomer($data);
+        return new JsonResponse(['success' => 'Success'], 200,[]);
     }
 }

@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(itemOperations={"get_customer"={"method"="GET", "route_name"="api_get_customer"}}, collectionOperations={"get","post"={"method"="POST","route_name"="api_post_customer"}})
+ * @ApiResource(itemOperations={"get_customer"={"method"="GET", "route_name"="api_get_customer"}, "patch"={"method"="PATCH","route_name"="api_patch_customer"}}, collectionOperations={"get","post"={"method"="POST","route_name"="api_post_customer"}})
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
 class Customer
