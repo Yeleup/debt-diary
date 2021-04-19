@@ -30,13 +30,6 @@ class CustomerRepository extends ServiceEntityRepository
         return $this->findOneBy($criteria);
     }
 
-    public function addCustomer(Customer $customer)
-    {
-        $em = $this->getEntityManager();
-        $em->persist($customer);
-        $em->flush();
-    }
-
     // /**
     //  * @return Customer[] Returns an array of Customer objects
     //  */

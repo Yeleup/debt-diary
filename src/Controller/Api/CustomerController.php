@@ -63,7 +63,10 @@ class CustomerController extends AbstractController
             $check = $repository->checkCustomer($data);
 
             if (!$check) {
-                $repository->addCustomer($data);
+                // Add Customer
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($data);
+                $em->flush();
                 return new JsonResponse(['success' => 'Success'], 200,[]);
             } else {
                 return new JsonResponse(['success' => 'Dupicate'], 200,[]);
@@ -86,8 +89,11 @@ class CustomerController extends AbstractController
      */
     public function patchCustomer(Customer $data)
     {
-        $repository =$this->getDoctrine()->getRepository(Customer::class);
-        $repository->addCustomer($data);
+        // Update Customer
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($data);
+        $em->flush();
+
         return new JsonResponse(['success' => 'Success'], 200,[]);
     }
 }
