@@ -19,6 +19,24 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
+    public function checkCustomer(Customer $customer)
+    {
+        $criteria = array(
+            'name'   => $customer->getName(),
+            'place'  => $customer->getPlace(),
+            'market' => $customer->getMarket()
+        );
+
+        return $this->findOneBy($criteria);
+    }
+
+    public function addCustomer(Customer $customer)
+    {
+        $em = $this->getEntityManager();
+        $em->persist($customer);
+        $em->flush();
+    }
+
     // /**
     //  * @return Customer[] Returns an array of Customer objects
     //  */

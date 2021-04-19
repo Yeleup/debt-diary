@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Customer;
+use App\Repository\CustomerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,5 +43,34 @@ class CustomerController extends AbstractController
         $json['lastTransaction'] = ($data->getLastTransaction() ? $data->getLastTransaction()->format('Y-m-d H:i:s') : '');
 
         return new JsonResponse($json);
+    }
+
+    /**
+     * @Route(
+     *     name="api_post_customer",
+     *     path="/api/customer",
+     *     methods={"POST"},
+     *     defaults={
+     *         "_api_resource_class"=Customer::class,
+     *         "_api_collection_operation_name"="post"
+     *     }
+     * )
+     */
+    public function postCustomer(Customer $data)
+    {
+        $repository =$this->getDoctrine()->getRepository(Customer::class);
+
+        if ($data->getMarket()) {
+            $check = $repository->checkCustomer($data);
+
+            if (!$check) {
+                $repository->addCustomer($data);
+                return new JsonResponse(['success' => 'Success'], 200,[]);
+            } else {
+                return new JsonResponse(['success' => 'Dupicate'], 200,[]);
+            }
+        } else {
+            return new JsonResponse(['error' => 'Error'], 200,[]);
+        }
     }
 }
