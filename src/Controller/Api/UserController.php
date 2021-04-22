@@ -19,37 +19,43 @@ class UserController extends AbstractController
      */
     public function getCurrentUser()
     {
-        // Виды оплаты
-        $payments = [];
-
-        if (!empty( $this->getUser()->getPayments())) {
-            foreach ($this->getUser()->getPayments()->toArray() as $payment) {
-                $payments[] = array(
-                    'id' => $payment->getId(),
-                    'title' => $payment->getTitle(),
-                );
-            }
-        }
-
-        // Точки продаж
-        $markets = [];
-
-        if (!empty( $this->getUser()->getMarkets())) {
-            foreach ($this->getUser()->getMarkets()->toArray() as $market) {
-                $markets[] = array(
-                    'id' => $market->getId(),
-                    'title' => $market->getTitle(),
-                );
-            }
-        }
-
         $user = array(
             'id' => $this->getUser()->getId(),
             'username' => $this->getUser()->getUsername(),
             'role' => $this->getUser()->getRoles(),
-            'payments' => $payments,
-            'markets' => $markets,
         );
+
+        // Виды оплаты
+        if ($this->isGranted("ROLE_CONTROL")) {
+            $payments = [];
+
+            if (!empty($this->getUser()->getPayments())) {
+                foreach ($this->getUser()->getPayments()->toArray() as $payment) {
+                    $payments[] = array(
+                        'id' => $payment->getId(),
+                        'title' => $payment->getTitle(),
+                    );
+                }
+            }
+
+            $user['payments'] = $payments;
+        }
+
+        // Точки продаж
+        if ($this->isGranted("ROLE_USER")) {
+            $markets = [];
+
+            if (!empty($this->getUser()->getMarkets())) {
+                foreach ($this->getUser()->getMarkets()->toArray() as $market) {
+                    $markets[] = array(
+                        'id' => $market->getId(),
+                        'title' => $market->getTitle(),
+                    );
+                }
+            }
+
+            $user['markets'] = $markets;
+        }
 
         return new JsonResponse($user);
     }

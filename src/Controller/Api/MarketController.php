@@ -33,24 +33,12 @@ class MarketController extends AbstractController
                     'place' => $customer->getPlace(),
                     'contact' => $customer->getContact(),
                     'total' => $customer->getTotal(),
-                    'lastTransaction' => $customer->getLastTransaction(),
+                    'lastTransaction' => ($customer->getLastTransaction() ? $customer->getLastTransaction()->format('Y-m-d H:i:s') : ''),
                 );
             }
         }
 
         $market['customers'] = $customers;
-
-        // Users
-        if ($data->getUsers()) {
-            $users = [];
-            foreach ($data->getUsers()->toArray() as $user) {
-                $users[] = array(
-                    'id' => $user->getId()
-                );
-            }
-        }
-
-        $market['users'] = $users;
 
         return new JsonResponse($market);
     }
