@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\CustomerOrder;
+use App\Entity\Customer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,5 +39,51 @@ class CustomerOrderController extends AbstractController
         } else {
             return new JsonResponse(['error' => 'Error'], 400,[]);
         }
+    }
+
+    /**
+     * @Route(name="api_get_customer_order", path="/api/customer_order/{id}", methods={"GET"},
+     * defaults={
+     *      "_api_resource_class"=Customer::class,
+     *      "_api_item_operation_name"="get_customer_order"
+     *     }
+     * )
+     */
+    public function getCustomerOrder(Customer $data)
+    {
+        $orders = array();
+
+        if ($data) {
+            $repo = $this->getDoctrine()->getRepository(CustomerOrder::class);
+
+            $currentOrders = $repo->findBy(['customer' => $data]);
+
+            foreach ($currentOrders as $order) {
+                $attr = array(
+                    'amount' => $order->getAmount(),
+                    'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
+                    'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
+                );
+
+                if ($order->getType()) {
+                    $attr['type'] = $order->getType()->getId();
+                }
+
+                if ($order->getPayment()) {
+                    $attr['payment'] = $order->getPayment()->getId();
+                }
+
+                if ($order->getCustomer()) {
+                    $attr['customer'] = $order->getCustomer()->getId();
+                }
+
+                if ($order->getConfirmed()) {
+                    $attr['confirmed'] = $order->getConfirmed();
+                }
+
+                $orders[] = $attr;
+            }
+        }
+        return new JsonResponse($orders);
     }
 }

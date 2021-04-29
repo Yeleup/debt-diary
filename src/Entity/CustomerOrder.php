@@ -8,7 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Controller\Api\CustomerOrderController;
 
 /**
- * @ApiResource(collectionOperations={"get","post"={"method"="POST","route_name"="api_customer_order_collection"}})
+ * @ApiResource(
+ *     collectionOperations={"get","post"={"method"="POST","route_name"="api_customer_order_collection"}},
+ *     itemOperations={"get_customer_order"={"method"="GET", "route_name"="api_get_customer_order"}}
+ * )
  * @ORM\Entity(repositoryClass=CustomerOrderRepository::class)
  */
 class CustomerOrder
