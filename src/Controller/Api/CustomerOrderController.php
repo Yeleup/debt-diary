@@ -86,4 +86,52 @@ class CustomerOrderController extends AbstractController
         }
         return new JsonResponse($orders);
     }
+
+    /**
+     * @Route(name="api_get_customer_order_current", path="/api/customer_order/{id}/current", methods={"GET"},
+     * defaults={
+     *      "_api_resource_class"=Customer::class,
+     *      "_api_item_operation_name"="get_customer_order_current"
+     *     }
+     * )
+     */
+    public function getCustomerOrderCurrent(Customer $data)
+    {
+        $orders = array();
+
+        if ($data) {
+            $now = new \DateTime();
+
+            $repo = $this->getDoctrine()->getRepository(CustomerOrder::class);
+
+            $currentOrders = $repo->getByDate($now, $this->getUser(), $data);
+
+            foreach ($currentOrders as $order) {
+                $attr = array(
+                    'amount' => $order->getAmount(),
+                    'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
+                    'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
+                );
+
+                if ($order->getType()) {
+                    $attr['type'] = $order->getType()->getId();
+                }
+
+                if ($order->getPayment()) {
+                    $attr['payment'] = $order->getPayment()->getId();
+                }
+
+                if ($order->getCustomer()) {
+                    $attr['customer'] = $order->getCustomer()->getId();
+                }
+
+                if ($order->getConfirmed()) {
+                    $attr['confirmed'] = $order->getConfirmed();
+                }
+
+                $orders[] = $attr;
+            }
+        }
+        return new JsonResponse($orders);
+    }
 }

@@ -177,7 +177,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
         }
     }
 
-    public function getByDate(\Datetime $date, $user)
+    public function getByDate(\Datetime $date, $user, $customer = 0)
     {
         $from = new \DateTime($date->format("Y-m-d")." 00:00:00");
         $to   = new \DateTime($date->format("Y-m-d")." 23:59:59");
@@ -190,6 +190,10 @@ class CustomerOrderRepository extends ServiceEntityRepository
             ->setParameter('from', $from )
             ->setParameter('to', $to)
         ;
+
+        if ($customer) {
+            $qb->andWhere('e.customer = :customer')->setParameter('customer', $customer);
+        }
 
         $result = $qb->getQuery()->getResult();
 

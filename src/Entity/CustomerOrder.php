@@ -10,7 +10,7 @@ use App\Controller\Api\CustomerOrderController;
 /**
  * @ApiResource(
  *     collectionOperations={"get","post"={"method"="POST","route_name"="api_customer_order_collection"}},
- *     itemOperations={"get_customer_order"={"method"="GET", "route_name"="api_get_customer_order"}}
+ *     itemOperations={"get_customer_order"={"method"="GET", "route_name"="api_get_customer_order"}, "get_customer_order_current"={"method"="GET", "route_name"="api_get_customer_order_current"}}
  * )
  * @ORM\Entity(repositoryClass=CustomerOrderRepository::class)
  */
