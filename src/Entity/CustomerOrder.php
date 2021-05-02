@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CustomerOrderRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Controller\Api\CustomerOrderController;
 
 /**
  * @ApiResource(
@@ -103,13 +102,7 @@ class CustomerOrder
 
     public function setPayment(?Payment $payment): self
     {
-        $this->payment = null;
-
-        if ($this->getType()) {
-            if ($this->getType()->getPaymentStatus()) {
-                $this->payment = $payment;
-            }
-        }
+        $this->payment = $payment;
 
         return $this;
     }
