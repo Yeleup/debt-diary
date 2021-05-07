@@ -5,3 +5,7 @@
 admin:
     path: /admin
     controller: App\Controller\Admin\DefaultDashboardController::index
+
+api_login:
+    path:       /api_login
+    methods:    POST

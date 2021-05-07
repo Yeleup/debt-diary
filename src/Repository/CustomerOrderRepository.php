@@ -207,6 +207,8 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $qb->andWhere('e.customer = :customer')->setParameter('customer', $customer);
         }
 
+        $qb->orderBy('e.updated', 'ASC');
+
         $result = $qb->getQuery()->getResult();
 
         return $result;

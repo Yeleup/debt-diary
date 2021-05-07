@@ -56,7 +56,7 @@ class CustomerOrderController extends AbstractController
         if ($data) {
             $repo = $this->getDoctrine()->getRepository(CustomerOrder::class);
 
-            $currentOrders = $repo->findBy(['customer' => $data]);
+            $currentOrders = $repo->findBy(['customer' => $data], ['updated' => 'ASC']);
 
             foreach ($currentOrders as $order) {
                 $attr = array(
