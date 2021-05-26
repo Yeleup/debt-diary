@@ -6,6 +6,7 @@ use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use App\Form\CustomerOrderType;
 use App\Repository\CustomerOrderRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,12 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 class CustomerOrderController extends AbstractController
 {
+    private $adminUrlGenerator;
+
+    public function __construct(AdminUrlGenerator $adminUrlGenerator)
+    {
+        $this->adminUrlGenerator = $adminUrlGenerator;
+    }
 
     /**
      * @Route("/{id}", name="_index", requirements={"id"="\d+"})
@@ -69,7 +76,7 @@ class CustomerOrderController extends AbstractController
             // Добавления реализации
             $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($customerOrder);
 
-            return $this->redirectToRoute('customer_order_index', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
+            return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
         }
 
         return $this->render('customer_order/new.html.twig', [
@@ -104,7 +111,7 @@ class CustomerOrderController extends AbstractController
             // Редактирование реализации
             $this->getDoctrine()->getRepository(CustomerOrder::class)->editOrder($customerOrder);
 
-            return $this->redirectToRoute('customer_order_index', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
+            return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
         }
 
         return $this->render('customer_order/edit.html.twig', [
@@ -127,8 +134,6 @@ class CustomerOrderController extends AbstractController
             $this->getDoctrine()->getRepository(CustomerOrder::class)->deleteOrder($customerOrder);
         }
 
-        if ($request->query->get('eaContext')) {
-            return $this->redirectToRoute('customer_order_index', ['id'=> $customer->getId(), 'eaContext' => $request->query->get('eaContext')]);
-        }
+        return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
     }
 }
