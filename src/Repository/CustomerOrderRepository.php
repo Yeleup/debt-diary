@@ -71,14 +71,20 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
     public function addOrder(CustomerOrder $customerOrder)
     {
-        // Плюсуем или минусуем, смотря по префиксу
         if ($customerOrder->getType()) {
             $amount = (float) (abs($customerOrder->getAmount()));
+
+            // Плюсуем или минусуем, смотря по префиксу
             if ($customerOrder->getType()->getPrefix() == '-') {
                 $amount = -1 * $amount;
                 $customerOrder->setAmount($amount);
             } else {
                 $customerOrder->setAmount($amount);
+            }
+
+            // Не показываем оплату если в типах не указано
+            if (!$customerOrder->getType()->getPaymentStatus()) {
+                $customerOrder->setPayment(null);
             }
         }
 
@@ -113,14 +119,20 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
     public function editOrder(CustomerOrder $customerOrder)
     {
-        // Плюсуем или минусуем, смотря по префиксу
         if ($customerOrder->getType()) {
             $amount = (float) (abs($customerOrder->getAmount()));
+
+            // Плюсуем или минусуем, смотря по префиксу
             if ($customerOrder->getType()->getPrefix() == '-') {
                 $amount = -1 * $amount;
                 $customerOrder->setAmount($amount);
             } else {
                 $customerOrder->setAmount($amount);
+            }
+
+            // Не показываем оплату если в типах не указано
+            if (!$customerOrder->getType()->getPaymentStatus()) {
+                $customerOrder->setPayment(null);
             }
         }
 
@@ -194,6 +206,8 @@ class CustomerOrderRepository extends ServiceEntityRepository
         if ($customer) {
             $qb->andWhere('e.customer = :customer')->setParameter('customer', $customer);
         }
+
+        $qb->orderBy('e.updated', 'ASC');
 
         $result = $qb->getQuery()->getResult();
 

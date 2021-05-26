@@ -28,6 +28,7 @@ class UserController extends AbstractController
 
             foreach ($currentOrders as $order) {
                 $attr = array(
+                    'username'=> $order->getUser()->getUsername(),
                     'amount' => $order->getAmount(),
                     'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),

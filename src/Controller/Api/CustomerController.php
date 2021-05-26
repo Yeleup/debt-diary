@@ -23,6 +23,7 @@ class CustomerController extends AbstractController
         if ($data->getCustomerOrders()) {
             foreach ($data->getCustomerOrders()->toArray() as $customer_order) {
                 $customer_orders[] = array(
+                    'username'=> $customer_order->getUser()->getUsername(),
                     'amount' => $customer_order->getAmount(),
                     'type' => ($customer_order->getType() ? $customer_order->getType()->getId() : 'null'),
                     'payment' => ($customer_order->getPayment() ? $customer_order->getPayment()->getId() : 'null'),

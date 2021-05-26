@@ -32,12 +32,12 @@ class CustomerOrderController extends AbstractController
             $checkOrder = $this->getDoctrine()->getRepository(CustomerOrder::class)->checkOrder($data);
             if (!$checkOrder) {
                 $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($data);
-                return new JsonResponse(['success' => 'Success'], 200,[]);
+                return new JsonResponse(['status' => 'success', 'text' => 'success', 'customer' => $data->getCustomer()->getId(), 'total' => $data->getCustomer()->getTotal()], 200,[]);
             } else {
-                return new JsonResponse(['error' => 'Dupicate'], 400,[]);
+                return new JsonResponse(['status' => 'error', 'text' => 'duplicate', 'customer' => $data->getCustomer()->getId(), 'total' => $data->getCustomer()->getTotal()], 400,[]);
             }
         } else {
-            return new JsonResponse(['error' => 'Error'], 400,[]);
+            return new JsonResponse(['status' => 'error'], 400,[]);
         }
     }
 
@@ -56,21 +56,24 @@ class CustomerOrderController extends AbstractController
         if ($data) {
             $repo = $this->getDoctrine()->getRepository(CustomerOrder::class);
 
-            $currentOrders = $repo->findBy(['customer' => $data]);
+            $currentOrders = $repo->findBy(['customer' => $data], ['updated' => 'ASC']);
 
             foreach ($currentOrders as $order) {
                 $attr = array(
+                    'username'=> $order->getUser()->getUsername(),
                     'amount' => $order->getAmount(),
                     'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
                 );
 
                 if ($order->getType()) {
-                    $attr['type'] = $order->getType()->getId();
+                    $attr['type']['id'] = $order->getType()->getId();
+                    $attr['type']['title'] = $order->getType()->getTitle();
                 }
 
                 if ($order->getPayment()) {
-                    $attr['payment'] = $order->getPayment()->getId();
+                    $attr['payment']['id'] = $order->getPayment()->getId();
+                    $attr['payment']['title'] = $order->getPayment()->getTitle();
                 }
 
                 if ($order->getCustomer()) {
@@ -108,17 +111,20 @@ class CustomerOrderController extends AbstractController
 
             foreach ($currentOrders as $order) {
                 $attr = array(
-                    'amount' => $order->getAmount(),
+                    'username'=> $order->getUser()->getUsername(),
+                    'amount' =>  $order->getAmount(),
                     'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
                 );
 
                 if ($order->getType()) {
-                    $attr['type'] = $order->getType()->getId();
+                    $attr['type']['id'] = $order->getType()->getId();
+                    $attr['type']['title'] = $order->getType()->getTitle();
                 }
 
                 if ($order->getPayment()) {
-                    $attr['payment'] = $order->getPayment()->getId();
+                    $attr['payment']['id'] = $order->getPayment()->getId();
+                    $attr['payment']['title'] = $order->getPayment()->getTitle();
                 }
 
                 if ($order->getCustomer()) {
