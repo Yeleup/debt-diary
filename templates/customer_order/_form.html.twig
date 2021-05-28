@@ -36,3 +36,22 @@
     {% endif %}
 </div>
 {{ form_end(form) }}
+
+<script>
+    types = {{ data.types|json_encode|raw }};
+
+    $('#customer_order_type :selected').val()
+
+    $('#customer_order_type').change(function(e){
+        for (type of types) {
+            if ($(this).val() == type.id) {
+                if (!type.payment_status) {
+                    $('#customer_order_payment').parent().parent().hide();
+                } else {
+                    $('#customer_order_payment').parent().parent().show();
+                }
+            }
+        }
+    });
+
+</script>

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\CustomerOrder;
+use App\Entity\Type;
 use App\Form\CustomerOrderType;
 use App\Repository\CustomerOrderRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -114,8 +115,20 @@ class CustomerOrderController extends AbstractController
             return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
         }
 
+        $types = $this->getDoctrine()->getRepository(Type::class)->findAll();
+
+        $data['types'] = [];
+
+        foreach ($types as $type) {
+            $data['types'][] = array(
+               'id' => $type->getId(),
+               'payment_status' => $type->getPaymentStatus(),
+            );
+        }
+
         return $this->render('customer_order/edit.html.twig', [
             'customer' => $customer,
+            'data' => $data,
             'customer_order' => $customerOrder,
             'form' => $form->createView(),
             'lang' => $lang,
