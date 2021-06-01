@@ -25,12 +25,6 @@ class CustomerOrderType extends AbstractType
             ->add('amount', MoneyType::class, ['currency' => 'KZT', 'label_format' => $this->translator->trans('customer_order.amount')])
             ->add('type', null, ['label_format' => $this->translator->trans('customer_order.type')])
             ->add('payment', null, ['label_format' => $this->translator->trans('customer_order.payment')])
-            ->add('updated', DateTimeType::class, [
-                'label_format' => $this->translator->trans('customer_order.updated'),
-                'widget' => 'single_text',
-                'html5' => true,
-                'attr' => ['class' => 'js-datepicker'],
-            ])
         ;
     }
 

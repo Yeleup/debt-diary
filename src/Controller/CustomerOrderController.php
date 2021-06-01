@@ -9,6 +9,7 @@ use App\Form\CustomerOrderType;
 use App\Repository\CustomerOrderRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,6 +67,14 @@ class CustomerOrderController extends AbstractController
         $customerOrder->setCustomer($customer);
         $customerOrder->setUser($this->getUser());
         $form = $this->createForm(CustomerOrderType::class, $customerOrder);
+
+        $form->add('updated', DateTimeType::class, [
+            'label_format' => new TranslatableMessage('customer_order.updated'),
+            'widget' => 'single_text',
+            'html5' => true,
+            'attr' => ['class' => 'js-datepicker'],
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
