@@ -40,8 +40,6 @@
 <script>
     types = {{ data.types|json_encode|raw }};
 
-    $('#customer_order_type :selected').val()
-
     $('#customer_order_type').change(function(e){
         for (type of types) {
             if ($(this).val() == type.id) {
@@ -54,4 +52,5 @@
         }
     });
 
+    $('#customer_order_type').trigger("change");
 </script>

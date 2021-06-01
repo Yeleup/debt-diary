@@ -27,5 +27,5 @@
 {% endblock %}
 
 {% block page_content %}
-    {{ include('customer_order/_form.html.twig', {'new': true}) }}
+    {{ include('customer_order/_form.html.twig', {'new': true, 'data': data }) }}
 {% endblock %}

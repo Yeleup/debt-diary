@@ -44,8 +44,6 @@ class CustomerCrudController extends AbstractCrudController
         $customerOrder = Action::new('customerOrder', 'customer.history')->linkToRoute('customer_order_index', function (Customer $customer): array {return ['id' => $customer->getId()];});
 
         return $actions
-            ->setPermissions([Action::EDIT => "ROLE_ADMIN", Action::EDIT => "ROLE_USER"])
-            ->setPermissions([Action::NEW => "ROLE_ADMIN", Action::NEW => "ROLE_USER"])
             ->setPermission(Action::DETAIL, "ROLE_ADMIN")
             ->setPermission(Action::DELETE, "ROLE_ADMIN")
             ->add(Crud::PAGE_INDEX, $customerOrder);
@@ -74,7 +72,7 @@ class CustomerCrudController extends AbstractCrudController
         return [
             TextField::new('name','customer.name'),
             TextField::new('place','customer.place'),
-            TextField::new('contact','customer.contact'),
+            TextField::new('contact','customer.contact')->hideOnIndex(),
             $marketField,
             NumberField::new('total','customer.total')->onlyOnIndex(),
             DateField::new('last_transaction','customer.last_transaction')->setFormat('y-MM-dd HH:mm:ss')->onlyOnIndex(),
