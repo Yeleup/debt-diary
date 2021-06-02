@@ -162,7 +162,6 @@ class User implements UserInterface
     {
         if (!$this->markets->contains($market)) {
             $this->markets[] = $market;
-            $market->setUser($this);
         }
 
         return $this;
@@ -170,12 +169,7 @@ class User implements UserInterface
 
     public function removeMarket(Market $market): self
     {
-        if ($this->markets->removeElement($market)) {
-            // set the owning side to null (unless already changed)
-            if ($market->getUser() === $this) {
-                $market->setUser(null);
-            }
-        }
+        $this->markets->removeElement($market);
 
         return $this;
     }
