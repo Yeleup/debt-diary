@@ -95,14 +95,12 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            return new RedirectResponse($targetPath);
-        } elseif ($this->authChecker->isGranted("ROLE_USER")) {
-            return new RedirectResponse('user');
-        } elseif ($this->authChecker->isGranted("ROLE_ADMIN")) {
-            return new RedirectResponse('admin');
+        if ($this->authChecker->isGranted("ROLE_USER")) {
+            return new RedirectResponse($this->urlGenerator->generate('user'));
         } elseif ($this->authChecker->isGranted("ROLE_CONTROL")) {
-            return new RedirectResponse('control');
+            return new RedirectResponse($this->urlGenerator->generate('control'));
+        } elseif ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+            return new RedirectResponse($targetPath);
         }
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
