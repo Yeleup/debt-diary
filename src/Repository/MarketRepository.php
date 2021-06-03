@@ -19,22 +19,32 @@ class MarketRepository extends ServiceEntityRepository
         parent::__construct($registry, Market::class);
     }
 
-    // /**
-    //  * @return Market[] Returns an array of Market objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+    * @return Market[] Returns an array of Market objects
+    */
+    public function findByUserMarket($user)
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
+            ->leftJoin('m.users', 'u')
+            ->andWhere('u.id = :user')
+            ->setParameter('user', $user)
             ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
+    public function getCustomers(Market $market)
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.customers', 'c')
+            ->andWhere('m.id = :market')
+            ->setParameter('market', $market)
+            ->orderBy('c.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
     /*
     public function findOneBySomeField($value): ?Market

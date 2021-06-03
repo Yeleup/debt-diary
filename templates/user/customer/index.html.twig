@@ -1,0 +1,161 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title market.title %}
+
+{% block page_actions %}
+    <div class="global-actions">
+        <a class=" action-new btn btn-primary" href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('new') }}" data-action-name="new">{{ lang.add|trans }}</a>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="datagrid-header-tools">
+        <div class="datagrid-search">
+            <div class="form-action form-action-search">
+                <form method="get">
+                    {# reset the referrer and page number whenever a new query is performed #}
+                    {% set query_parameters = ea.request.query.all|merge({
+                        referrer: null, page: 1,
+                    }) %}
+
+                    {# browsers remove the query string when submitting forms using GET;
+                       that's why all query string parameters are added as hidden form fields #}
+                    {% for paramName, paramValue in query_parameters|ea_flatten_array %}
+                        <input type="hidden" name="{{ paramName }}" value="{{ paramValue }}">
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <div class="form-widget">
+                            <input class="form-control" type="search" name="search" value="{{ app.request.get('search') ?? '' }}" placeholder="{{ 'action.search'|trans(ea.i18n.translationParameters, 'EasyAdminBundle') }}" spellcheck="false" autocorrect="false">
+
+                            {% if app.request.get('search') %}
+                                <a href="{{ ea_url().unset('search') }}" class="action-search-reset">
+                                    <i class="fas fa-times-circle"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <div class="form-widget">
+                            <select name="sort" class="form-control" onchange="javascript:this.form.submit()">
+                                {% for paramName, paramValue in query_parameters|ea_flatten_array %}
+                                    {% if paramName == 'sort' %}
+                                        {% for sort in sorts %}
+                                            {% if paramValue == sort.value %}
+                                                <option selected value="{{ sort.value }}">{{ sort.text }}</option>
+                                            {% else %}
+                                                <option value="{{ sort.value }}">{{ sort.text }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <div class="form-widget">
+                            <select name="order" class="form-control" onchange="javascript:this.form.submit()">
+                                {% for paramName, paramValue in query_parameters|ea_flatten_array %}
+                                    {% if paramName == 'order' %}
+                                        {% if paramValue == 'ASC' %}
+                                            <option selected value="ASC">С наименьшей</option>
+                                            <option value="DESC">С наибольшей</option>
+                                        {% else %}
+                                            <option value="ASC">С наименьшей</option>
+                                            <option selected value="DESC">С наибольшей</option>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="datagrid-filters">
+
+        </div>
+    </div>
+
+    <div class="content-panel">
+        <div class="content-panel-body without-header {{ not has_page_footer ? 'without-footer' }}">
+        {% block page_content %}
+            <div class="list-group">
+                {% for customer in customers %}
+                    <div class="list-group-item">
+                        <a href="{{ customer.href }}" class="list-group-item-action">
+                            <h4>{{ customer.name }}</h4>
+                            <p>{{ customer.place }}</p>
+                            <div class="d-flex justify-content-between">
+                                {% if customer.total is not empty %}
+                                    <h4>{{ customer.total~'₸'}}</h4>
+                                {% endif %}
+
+                                {% if customer.lastTransaction is not empty %}
+                                    <small>{{ customer.lastTransaction|date("d-m-Y") }}</small>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <a href="{{ customer.href }}" class="btn btn-lg">{{ lang.customerHistory|trans }}</a>
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('edit').setEntityId(customer.id) }}" class="btn btn-lg">{{ lang.edit|trans }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endblock %}
+        </div>
+
+{#        {{ include(ea.templatePath('crud/paginator')) }}#}
+
+{#        <div class="content-panel-footer without-padding without-border">#}
+
+{#            <div class="list-pagination">#}
+{#                <div class="list-pagination-counter">#}
+{#                    <strong>100</strong> результатов#}
+{#                </div>#}
+
+{#                <nav class="pager list-pagination-paginator first-page ">#}
+{#                    <ul class="pagination">#}
+{#                        <li class="page-item disabled">#}
+{#                            <a class="page-link" href="#">#}
+{#                                <i class="fa fa-angle-left mx-1"></i> <span class="btn-label">Предыдущая</span>#}
+{#                            </a>#}
+{#                        </li>#}
+
+{#                        <li class="page-item active ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=1&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">1</a>#}
+{#                        </li>#}
+{#                        <li class="page-item  ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=2&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">2</a>#}
+{#                        </li>#}
+{#                        <li class="page-item  ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=3&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">3</a>#}
+{#                        </li>#}
+{#                        <li class="page-item  ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=4&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">4</a>#}
+{#                        </li>#}
+{#                        <li class="page-item  ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=5&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">5</a>#}
+{#                        </li>#}
+{#                        <li class="page-item  ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=6&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">6</a>#}
+{#                        </li>#}
+{#                        <li class="page-item  ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=7&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">7</a>#}
+{#                        </li>#}
+
+{#                        <li class="page-item ">#}
+{#                            <a class="page-link" href="http://127.0.0.1:8000/admin?crudAction=index&amp;crudControllerFqcn=App%5CController%5CAdmin%5CCustomerCrudController&amp;menuIndex=2&amp;page=2&amp;referrer=%2Fadmin%3FcrudAction%3Dindex%26crudControllerFqcn%3DApp%255CController%255CAdmin%255CCustomerCrudController%26menuIndex%3D2%26signature%3Dz2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM%26submenuIndex%3D-1&amp;signature=z2rVIKV0Os33i0ZnHNARZlaUUBlKDBXpN2iXcABcjCM&amp;submenuIndex=-1">#}
+{#                                <span class="btn-label">Следующая</span> <i class="fa fa-angle-right mx-1"></i>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                </nav>#}
+{#            </div>#}
+
+{#        </div>#}
+    </div>
+{% endblock %}

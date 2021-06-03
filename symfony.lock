@@ -1,4 +1,7 @@
 {
+    "fzaninotto/faker": {
+        "version": "v1.9.2"
+    },
     "php": {
         "version": "7.4"
     }
