@@ -7,7 +7,9 @@ use App\Entity\Market;
 use App\Repository\MarketRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\PaginatorFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,7 +20,7 @@ class CustomerController extends AbstractController
     private $repository;
     private $adminUrlGenerator;
 
-    public function __construct(MarketRepository $repository, AdminUrlGenerator $adminUrlGenerator)
+    public function __construct( MarketRepository $repository, AdminUrlGenerator $adminUrlGenerator)
     {
         $this->repository = $repository;
         $this->adminUrlGenerator = $adminUrlGenerator;
@@ -27,7 +29,7 @@ class CustomerController extends AbstractController
     /**
      * @Route(name="user_customer")
      */
-    public function index(Request $request, Market $market): Response
+    public function index(Request $request, Market $market, PaginatorInterface $paginator): Response
     {
         $customerRepository = $this->getDoctrine()->getRepository(Customer::class);
 
@@ -55,7 +57,11 @@ class CustomerController extends AbstractController
             'order'              => $request->query->get('order'),
         );
 
-        $customers = $customerRepository->findByFilter($filter_data);
+        $pagination = $customers = $paginator->paginate(
+            $customerRepository->findByFilter($filter_data),
+            $request->query->getInt('page', $request->query->get('page')),
+            5
+        );
 
         $data['customer'] = array();
 
@@ -91,8 +97,8 @@ class CustomerController extends AbstractController
         $action = $this->adminUrlGenerator->setRoute('user_customer', ['id'=> $market->getId()])->generateUrl();
 
 
-
         return $this->render('user/customer/index.html.twig', [
+            'pagination' => $pagination,
             'lang' => $lang,
             'sorts' => $sorts,
             'action' => $action,
