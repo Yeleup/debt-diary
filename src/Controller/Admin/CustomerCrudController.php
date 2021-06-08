@@ -44,6 +44,8 @@ class CustomerCrudController extends AbstractCrudController
         $customerOrder = Action::new('customerOrder', 'customer.history')->linkToRoute('customer_order_index', function (Customer $customer): array {return ['id' => $customer->getId()];});
 
         return $actions
+            ->setPermission(Action::SAVE_AND_CONTINUE, "ROLE_ADMIN")
+            ->setPermission(Action::SAVE_AND_ADD_ANOTHER, "ROLE_ADMIN")
             ->setPermission(Action::DETAIL, "ROLE_ADMIN")
             ->setPermission(Action::DELETE, "ROLE_ADMIN")
             ->add(Crud::PAGE_INDEX, $customerOrder);

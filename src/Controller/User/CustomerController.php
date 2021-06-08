@@ -97,14 +97,14 @@ class CustomerController extends AbstractController
             'value' => 'c.last_transaction',
         );
 
-        $action = $this->adminUrlGenerator->setRoute('user_customer', ['id'=> $market->getId()])->generateUrl();
+        $referer = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $market->getId()])->generateUrl();
 
 
         return $this->render('user/customer/index.html.twig', [
+            'referer' => $referer,
             'pagination' => $pagination,
             'lang' => $lang,
             'sorts' => $sorts,
-            'action' => $action,
             'market' => $market,
             'customers' => $data['customer'],
         ]);

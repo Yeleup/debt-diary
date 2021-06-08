@@ -5,7 +5,7 @@
 
 {% block page_actions %}
     <div class="global-actions">
-        <a class=" action-new btn btn-primary" href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('new') }}" data-action-name="new">{{ lang.add|trans }}</a>
+        <a class=" action-new btn btn-primary" href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('new').includeReferrer() }}" data-action-name="new">{{ lang.add|trans }}</a>
     </div>
 {% endblock %}
 
@@ -120,7 +120,7 @@
                             </div>
                         </a>
                         <a href="{{ customer.href }}" class="btn btn-lg">{{ lang.customerHistory|trans }}</a>
-                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('edit').setEntityId(customer.id) }}" class="btn btn-lg">{{ lang.edit|trans }}</a>
+                        <a href="{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('edit').setEntityId(customer.id).includeReferrer() }}" class="btn btn-lg">{{ lang.edit|trans }}</a>
                     </div>
                 {% endfor %}
             </div>
