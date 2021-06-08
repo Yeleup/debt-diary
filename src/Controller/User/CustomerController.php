@@ -42,18 +42,21 @@ class CustomerController extends AbstractController
             $request->query->set('order', 'ASC');
         }
 
-        if ($request->query->get('sort')) {
-            $request->query->set('sort', $request->query->get('sort'));
+        if ($request->query->get('sorting')) {
+            $request->query->set('sorting', $request->query->get('sorting'));
         } else {
-            $request->query->set('sort', 'c.last_transaction');
+            $request->query->set('sorting', 'c.last_transaction');
         }
 
+        if (!$request->query->get('page')) {
+            $request->query->set('page', 1);
+        }
 
         // Список клиентов
         $filter_data = array(
             'market'             => $market,
             'search'             => $search,
-            'sort'               => $request->query->get('sort'),
+            'sort'               => $request->query->get('sorting'),
             'order'              => $request->query->get('order'),
         );
 

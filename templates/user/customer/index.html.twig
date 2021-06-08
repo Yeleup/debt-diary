@@ -10,6 +10,25 @@
 {% endblock %}
 
 {% block main %}
+    <style>
+        /*Стили только для смартфонов*/
+        @media screen and (max-device-width:480px){
+
+            .list-pagination {
+                max-width: 200px;
+            }
+
+            .list-pagination nav {
+                margin-left: -15px;
+            }
+        }
+        /*Стили только для планшетов*/
+        @media screen and (min-device-width:481px){
+        }
+        /*Стили только для десктопов*/
+        @media screen and (min-width:769px){
+        }
+    </style>
     <div class="datagrid-header-tools">
         <div class="datagrid-search">
             <div class="form-action form-action-search">
@@ -39,9 +58,9 @@
 
                     <div class="form-group mt-2">
                         <div class="form-widget">
-                            <select name="sort" class="form-control" onchange="javascript:this.form.submit()">
+                            <select name="sorting" class="form-control" onchange="javascript:this.form.submit()">
                                 {% for paramName, paramValue in query_parameters|ea_flatten_array %}
-                                    {% if paramName == 'sort' %}
+                                    {% if paramName == 'sorting' %}
                                         {% for sort in sorts %}
                                             {% if paramValue == sort.value %}
                                                 <option selected value="{{ sort.value }}">{{ sort.text }}</option>
@@ -109,15 +128,8 @@
         </div>
 
         <div class="content-panel-footer without-padding without-border">
-
             <div class="list-pagination">
-                <div class="list-pagination-counter">
-                    <strong>{{ pagination.getTotalItemCount }}</strong> результатов
-                </div>
-
-                <nav class="pager list-pagination-paginator first-page ">
-                    {{ knp_pagination_render(pagination,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
-                </nav>
+                {{ knp_pagination_render(pagination,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig') }}
             </div>
         </div>
     </div>
