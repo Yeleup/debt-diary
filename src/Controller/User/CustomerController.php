@@ -69,6 +69,14 @@ class CustomerController extends AbstractController
         $data['customer'] = array();
 
         foreach ($customers as $customer) {
+            $href = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])
+                ->set('market', $market->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl();
+
             $data['customer'][] = array(
                 'id' => $customer->getId(),
                 'name' => $customer->getName(),
@@ -76,7 +84,7 @@ class CustomerController extends AbstractController
                 'contact' => $customer->getContact(),
                 'total' => $customer->getTotal(),
                 'lastTransaction' => $customer->getLastTransaction(),
-                'href' => $this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl(),
+                'href' => $href,
             );
         }
 

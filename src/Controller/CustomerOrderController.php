@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\Admin\CustomerCrudController;
 use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use App\Entity\Type;
@@ -12,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -30,7 +32,7 @@ class CustomerOrderController extends AbstractController
     /**
      * @Route("/{id}", name="_index", requirements={"id"="\d+"})
      */
-    public function index(Customer $customer, CustomerOrderRepository $customerOrderRepository)
+    public function index(Request $request, Customer $customer, CustomerOrderRepository $customerOrderRepository)
     {
         // Text
         $lang['user'] = new TranslatableMessage('customer_order.user');
@@ -45,11 +47,70 @@ class CustomerOrderController extends AbstractController
         $lang['return'] = new TranslatableMessage('return');
         $lang['no_records_found'] = new TranslatableMessage('no_records_found');
 
+        $data['customer_orders'] = array();
         $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['updated' => 'ASC']);
 
+        foreach ($customer_orders as $customerOrder) {
+            if ($this->isGranted("ROLE_ADMIN")) {
+                $edit = $this->adminUrlGenerator->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])->generateUrl();
+                $delete = $this->adminUrlGenerator->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])->generateUrl();
+            } else {
+                $edit = $this->adminUrlGenerator->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])
+                    ->set('market', $customer->getMarket()->getId())
+                    ->set('search', $request->query->get('search'))
+                    ->set('order', $request->query->get('order'))
+                    ->set('sorting', $request->query->get('sorting'))
+                    ->set('page', $request->query->get('page'))
+                    ->generateUrl();
+
+                $delete = $this->adminUrlGenerator->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])
+                    ->set('market', $customer->getMarket()->getId())
+                    ->set('search', $request->query->get('search'))
+                    ->set('order', $request->query->get('order'))
+                    ->set('sorting', $request->query->get('sorting'))
+                    ->set('page', $request->query->get('page'))
+                    ->generateUrl();
+            }
+
+            $data['customer_orders'][] = array(
+                'id' => $customerOrder->getId(),
+                'user' => $customerOrder->getUser(),
+                'updated' => $customerOrder->getUpdated(),
+                'type' => $customerOrder->getType(),
+                'payment' => $customerOrder->getPayment(),
+                'amount' => $customerOrder->getAmount(),
+                'edit' => $edit,
+                'delete' => $delete,
+            );
+        }
+
+
+        if ($this->isGranted("ROLE_ADMIN")) {
+            $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])->generateUrl();
+            $link['return'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setAction('index')->generateUrl();
+
+        } else {
+            $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])
+                ->set('market', $customer->getMarket()->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl();
+            
+            $link['return'] = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $request->query->get('market')])
+                ->set('market', $customer->getMarket()->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl();
+        }
+
         return $this->render('customer_order/index.html.twig', [
+            'link' => $link,
             'customer' => $customer,
-            'customer_orders' => $customer_orders,
+            'customer_orders' => $data['customer_orders'],
             'lang' => $lang,
         ]);
     }
@@ -86,7 +147,22 @@ class CustomerOrderController extends AbstractController
             // Добавления реализации
             $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($customerOrder);
 
-            return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
+            if ($this->isGranted("ROLE_ADMIN")) {
+                $redirect = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
+            } else {
+                $redirect = $this->redirect(
+                    $this->adminUrlGenerator
+                        ->setRoute('customer_order_index', ['id'=> $customer->getId()])
+                        ->set('market', $customer->getMarket()->getId())
+                        ->set('search', $request->query->get('search'))
+                        ->set('order', $request->query->get('order'))
+                        ->set('sorting', $request->query->get('sorting'))
+                        ->set('page', $request->query->get('page'))
+                        ->generateUrl()
+                );
+            }
+
+            return $redirect;
         }
 
         $types = $this->getDoctrine()->getRepository(Type::class)->findAll();
@@ -100,7 +176,21 @@ class CustomerOrderController extends AbstractController
             );
         }
 
+        if ($this->isGranted("ROLE_ADMIN")) {
+            $link['return'] = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])->generateUrl();
+
+        } else {
+            $link['return'] = $this->adminUrlGenerator->setRoute('customer_order_index',  ['id' => $customer->getId()])
+                ->set('market', $customer->getMarket()->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl();
+        }
+
         return $this->render('customer_order/new.html.twig', [
+            'link' => $link,
             'customer' => $customer,
             'data' => $data,
             'customer_order' => $customerOrder,
@@ -133,7 +223,22 @@ class CustomerOrderController extends AbstractController
             // Редактирование реализации
             $this->getDoctrine()->getRepository(CustomerOrder::class)->editOrder($customerOrder);
 
-            return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
+            if ($this->isGranted("ROLE_ADMIN")) {
+                $redirect = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
+            } else {
+                $redirect = $this->redirect(
+                    $this->adminUrlGenerator
+                        ->setRoute('customer_order_index', ['id'=> $customer->getId()])
+                        ->set('market', $customer->getMarket()->getId())
+                        ->set('search', $request->query->get('search'))
+                        ->set('order', $request->query->get('order'))
+                        ->set('sorting', $request->query->get('sorting'))
+                        ->set('page', $request->query->get('page'))
+                        ->generateUrl()
+                );
+            }
+
+            return $redirect;
         }
 
         $types = $this->getDoctrine()->getRepository(Type::class)->findAll();
@@ -147,7 +252,21 @@ class CustomerOrderController extends AbstractController
             );
         }
 
+        if ($this->isGranted("ROLE_ADMIN")) {
+            $link['return'] = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])->generateUrl();
+
+        } else {
+            $link['return'] = $this->adminUrlGenerator->setRoute('customer_order_index',  ['id' => $customer->getId()])
+                ->set('market', $customer->getMarket()->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl();
+        }
+
         return $this->render('customer_order/edit.html.twig', [
+            'link' => $link,
             'customer' => $customer,
             'data' => $data,
             'customer_order' => $customerOrder,
@@ -168,6 +287,18 @@ class CustomerOrderController extends AbstractController
             $this->getDoctrine()->getRepository(CustomerOrder::class)->deleteOrder($customerOrder);
         }
 
-        return $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
+        if ($this->isGranted("ROLE_ADMIN")) {
+            $return = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
+        } else {
+            $return = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])
+                ->set('market', $customer->getMarket()->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl());
+        }
+
+        return $return;
     }
 }

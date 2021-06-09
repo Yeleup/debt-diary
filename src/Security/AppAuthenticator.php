@@ -99,6 +99,8 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
             return new RedirectResponse($this->urlGenerator->generate('user'));
         } elseif ($this->authChecker->isGranted("ROLE_CONTROL")) {
             return new RedirectResponse($this->urlGenerator->generate('control'));
+        } elseif ($this->authChecker->isGranted("ROLE_ADMIN")) {
+            return new RedirectResponse($this->urlGenerator->generate('admin'));
         } elseif ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
