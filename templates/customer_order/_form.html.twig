@@ -53,4 +53,9 @@
     });
 
     $('#customer_order_type').trigger("change");
+
+    $("#form_customer_order_edit").submit(function(){
+        $('button[form=form_customer_order_edit]').attr('disabled', true);
+        $('button[form=form_customer_order_edit]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...');
+    });
 </script>
