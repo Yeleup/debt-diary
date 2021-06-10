@@ -26,8 +26,91 @@
     </section>
 {% endblock %}
 
-{% block page_content %}
-    <table class="table table-sm">
+{% block main %}
+    <style>
+        .rwd-table {
+            margin: 1em 0;
+            min-width: 100%;
+        }
+        .rwd-table tr {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .rwd-table th {
+            display: none;
+        }
+        .rwd-table td {
+            display: block;
+        }
+        .rwd-table td:first-child {
+            padding-top: 0.5em;
+        }
+        .rwd-table td:last-child {
+            padding-bottom: 0.5em;
+        }
+        .rwd-table td:before {
+            content: attr(data-th) ": ";
+            font-weight: bold;
+            width: 8.5em;
+            display: inline-block;
+        }
+        .rwd-table td.empty:before {
+            display: none;
+        }
+        @media (min-width: 480px) {
+            .rwd-table td:before {
+                display: none;
+            }
+        }
+        .rwd-table th,
+        .rwd-table td {
+            text-align: left;
+        }
+        @media (min-width: 480px) {
+            .rwd-table th,
+            .rwd-table td {
+                display: table-cell;
+                padding: 0.25em 0.5em;
+            }
+            .rwd-table th:first-child,
+            .rwd-table td:first-child {
+                padding-left: 0;
+            }
+            .rwd-table th:last-child,
+            .rwd-table td:last-child {
+                padding-right: 0;
+            }
+        }
+
+        h1 {
+            font-weight: normal;
+            letter-spacing: -1px;
+            color: #34495e;
+        }
+
+        .rwd-table {
+            border-radius: 0.4em;
+            overflow: hidden;
+        }
+        .rwd-table tr {
+            border-color: #46637f;
+        }
+        .rwd-table th,
+        .rwd-table td {
+            margin: 0.5em 1em;
+        }
+        @media (min-width: 480px) {
+            .rwd-table th,
+            .rwd-table td {
+                padding: 1em !important;
+            }
+        }
+        .rwd-table th,
+        .rwd-table td:before {
+            font-weight: 700;
+        }
+    </style>
+    <table class="table table-light rwd-table">
         <thead>
             <tr>
                 <th>{{ lang.user|trans }}</th>
@@ -36,37 +119,49 @@
                 <th>{{ lang.payment|trans }}</th>
                 <th>{{ lang.amount|trans }}</th>
                 <th>{{ lang.action|trans }}</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>{{ lang.action|trans }}</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
         {% for customer_order in customer_orders %}
             <tr>
-                <td>{{ customer_order.user ?? customer_order.user.username }}</td>
-                <td>{{ customer_order.updated ? customer_order.updated|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ customer_order.type ? customer_order.type.title : '' }}</td>
-                <td>{{ customer_order.payment ? customer_order.payment.title : '' }}</td>
-                <th class="text-center">{{ customer_order.amount }}</th>
-                <td class="actions">
-                    <a class="btn btn-primary float-left mr-1" href="{{ customer_order.edit }}">{{ lang.edit|trans }}</a>
-
-                    <form class="float-left" method="post" action="{{ customer_order.delete }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ customer_order.id) }}">
-                        <button class="btn btn-danger">{{ lang.delete|trans }}</button>
-                    </form>
+                <td data-th="{{ lang.user|trans }}">{{ customer_order.user ?? customer_order.user.username }}</td>
+                <td data-th="{{ lang.created|trans }}">{{ customer_order.updated ? customer_order.updated|date('Y-m-d H:i:s') : '' }}</td>
+                <td data-th="{{ lang.type|trans }}" class="{{ customer_order.type ? '' : 'd-none d-sm-table-cell' }}">{{ customer_order.type ? customer_order.type.title : '' }}</td>
+                <td data-th="{{ lang.payment|trans }}" class="{{ customer_order.payment ? '' : 'd-none d-sm-table-cell' }}">{{ customer_order.payment ? customer_order.payment.title : '' }}</td>
+                <td data-th="{{ lang.amount|trans }}">{{ customer_order.amount }}</td>
+                <td data-th="{{ lang.action|trans }}">
+                    <a class="btn btn-primary mr-1" href="{{ customer_order.edit }}"><i class="fa fa-edit"></i> {{ lang.edit|trans }}</a>
                 </td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td data-th="{{ lang.action|trans }}">
+                        <form style="display:contents" method="post" action="{{ customer_order.delete }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ customer_order.id) }}">
+                            <button class="btn btn-danger"><i class="fa fa-trash"></i> {{ lang.delete|trans }}</button>
+                        </form>
+                    </td>
+                {% endif %}
             </tr>
         {% else %}
             <tr>
-                <td class="text-center" colspan="6">{{ lang.no_records_found|trans }}</td>
+                <td class="text-center empty" colspan="6">{{ lang.no_records_found|trans }}</td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td class="d-none d-sm-block"></td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
+        <tfoot class="{{ customer.total ? '' : 'd-none' }}">
             <tr>
-                <td colspan="4"></td>
-                <td class="text-center"><h3>{{ customer.total }}</h3></td>
-                <td></td>
+                <td colspan="4" class="d-none d-sm-table-cell"></td>
+                <td data-th="Долг"><span>{{ customer.total }}</span></td>
+                <td class="d-none d-sm-table-cell"></td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td class="d-none d-sm-table-cell"></td>
+                {% endif %}
             </tr>
         </tfoot>
     </table>
