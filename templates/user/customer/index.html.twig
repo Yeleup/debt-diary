@@ -107,7 +107,6 @@
             <div class="list-group">
                 {% for customer in customers %}
                     <div class="list-group-item">
-                        <button class="btn rounded position-absolute" style="right:10px" onclick="location.href='{{ ea_url().setController('App\\Controller\\Admin\\CustomerCrudController').setAction('edit').setEntityId(customer.id).includeReferrer() }}'"><icon class="fa fa-edit"></icon> {{ lang.edit|trans }}</button>
                         <a href="{{ customer.href }}" class="list-group-item-action">
                             <h4>{{ customer.name }}</h4>
                             <p>{{ customer.place }}</p>

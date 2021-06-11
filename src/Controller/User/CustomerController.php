@@ -5,11 +5,9 @@ namespace App\Controller\User;
 use App\Entity\Customer;
 use App\Entity\Market;
 use App\Repository\MarketRepository;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\PaginatorFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,35 +25,38 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route(name="user_customer")
+     * @Route("user/customer/{id}", name="user_customer")
      */
     public function index(Request $request, Market $market, PaginatorInterface $paginator): Response
     {
         $customerRepository = $this->getDoctrine()->getRepository(Customer::class);
 
         // GET
-        $search = $request->query->get('search');
+        $params = [];
+        if ($market) {
+            $params['market'] = $market->getId();
+        }
+
+        if ($request->query->get('search')) {
+            $params['search'] = $request->query->get('search');
+        }
 
         if ($request->query->get('order')) {
-            $request->query->set('order', $request->query->get('order'));
-        } else {
-            $request->query->set('order', 'ASC');
+            $params['order'] = $request->query->get('order');
         }
 
         if ($request->query->get('sorting')) {
-            $request->query->set('sorting', $request->query->get('sorting'));
-        } else {
-            $request->query->set('sorting', 'c.last_transaction');
+            $params['sorting'] = $request->query->get('sorting');
         }
 
-        if (!$request->query->get('page')) {
-            $request->query->set('page', 1);
+        if ($request->query->get('page')) {
+            $params['page'] = $request->query->get('page');
         }
 
         // Список клиентов
         $filter_data = array(
             'market'             => $market,
-            'search'             => $search,
+            'search'             => $request->query->get('search'),
             'sort'               => $request->query->get('sorting'),
             'order'              => $request->query->get('order'),
         );
@@ -70,11 +71,7 @@ class CustomerController extends AbstractController
 
         foreach ($customers as $customer) {
             $href = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])
-                ->set('market', $market->getId())
-                ->set('search', $request->query->get('search'))
-                ->set('order', $request->query->get('order'))
-                ->set('sorting', $request->query->get('sorting'))
-                ->set('page', $request->query->get('page'))
+                ->setAll($params)
                 ->generateUrl();
 
             $data['customer'][] = array(

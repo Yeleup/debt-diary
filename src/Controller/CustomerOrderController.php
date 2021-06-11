@@ -8,6 +8,7 @@ use App\Entity\CustomerOrder;
 use App\Entity\Type;
 use App\Form\CustomerOrderType;
 use App\Repository\CustomerOrderRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -34,6 +35,28 @@ class CustomerOrderController extends AbstractController
      */
     public function index(Request $request, Customer $customer, CustomerOrderRepository $customerOrderRepository)
     {
+        // GET
+        $params = [];
+        if ($request->query->get('market')) {
+            $params['market'] = $request->query->get('market');
+        }
+
+        if ($request->query->get('search')) {
+            $params['search'] = $request->query->get('search');
+        }
+
+        if ($request->query->get('order')) {
+            $params['order'] = $request->query->get('order');
+        }
+
+        if ($request->query->get('sorting')) {
+            $params['sorting'] = $request->query->get('sorting');
+        }
+
+        if ($request->query->get('page')) {
+            $params['page'] = $request->query->get('page');
+        }
+
         // Text
         $lang['user'] = new TranslatableMessage('customer_order.user');
         $lang['created'] = new TranslatableMessage('customer_order.created');
@@ -51,24 +74,21 @@ class CustomerOrderController extends AbstractController
         $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['updated' => 'ASC']);
 
         foreach ($customer_orders as $customerOrder) {
+
+            if ($customer->getMarket()) {
+                $params['market'] = $customer->getMarket()->getId();
+            }
+
             if ($this->isGranted("ROLE_ADMIN")) {
                 $edit = $this->adminUrlGenerator->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])->generateUrl();
                 $delete = $this->adminUrlGenerator->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])->generateUrl();
             } else {
                 $edit = $this->adminUrlGenerator->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])
-                    ->set('market', $customer->getMarket()->getId())
-                    ->set('search', $request->query->get('search'))
-                    ->set('order', $request->query->get('order'))
-                    ->set('sorting', $request->query->get('sorting'))
-                    ->set('page', $request->query->get('page'))
+                    ->setAll($params)
                     ->generateUrl();
 
                 $delete = $this->adminUrlGenerator->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])
-                    ->set('market', $customer->getMarket()->getId())
-                    ->set('search', $request->query->get('search'))
-                    ->set('order', $request->query->get('order'))
-                    ->set('sorting', $request->query->get('sorting'))
-                    ->set('page', $request->query->get('page'))
+                    ->setAll($params)
                     ->generateUrl();
             }
 
@@ -87,23 +107,23 @@ class CustomerOrderController extends AbstractController
 
         if ($this->isGranted("ROLE_ADMIN")) {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])->generateUrl();
+            $link['edit'] = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])->generateUrl();
             $link['return'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setAction('index')->generateUrl();
 
         } else {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])
-                ->set('market', $customer->getMarket()->getId())
-                ->set('search', $request->query->get('search'))
-                ->set('order', $request->query->get('order'))
-                ->set('sorting', $request->query->get('sorting'))
-                ->set('page', $request->query->get('page'))
+                ->setAll($params)
+                ->generateUrl();
+
+            $link['edit'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)
+                ->setEntityId($customer->getId())
+                ->setAction(Action::EDIT)
+                ->setAll($params)
+                ->includeReferrer()
                 ->generateUrl();
             
             $link['return'] = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $request->query->get('market')])
-                ->set('market', $customer->getMarket()->getId())
-                ->set('search', $request->query->get('search'))
-                ->set('order', $request->query->get('order'))
-                ->set('sorting', $request->query->get('sorting'))
-                ->set('page', $request->query->get('page'))
+                ->setAll($params)
                 ->generateUrl();
         }
 
@@ -120,6 +140,28 @@ class CustomerOrderController extends AbstractController
      */
     public function new(Request $request, Customer $customer)
     {
+        // GET
+        $params = [];
+        if ($customer->getMarket()) {
+            $params['market'] = $customer->getMarket()->getId();
+        }
+
+        if ($request->query->get('search')) {
+            $params['search'] = $request->query->get('search');
+        }
+
+        if ($request->query->get('order')) {
+            $params['order'] = $request->query->get('order');
+        }
+
+        if ($request->query->get('sorting')) {
+            $params['sorting'] = $request->query->get('sorting');
+        }
+
+        if ($request->query->get('page')) {
+            $params['page'] = $request->query->get('page');
+        }
+
         // Text
         $lang['add'] = new TranslatableMessage('add');
         $lang['return'] = new TranslatableMessage('return');
@@ -153,11 +195,7 @@ class CustomerOrderController extends AbstractController
                 $redirect = $this->redirect(
                     $this->adminUrlGenerator
                         ->setRoute('customer_order_index', ['id'=> $customer->getId()])
-                        ->set('market', $customer->getMarket()->getId())
-                        ->set('search', $request->query->get('search'))
-                        ->set('order', $request->query->get('order'))
-                        ->set('sorting', $request->query->get('sorting'))
-                        ->set('page', $request->query->get('page'))
+                        ->setAll($params)
                         ->generateUrl()
                 );
             }
@@ -181,11 +219,7 @@ class CustomerOrderController extends AbstractController
 
         } else {
             $link['return'] = $this->adminUrlGenerator->setRoute('customer_order_index',  ['id' => $customer->getId()])
-                ->set('market', $customer->getMarket()->getId())
-                ->set('search', $request->query->get('search'))
-                ->set('order', $request->query->get('order'))
-                ->set('sorting', $request->query->get('sorting'))
-                ->set('page', $request->query->get('page'))
+                ->setAll($params)
                 ->generateUrl();
         }
 
@@ -205,11 +239,33 @@ class CustomerOrderController extends AbstractController
      */
     public function edit(Request $request, CustomerOrder $customerOrder)
     {
+        $customer = $customerOrder->getCustomer();
+
+        // GET
+        $params = [];
+        if ($customer->getMarket()) {
+            $params['market'] = $customer->getMarket()->getId();
+        }
+
+        if ($request->query->get('search')) {
+            $params['search'] = $request->query->get('search');
+        }
+
+        if ($request->query->get('order')) {
+            $params['order'] = $request->query->get('order');
+        }
+
+        if ($request->query->get('sorting')) {
+            $params['sorting'] = $request->query->get('sorting');
+        }
+
+        if ($request->query->get('page')) {
+            $params['page'] = $request->query->get('page');
+        }
+
         // Text
         $lang['save'] = new TranslatableMessage('save');
         $lang['return'] = new TranslatableMessage('return');
-
-        $customer = $customerOrder->getCustomer();
 
         $form = $this->createForm(CustomerOrderType::class, $customerOrder)->remove('updated');
         $form->handleRequest($request);
@@ -229,11 +285,7 @@ class CustomerOrderController extends AbstractController
                 $redirect = $this->redirect(
                     $this->adminUrlGenerator
                         ->setRoute('customer_order_index', ['id'=> $customer->getId()])
-                        ->set('market', $customer->getMarket()->getId())
-                        ->set('search', $request->query->get('search'))
-                        ->set('order', $request->query->get('order'))
-                        ->set('sorting', $request->query->get('sorting'))
-                        ->set('page', $request->query->get('page'))
+                        ->setAll($params)
                         ->generateUrl()
                 );
             }
@@ -257,11 +309,7 @@ class CustomerOrderController extends AbstractController
 
         } else {
             $link['return'] = $this->adminUrlGenerator->setRoute('customer_order_index',  ['id' => $customer->getId()])
-                ->set('market', $customer->getMarket()->getId())
-                ->set('search', $request->query->get('search'))
-                ->set('order', $request->query->get('order'))
-                ->set('sorting', $request->query->get('sorting'))
-                ->set('page', $request->query->get('page'))
+                ->setAll($params)
                 ->generateUrl();
         }
 
@@ -280,7 +328,6 @@ class CustomerOrderController extends AbstractController
      */
     public function delete(Request $request, CustomerOrder $customerOrder): Response
     {
-
         $customer = $customerOrder->getCustomer();
 
         if ($this->isCsrfTokenValid('delete'.$customerOrder->getId(), $request->request->get('_token'))) {
