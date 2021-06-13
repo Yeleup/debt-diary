@@ -38,24 +38,26 @@
 {{ form_end(form) }}
 
 <script>
-    types = {{ data.types|json_encode|raw }};
+    $(document).ready(function() {
+        types = {{ data.types|json_encode|raw }};
 
-    $('#customer_order_type').change(function(e){
-        for (type of types) {
-            if ($(this).val() == type.id) {
-                if (!type.payment_status) {
-                    $('#customer_order_payment').parent().parent().hide();
-                } else {
-                    $('#customer_order_payment').parent().parent().show();
+        $('#customer_order_type').change(function (e) {
+            for (type of types) {
+                if ($(this).val() == type.id) {
+                    if (!type.payment_status) {
+                        $('#customer_order_payment').parent().parent().hide();
+                    } else {
+                        $('#customer_order_payment').parent().parent().show();
+                    }
                 }
             }
-        }
-    });
+        });
 
-    $('#customer_order_type').trigger("change");
+        $('#customer_order_type').trigger("change");
 
-    $("#form_customer_order_edit").submit(function(){
-        $('button[form=form_customer_order_edit]').attr('disabled', true);
-        $('button[form=form_customer_order_edit]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...');
+        $("#form_customer_order_edit").submit(function () {
+            $('button[form=form_customer_order_edit]').attr('disabled', true);
+            $('button[form=form_customer_order_edit]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...');
+        });
     });
 </script>

@@ -185,6 +185,8 @@ class CustomerOrderController extends AbstractController
         $form->add('updated', DateTimeType::class, [
             'label_format' => new TranslatableMessage('customer_order.updated'),
             'widget' => 'single_text',
+            'html5' => false,
+            'format' => 'yyyy-MM-dd HH:mm:ss',
             'attr' => ['class' => 'js-datepicker'],
         ]);
 
