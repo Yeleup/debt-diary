@@ -48,8 +48,8 @@ class CustomerCrudController extends AbstractCrudController
 
         if ($request->get('referrer')) {
             $actions
-                ->add(Crud::PAGE_EDIT, Action::new('Назад')->linkToUrl($request->get('referrer')))
-                ->add(Crud::PAGE_NEW, Action::new('Назад')->linkToUrl($request->get('referrer')));
+                ->add(Crud::PAGE_EDIT, Action::new('return', 'return')->linkToUrl($request->get('referrer')))
+                ->add(Crud::PAGE_NEW, Action::new('return', 'return')->linkToUrl($request->get('referrer')));
         }
 
         return $actions

@@ -67,7 +67,8 @@ class CustomerOrderController extends AbstractController
         $lang['edit'] = new TranslatableMessage('edit');
         $lang['delete'] = new TranslatableMessage('delete');
         $lang['add'] = new TranslatableMessage('add');
-        $lang['return'] = new TranslatableMessage('return');
+        $lang['add'] = new TranslatableMessage('add');
+        $lang['back'] = new TranslatableMessage('back');
         $lang['no_records_found'] = new TranslatableMessage('no_records_found');
 
         $data['customer_orders'] = array();
@@ -109,7 +110,7 @@ class CustomerOrderController extends AbstractController
         if ($this->isGranted("ROLE_ADMIN")) {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])->generateUrl();
             $link['edit'] = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])->generateUrl();
-            $link['return'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setAction('index')->generateUrl();
+            $link['back'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setAction('index')->generateUrl();
         } else {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])
                 ->setAll($params)
@@ -122,7 +123,7 @@ class CustomerOrderController extends AbstractController
                 ->includeReferrer()
                 ->generateUrl();
             
-            $link['return'] = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $request->query->get('market')])
+            $link['back'] = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $request->query->get('market')])
                 ->setAll($params)
                 ->generateUrl();
         }
@@ -174,7 +175,7 @@ class CustomerOrderController extends AbstractController
         }
 
         // Text
-        $lang['add'] = new TranslatableMessage('add');
+        $lang['create'] = new TranslatableMessage('create');
         $lang['return'] = new TranslatableMessage('return');
 
         $customerOrder = new CustomerOrder();

@@ -60,8 +60,10 @@ dashboard:
   user: Пользователи
 # Global variables
 no_records_found: записей не найдено
+create: Создать
 add: Добавить
 save: Сохранить
-return: Назад
+return: Отмена
+back: Назад
 edit: Редактировать
 delete: Удалить
