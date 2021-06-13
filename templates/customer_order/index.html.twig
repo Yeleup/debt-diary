@@ -13,9 +13,7 @@
             </div>
 
             <div class="page-actions">
-                <a class="action-saveAndContinue btn btn-secondary action-save" href="{{ link.return }}">
-                    <span class="btn-label"><i class="action-icon far fa-arrow-alt-circle-left"></i> {{ lang.return|trans }}</span>
-                </a>
+                <a href="{{ link.return }}">{{ lang.return|trans }}</a>
 
                 <a class="action-saveAndReturn btn btn-success action-save" href="{{ link.add }}">
                     <span class="btn-label"><i class="action-icon far fa-edit"></i> {{ lang.add|trans }}</span>
@@ -121,6 +119,7 @@
                 <th>{{ lang.type|trans }}</th>
                 <th>{{ lang.payment|trans }}</th>
                 <th>{{ lang.amount|trans }}</th>
+                <th>Стало</th>
                 <th>{{ lang.action|trans }}</th>
                 {% if is_granted('ROLE_ADMIN') %}
                     <th>{{ lang.action|trans }}</th>
@@ -135,6 +134,7 @@
                 <td data-th="{{ lang.type|trans }}" class="{{ customer_order.type ? '' : 'd-none d-sm-table-cell' }}">{{ customer_order.type ? customer_order.type.title : '' }}</td>
                 <td data-th="{{ lang.payment|trans }}" class="{{ customer_order.payment ? '' : 'd-none d-sm-table-cell' }}">{{ customer_order.payment ? customer_order.payment.title : '' }}</td>
                 <td data-th="{{ lang.amount|trans }}">{{ customer_order.amount }}</td>
+                <td data-th="Стало">{{ customer_order.total }}</td>
                 <td data-th="{{ lang.action|trans }}">
                     <a class="btn btn-primary mr-1" href="{{ customer_order.edit }}"><i class="fa fa-edit"></i> {{ lang.edit|trans }}</a>
                 </td>
@@ -159,7 +159,7 @@
         </tbody>
         <tfoot class="{{ customer.total ? '' : 'd-none' }}">
             <tr>
-                <td colspan="4" class="d-none d-sm-table-cell"></td>
+                <td colspan="5" class="d-none d-sm-table-cell"></td>
                 <td data-th="Долг"><span>{{ customer.total }}</span></td>
                 <td class="d-none d-sm-table-cell"></td>
                 {% if is_granted('ROLE_ADMIN') %}

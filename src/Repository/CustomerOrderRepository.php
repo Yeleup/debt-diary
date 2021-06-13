@@ -23,7 +23,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
     public function getCustomerTotal(Customer $customer)
     {
         $qb = $this->createQueryBuilder('c');
-        $qb->select('SUM(c.amount) as total');
+        $qb->select('SUM(c.amount)');
         $qb->where($qb->expr()->andX(
             $qb->expr()->eq('c.customer', ':customer_id')
         ));
@@ -31,8 +31,8 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
         $total = 0;
 
-        if ($qb->getQuery()->getSingleResult()['total']) {
-            $total = $qb->getQuery()->getSingleResult()['total'];
+        if ($qb->getQuery()->getSingleScalarResult()) {
+            $total = $qb->getQuery()->getSingleScalarResult();
         }
 
         return $total;
@@ -100,6 +100,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
             // Общая сумма клиента
             $total = $this->getCustomerTotal($customer);
+            $customerOrder->setTotal($total);
             $customer->setTotal($total);
 
             // Последняя оплата клиента, если приход
@@ -148,6 +149,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
             // Общая сумма клиента
             $total = $this->getCustomerTotal($customer);
+            $customerOrder->setTotal($total);
             $customer->setTotal($total);
 
             // Последняя оплата клиента, если приход
@@ -178,6 +180,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
             // Общая сумма клиента
             $total = $this->getCustomerTotal($customer);
+            $customerOrder->setTotal($total);
             $customer->setTotal($total );
             $entityManager->persist($customer);
             $entityManager->flush();

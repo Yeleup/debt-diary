@@ -66,6 +66,11 @@ class CustomerOrder
      */
     private $confirmed;
 
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
+     */
+    private $total;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -169,6 +174,18 @@ class CustomerOrder
     public function setConfirmed(?bool $confirmed): self
     {
         $this->confirmed = $confirmed;
+
+        return $this;
+    }
+
+    public function getTotal(): ?string
+    {
+        return $this->total;
+    }
+
+    public function setTotal(?string $total): self
+    {
+        $this->total = $total;
 
         return $this;
     }

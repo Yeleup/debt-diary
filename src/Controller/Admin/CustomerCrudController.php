@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\Request;
 
 class CustomerCrudController extends AbstractCrudController
 {
@@ -42,6 +43,14 @@ class CustomerCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $customerOrder = Action::new('customerOrder', 'customer.history')->linkToRoute('customer_order_index', function (Customer $customer): array {return ['id' => $customer->getId()];});
+
+        $request = Request::createFromGlobals();
+
+        if ($request->get('referrer')) {
+            $actions
+                ->add(Crud::PAGE_EDIT, Action::new('Назад')->linkToUrl($request->get('referrer')))
+                ->add(Crud::PAGE_NEW, Action::new('Назад')->linkToUrl($request->get('referrer')));
+        }
 
         return $actions
             ->setPermission(Action::SAVE_AND_CONTINUE, "ROLE_ADMIN")

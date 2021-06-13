@@ -1,0 +1,53 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title customer.name %}
+
+{% block content_header %}
+    <section class="content-header">
+        <div class="d-flex flex-row justify-content-between align-content-center w-100">
+            <div class="content-header-title">
+                <h1 class="title">
+                    {{ customer.name }} <small>({{ customer.place }})</small>
+                </h1>
+            </div>
+
+            <div class="page-actions">
+                <a href="{{ link.return }}">{{ lang.return|trans }}</a>
+
+                <a class="action-saveAndReturn btn btn-success action-save" href="{{ link.add }}">
+                    <span class="btn-label"><i class="action-icon far fa-edit"></i> {{ lang.add|trans }}</span>
+                </a>
+
+                <a class="btn btn-primary" href="{{ link.edit }}">
+                    <span class="btn-label"><i class="action-icon far fa-edit"></i></span>
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+    {% block page_content %}
+        <table class="table datagrid table-bordered table-responsive">
+            {% for customer_order in customer_orders %}
+                <tr>
+                  <td class="align-middle text-center">
+                      <span class="text-nowrap">{{ customer_order.user ? customer_order.user.username : '' }}</span><br>
+                      <span class="text-nowrap">{{ customer_order.updated ? customer_order.updated|date('Y-m-d H:i:s') : '' }}</span>
+                  </td>
+                  <td class="align-middle text-center">{{ customer_order.amount }}</td>
+                  <td class="align-middle text-center">
+                    {{ customer_order.type ? customer_order.type.title : '' }}
+                    {{ customer_order.payment ? customer_order.payment.title : '' }}
+                  </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="align-middle text-center">{{ customer_order.total }}</td>
+                    <td class="text-center"></td>
+                </tr>
+            {% endfor %}
+        </table>
+{% endblock %}
+{% endblock %}

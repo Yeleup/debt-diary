@@ -71,7 +71,7 @@ class CustomerOrderController extends AbstractController
         $lang['no_records_found'] = new TranslatableMessage('no_records_found');
 
         $data['customer_orders'] = array();
-        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['updated' => 'ASC']);
+        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['created' => 'ASC']);
 
         foreach ($customer_orders as $customerOrder) {
 
@@ -99,6 +99,7 @@ class CustomerOrderController extends AbstractController
                 'type' => $customerOrder->getType(),
                 'payment' => $customerOrder->getPayment(),
                 'amount' => $customerOrder->getAmount(),
+                'total' => $customerOrder->getTotal(),
                 'edit' => $edit,
                 'delete' => $delete,
             );
@@ -109,7 +110,6 @@ class CustomerOrderController extends AbstractController
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])->generateUrl();
             $link['edit'] = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])->generateUrl();
             $link['return'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setAction('index')->generateUrl();
-
         } else {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])
                 ->setAll($params)
@@ -127,12 +127,23 @@ class CustomerOrderController extends AbstractController
                 ->generateUrl();
         }
 
-        return $this->render('customer_order/index.html.twig', [
-            'link' => $link,
-            'customer' => $customer,
-            'customer_orders' => $data['customer_orders'],
-            'lang' => $lang,
-        ]);
+        if ($this->isGranted("ROLE_USER")) {
+            $render = $this->render('user/customer_order/index.html.twig', [
+                'link' => $link,
+                'customer' => $customer,
+                'customer_orders' => $data['customer_orders'],
+                'lang' => $lang,
+            ]);
+        } else {
+            $render = $this->render('customer_order/index.html.twig', [
+                'link' => $link,
+                'customer' => $customer,
+                'customer_orders' => $data['customer_orders'],
+                'lang' => $lang,
+            ]);
+        }
+
+        return $render;
     }
 
     /**
@@ -174,7 +185,6 @@ class CustomerOrderController extends AbstractController
         $form->add('updated', DateTimeType::class, [
             'label_format' => new TranslatableMessage('customer_order.updated'),
             'widget' => 'single_text',
-            'html5' => true,
             'attr' => ['class' => 'js-datepicker'],
         ]);
 

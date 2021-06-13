@@ -37,21 +37,25 @@ class CustomerController extends AbstractController
             $params['market'] = $market->getId();
         }
 
-        if ($request->query->get('search')) {
-            $params['search'] = $request->query->get('search');
+        $params['search'] = $request->query->get('search');
+
+        if (!$request->query->get('order')) {
+            $request->query->set('order', 'ASC');
         }
 
-        if ($request->query->get('order')) {
-            $params['order'] = $request->query->get('order');
+        $params['order'] = $request->query->get('order');
+
+        if (!$request->query->get('sorting')) {
+            $request->query->set('sorting', 'c.last_transaction');
         }
 
-        if ($request->query->get('sorting')) {
-            $params['sorting'] = $request->query->get('sorting');
+        $params['sorting'] = $request->query->get('sorting');
+
+        if (!$request->query->get('page')) {
+            $request->query->set('page', 1);
         }
 
-        if ($request->query->get('page')) {
-            $params['page'] = $request->query->get('page');
-        }
+        $params['page'] = $request->query->get('page');
 
         // Список клиентов
         $filter_data = array(
