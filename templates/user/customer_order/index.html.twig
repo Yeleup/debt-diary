@@ -3,6 +3,16 @@
 
 {% block page_title customer.name %}
 
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+    .datagrid tbody tr:hover td, .datagrid tbody tr:hover th {
+        background: #23a441;
+        color: white;
+    }
+    </style>
+{% endblock %}
+
 {% block content_header %}
     <section class="content-header">
         <div class="d-flex flex-row justify-content-between align-content-center w-100">
@@ -46,14 +56,14 @@
     {% block page_content %}
         <table class="table datagrid table-bordered">
             {% for customer_order in customer_orders %}
-                <tr>
+                <tr {% if customer_order.edit %} class="active bg-success text-light" onclick="location.href='{{ customer_order.edit }}'" {% endif %}>
                   <td class="align-middle text-center">
                       <span class="text-nowrap">{{ customer_order.user ? customer_order.user.username : '' }}</span><br>
-                      <span class="text-nowrap">{{ customer_order.updated ? customer_order.updated|date('Y-m-d H:i:s') : '' }}</span>
+                      <span class="text-nowrap">{{ customer_order.updated ? customer_order.updated|date('Y-m-d') : '' }}</span>
                   </td>
                   <td class="align-middle text-center">{{ customer_order.amount }}</td>
                   <td class="align-middle text-center">
-                    {{ customer_order.type ? customer_order.type.title : '' }}
+                    {{ customer_order.type ? customer_order.type.title : '' }}</br>
                     {{ customer_order.payment ? customer_order.payment.title : '' }}
                   </td>
                 </tr>

@@ -100,6 +100,15 @@ class CustomerOrderController extends AbstractController
                     ->generateUrl();
             }
 
+
+            if ($this->getUser() == $customerOrder->getUser() && $customerOrder->getCreated()) {
+                if (date('Y-m-d') != $customerOrder->getCreated()->format('Y-m-d')) {
+                    $edit = false;
+                }
+            } else {
+                $edit = false;
+            }
+
             $data['customer_orders'][] = array(
                 'id' => $customerOrder->getId(),
                 'user' => $customerOrder->getUser(),
