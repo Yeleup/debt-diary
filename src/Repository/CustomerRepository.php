@@ -46,6 +46,8 @@ class CustomerRepository extends ServiceEntityRepository
         $sort_data = array(
             'c.last_transaction',
             'c.total',
+            'c.place',
+            'c.name',
         );
 
         if (isset($filter['sort']) && in_array($filter['sort'], $sort_data)) {

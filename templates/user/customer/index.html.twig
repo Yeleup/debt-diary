@@ -52,36 +52,22 @@
                         </div>
                     </div>
 
+                    <div class="form-group mt-2">
+                        <div class="form-widget">
+                            <select class="form-control" onchange="location = this.value;">
+                                {% for sort in sorts %}
+                                    {% if (sort.order == app.request.get('order')) and (sort.sorting == app.request.get('sorting')) %}
+                                        <option selected value="{{ sort.href }}">{{ sort.text }}</option>
+                                    {% else %}
+                                        <option value="{{ sort.href }}">{{ sort.text }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
                     {% for paramName, paramValue in query_parameters|ea_flatten_array %}
-                        {% if paramName == 'sorting' %}
-                            <div class="form-group mt-2">
-                                <div class="form-widget">
-                                    <select name="sorting" class="form-control" onchange="javascript:this.form.submit()">
-                                        {% for sort in sorts %}
-                                            {% if paramValue == sort.value %}
-                                                <option selected value="{{ sort.value }}">{{ sort.text }}</option>
-                                            {% else %}
-                                                <option value="{{ sort.value }}">{{ sort.text }}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                        {% elseif paramName == 'order' %}
-                            <div class="form-group mt-2">
-                                <div class="form-widget">
-                                    <select name="order" class="form-control" onchange="javascript:this.form.submit()">
-                                        {% if paramValue == 'ASC' %}
-                                            <option selected value="ASC">С наименьшей</option>
-                                            <option value="DESC">С наибольшей</option>
-                                        {% else %}
-                                            <option value="ASC">С наименьшей</option>
-                                            <option selected value="DESC">С наибольшей</option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                            </div>
-                        {% elseif paramName != 'search' %}
+                        {% if paramName != 'search' %}
                             <input type="hidden" name="{{ paramName }}" value="{{ paramValue }}">
                         {% endif %}
                     {% endfor %}

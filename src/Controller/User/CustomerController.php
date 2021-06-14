@@ -97,13 +97,51 @@ class CustomerController extends AbstractController
         $sorts = array();
 
         $sorts[] = array(
-            'text'  => 'По сумме реализации',
-            'value' => 'c.total',
+            'text'  => 'По клиентам А-Я',
+            'sorting' => 'c.name',
+            'order' => 'ASC',
+            'href'  => $this->adminUrlGenerator
+                ->setRoute('user_customer', ['id' => $market->getId()])
+                ->setAll($params)
+                ->set('sorting', 'c.name')
+                ->set('order', 'ASC')
+                ->generateUrl(),
         );
 
         $sorts[] = array(
-            'text'  => 'По дате оплаты',
-            'value' => 'c.last_transaction',
+            'text'  => 'По адресам А-Я',
+            'sorting' => 'c.place',
+            'order' => 'ASC',
+            'href'  => $this->adminUrlGenerator
+                ->setRoute('user_customer', ['id' => $market->getId()])
+                ->setAll($params)
+                ->set('sorting', 'c.place')
+                ->set('order', 'ASC')
+                ->generateUrl(),
+        );
+
+        $sorts[] = array(
+            'text'  => 'По сумме реализации',
+            'sorting' => 'c.total',
+            'order' => 'DESC',
+            'href'  => $this->adminUrlGenerator
+                ->setRoute('user_customer', ['id' => $market->getId()])
+                ->setAll($params)
+                ->set('sorting', 'c.total')
+                ->set('order', 'DESC')
+                ->generateUrl(),
+        );
+
+        $sorts[] = array(
+            'text'  => 'По оплате',
+            'sorting' => 'c.last_transaction',
+            'order' => 'ASC',
+            'href'  => $this->adminUrlGenerator
+                ->setRoute('user_customer', ['id' => $market->getId()])
+                ->setAll($params)
+                ->set('sorting', 'c.last_transaction')
+                ->set('order', 'ASC')
+                ->generateUrl(),
         );
 
         $referer = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $market->getId()])->generateUrl();
