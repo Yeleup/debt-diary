@@ -28,6 +28,21 @@
 {% endblock %}
 
 {% block main %}
+
+    <div class="form-group mt-2">
+        <div class="form-widget">
+            <select class="form-control" onchange="location = this.value;">
+                {% for sort in sorts %}
+                    {% if sort.limit == app.request.get('limit') %}
+                        <option selected value="{{ sort.href }}">{{ sort.text }}</option>
+                    {% else %}
+                        <option value="{{ sort.href }}">{{ sort.text }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
     {% block page_content %}
         <table class="table datagrid table-bordered">
             {% for customer_order in customer_orders %}

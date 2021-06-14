@@ -58,6 +58,11 @@ class CustomerOrderController extends AbstractController
             $params['page'] = $request->query->get('page');
         }
 
+        // Создаем GET параметры
+        if (!$request->query->get('limit')) {
+            $request->query->set('limit', 4);
+        }
+
         // Text
         $lang['user'] = $this->translator->trans('customer_order.user');
         $lang['created'] = $this->translator->trans('customer_order.created');
@@ -68,12 +73,13 @@ class CustomerOrderController extends AbstractController
         $lang['edit'] = $this->translator->trans('edit');
         $lang['delete'] = $this->translator->trans('delete');
         $lang['add'] = $this->translator->trans('add');
-        $lang['add'] = $this->translator->trans('add');
         $lang['back'] = $this->translator->trans('back');
         $lang['no_records_found'] = $this->translator->trans('no_records_found');
 
         $data['customer_orders'] = array();
-        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['created' => 'ASC']);
+
+        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['created' => 'DESC'], $request->query->get('limit'));
+        $customer_orders = array_reverse($customer_orders);
 
         foreach ($customer_orders as $customerOrder) {
 
@@ -129,8 +135,33 @@ class CustomerOrderController extends AbstractController
                 ->generateUrl();
         }
 
+        $link['history'] = $this->adminUrlGenerator->setRoute('customer_order_history', ['id' => $customer->getId()])
+            ->setAll($params)
+            ->generateUrl();
+
+        // Список сортировки
+        $sorts = array();
+
+        $sorts[] = array(
+            'text'  => $this->translator->trans('default'),
+            'limit' => $request->query->get('limit'),
+            'href'  => $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])
+                ->setAll($params)
+                ->generateUrl(),
+        );
+
+        $sorts[] = array(
+            'text'  => $this->translator->trans('customer.history'),
+            'limit' => 1000,
+            'href'  => $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])
+                ->setAll($params)
+                ->set('limit', 1000)
+                ->generateUrl(),
+        );
+
         if ($this->isGranted("ROLE_USER")) {
             $render = $this->render('user/customer_order/index.html.twig', [
+                'sorts' => $sorts,
                 'link' => $link,
                 'customer' => $customer,
                 'customer_orders' => $data['customer_orders'],
@@ -138,6 +169,7 @@ class CustomerOrderController extends AbstractController
             ]);
         } else {
             $render = $this->render('customer_order/index.html.twig', [
+                'sorts' => $sorts,
                 'link' => $link,
                 'customer' => $customer,
                 'customer_orders' => $data['customer_orders'],
