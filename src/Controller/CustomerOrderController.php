@@ -14,9 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/customer_order", name="customer_order")
@@ -24,10 +23,12 @@ use Symfony\Component\Translation\TranslatableMessage;
 class CustomerOrderController extends AbstractController
 {
     private $adminUrlGenerator;
+    private $translator;
 
-    public function __construct(AdminUrlGenerator $adminUrlGenerator)
+    public function __construct(AdminUrlGenerator $adminUrlGenerator, TranslatorInterface $translator)
     {
         $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->translator = $translator;
     }
 
     /**
@@ -58,18 +59,18 @@ class CustomerOrderController extends AbstractController
         }
 
         // Text
-        $lang['user'] = new TranslatableMessage('customer_order.user');
-        $lang['created'] = new TranslatableMessage('customer_order.created');
-        $lang['type'] = new TranslatableMessage('customer_order.type');
-        $lang['payment'] = new TranslatableMessage('customer_order.payment');
-        $lang['amount'] = new TranslatableMessage('customer_order.amount');
-        $lang['action'] = new TranslatableMessage('customer_order.action');
-        $lang['edit'] = new TranslatableMessage('edit');
-        $lang['delete'] = new TranslatableMessage('delete');
-        $lang['add'] = new TranslatableMessage('add');
-        $lang['add'] = new TranslatableMessage('add');
-        $lang['back'] = new TranslatableMessage('back');
-        $lang['no_records_found'] = new TranslatableMessage('no_records_found');
+        $lang['user'] = $this->translator->trans('customer_order.user');
+        $lang['created'] = $this->translator->trans('customer_order.created');
+        $lang['type'] = $this->translator->trans('customer_order.type');
+        $lang['payment'] = $this->translator->trans('customer_order.payment');
+        $lang['amount'] = $this->translator->trans('customer_order.amount');
+        $lang['action'] = $this->translator->trans('customer_order.action');
+        $lang['edit'] = $this->translator->trans('edit');
+        $lang['delete'] = $this->translator->trans('delete');
+        $lang['add'] = $this->translator->trans('add');
+        $lang['add'] = $this->translator->trans('add');
+        $lang['back'] = $this->translator->trans('back');
+        $lang['no_records_found'] = $this->translator->trans('no_records_found');
 
         $data['customer_orders'] = array();
         $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['created' => 'ASC']);
@@ -109,7 +110,7 @@ class CustomerOrderController extends AbstractController
 
         if ($this->isGranted("ROLE_ADMIN")) {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])->generateUrl();
-            $link['edit'] = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])->generateUrl();
+            $link['edit'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setEntityId($customer->getId())->setAction(Action::EDIT)->generateUrl();
             $link['back'] = $this->adminUrlGenerator->setController(CustomerCrudController::class)->setAction('index')->generateUrl();
         } else {
             $link['add'] = $this->adminUrlGenerator->setRoute('customer_order_new', ['id' => $customer->getId()])
@@ -175,8 +176,8 @@ class CustomerOrderController extends AbstractController
         }
 
         // Text
-        $lang['create'] = new TranslatableMessage('create');
-        $lang['return'] = new TranslatableMessage('return');
+        $lang['create'] = $this->translator->trans('create');
+        $lang['return'] = $this->translator->trans('return');
 
         $customerOrder = new CustomerOrder();
         $customerOrder->setCustomer($customer);
@@ -184,7 +185,7 @@ class CustomerOrderController extends AbstractController
         $form = $this->createForm(CustomerOrderType::class, $customerOrder);
 
         $form->add('updated', DateTimeType::class, [
-            'label_format' => new TranslatableMessage('customer_order.updated'),
+            'label_format' => $this->translator->trans('customer_order.updated'),
             'widget' => 'single_text',
             'html5' => false,
             'format' => 'yyyy-MM-dd HH:mm:ss',
@@ -277,8 +278,8 @@ class CustomerOrderController extends AbstractController
         }
 
         // Text
-        $lang['save'] = new TranslatableMessage('save');
-        $lang['return'] = new TranslatableMessage('return');
+        $lang['save'] = $this->translator->trans('save');
+        $lang['return'] = $this->translator->trans('return');
 
         $form = $this->createForm(CustomerOrderType::class, $customerOrder)->remove('updated');
         $form->handleRequest($request);
