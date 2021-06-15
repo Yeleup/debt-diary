@@ -59,5 +59,13 @@
             $('button[form=form_customer_order_edit]').attr('disabled', true);
             $('button[form=form_customer_order_edit]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...');
         });
+
+        // Current day
+        var today = new Date();
+
+        $('.js-datepicker').datepicker({
+            endDate: today,
+            format: 'yyyy-mm-dd ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
+        });
     });
 </script>

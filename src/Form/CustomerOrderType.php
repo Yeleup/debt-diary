@@ -23,6 +23,7 @@ class CustomerOrderType extends AbstractType
     {
         $builder
             ->add('amount', MoneyType::class, [
+                'html5' => true,
                 'currency' => 'KZT',
                 'label_format' => $this->translator->trans('customer_order.amount'),
                 'attr' => ['autocomplete' => 'off'],
