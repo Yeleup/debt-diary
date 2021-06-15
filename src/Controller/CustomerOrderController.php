@@ -87,27 +87,25 @@ class CustomerOrderController extends AbstractController
                 $params['market'] = $customer->getMarket()->getId();
             }
 
-            if ($this->isGranted("ROLE_ADMIN")) {
-                $edit = $this->adminUrlGenerator->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])->generateUrl();
-                $delete = $this->adminUrlGenerator->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])->generateUrl();
-            } else {
-                $edit = $this->adminUrlGenerator->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])
-                    ->setAll($params)
-                    ->generateUrl();
 
-                $delete = $this->adminUrlGenerator->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])
+            $edit = false;
+
+            /*
+             * Пользователь может изменять
+             * если заказ добавлен пользователем
+             * если дата заказа совпадает с текущей
+             */
+            if ($this->getUser() == $customerOrder->getUser() && $customerOrder->getCreated() && date('Y-m-d') == $customerOrder->getCreated()->format('Y-m-d')) {
+                $edit = $this->adminUrlGenerator
+                    ->setRoute("customer_order_edit", ['id' => $customerOrder->getId()])
                     ->setAll($params)
                     ->generateUrl();
             }
 
-
-            if ($this->getUser() == $customerOrder->getUser() && $customerOrder->getCreated()) {
-                if (date('Y-m-d') != $customerOrder->getCreated()->format('Y-m-d')) {
-                    $edit = false;
-                }
-            } else {
-                $edit = false;
-            }
+            $delete = $this->adminUrlGenerator
+                ->setRoute("customer_order_delete", ['id' => $customerOrder->getId()])
+                ->setAll($params)
+                ->generateUrl();
 
             $data['customer_orders'][] = array(
                 'id' => $customerOrder->getId(),

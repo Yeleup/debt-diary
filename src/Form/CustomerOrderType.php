@@ -22,7 +22,11 @@ class CustomerOrderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('amount', MoneyType::class, ['currency' => 'KZT', 'label_format' => $this->translator->trans('customer_order.amount')])
+            ->add('amount', MoneyType::class, [
+                'currency' => 'KZT',
+                'label_format' => $this->translator->trans('customer_order.amount'),
+                'attr' => ['autocomplete' => 'off'],
+            ])
             ->add('type', null, ['label_format' => $this->translator->trans('customer_order.type')])
             ->add('payment', null, ['label_format' => $this->translator->trans('customer_order.payment')])
         ;

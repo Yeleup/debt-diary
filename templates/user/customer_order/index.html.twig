@@ -6,10 +6,13 @@
 {% block head_stylesheets %}
     {{ parent() }}
     <style>
-    .datagrid tbody tr:hover td, .datagrid tbody tr:hover th {
-        background: #23a441;
-        color: white;
-    }
+        .active {
+            cursor: pointer;
+            user-select: none;
+        }
+        .active:hover {
+            color: #4c5367 !important;
+        }
     </style>
 {% endblock %}
 
@@ -56,7 +59,7 @@
     {% block page_content %}
         <table class="table datagrid table-bordered">
             {% for customer_order in customer_orders %}
-                <tr {% if customer_order.edit %} class="active bg-success text-light" onclick="location.href='{{ customer_order.edit }}'" {% endif %}>
+                <tr {% if customer_order.edit %} class="active bg-primary text-light" onclick="location.href='{{ customer_order.edit }}'" {% endif %}>
                   <td class="align-middle text-center">
                       <span class="text-nowrap">{{ customer_order.user ? customer_order.user.username : '' }}</span><br>
                       <span class="text-nowrap">{{ customer_order.updated ? customer_order.updated|date('Y-m-d') : '' }}</span>
