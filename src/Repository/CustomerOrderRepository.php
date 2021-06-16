@@ -20,22 +20,44 @@ class CustomerOrderRepository extends ServiceEntityRepository
         parent::__construct($registry, CustomerOrder::class);
     }
 
-    public function getCustomerTotal(Customer $customer)
+    public function getPreviousOrder(CustomerOrder $order)
     {
-        $qb = $this->createQueryBuilder('c');
-        $qb->select('SUM(c.amount)');
-        $qb->where($qb->expr()->andX(
-            $qb->expr()->eq('c.customer', ':customer_id')
-        ));
-        $qb->setParameter('customer_id', $customer->getId());
+        $qb = $this->createQueryBuilder('c')
+            ->select('c')
 
-        $total = 0;
+            // Filter users.
+            ->where('c.id < :order')
+            ->setParameter(':order', $order)
 
-        if ($qb->getQuery()->getSingleScalarResult()) {
-            $total = $qb->getQuery()->getSingleScalarResult();
-        }
+            // Order by id.
+            ->orderBy('c.id', 'DESC')
 
-        return $total;
+            // Get the first record.
+            ->setFirstResult(0)
+            ->setMaxResults(1)
+        ;
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function getNextOrder(CustomerOrder $order)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('c')
+
+            // Filter users.
+            ->where('c.id > :order')
+            ->setParameter(':order', $order)
+
+            // Order by id.
+            ->orderBy('c.id', 'ASC')
+
+            // Get the first record.
+            ->setFirstResult(0)
+            ->setMaxResults(1)
+        ;
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function checkOrder(CustomerOrder $customerOrder)
@@ -98,10 +120,18 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $entityManager->persist($customerOrder);
             $entityManager->flush();
 
+            // Предыдущий заказ
+            $previousOrder = $this->getPreviousOrder($customerOrder);
+
             // Общая сумма клиента
-            $total = $this->getCustomerTotal($customer);
-            $customerOrder->setTotal($total);
-            $customer->setTotal($total);
+            if ($previousOrder) {
+                $total = ($previousOrder->getTotal() + $customerOrder->getAmount());
+                $customerOrder->setTotal($total);
+                $customer->setTotal($total);
+            } else {
+                $customerOrder->setTotal($customerOrder->getAmount());
+                $customer->setTotal($customerOrder->getAmount());
+            }
 
             // Последняя оплата клиента, если приход
             if ($customerOrder->getPayment()) {
@@ -147,10 +177,18 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $entityManager->persist($customerOrder);
             $entityManager->flush();
 
+            // Предыдущий заказ
+            $previousOrder = $this->getPreviousOrder($customerOrder);
+
             // Общая сумма клиента
-            $total = $this->getCustomerTotal($customer);
-            $customerOrder->setTotal($total);
-            $customer->setTotal($total);
+            if ($previousOrder) {
+                $total = ($previousOrder->getTotal() + $customerOrder->getAmount());
+                $customerOrder->setTotal($total);
+                $customer->setTotal($total);
+            } else {
+                $customerOrder->setTotal($customerOrder->getAmount());
+                $customer->setTotal($customerOrder->getAmount());
+            }
 
             // Последняя оплата клиента, если приход
             if ($customerOrder->getPayment()) {
@@ -161,6 +199,14 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $entityManager->flush();
 
             $entityManager->getConnection()->commit();
+
+            // Получаем следующий заказ
+            $nextOrder = $this->getNextOrder($customerOrder);
+
+            // Рекурсивно изменяем следующие заказы
+            if ($nextOrder) {
+                $this->editOrder($nextOrder);
+            }
         } catch (\Exception $exception) {
             $entityManager->getConnection()->rollBack();
             throw $exception;
@@ -178,10 +224,19 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $entityManager->remove($customerOrder);
             $entityManager->flush();
 
+            // Предыдущий заказ
+            $previousOrder = $this->getPreviousOrder($customerOrder);
+
             // Общая сумма клиента
-            $total = $this->getCustomerTotal($customer);
-            $customerOrder->setTotal($total);
-            $customer->setTotal($total );
+            if ($previousOrder) {
+                $total = ($previousOrder->getTotal() + $customerOrder->getAmount());
+                $customerOrder->setTotal($total);
+                $customer->setTotal($total);
+            } else {
+                $customerOrder->setTotal($customerOrder->getAmount());
+                $customer->setTotal($customerOrder->getAmount());
+            }
+
             $entityManager->persist($customer);
             $entityManager->flush();
 
