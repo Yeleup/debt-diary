@@ -46,7 +46,7 @@ class CustomerController extends AbstractController
         $params['order'] = $request->query->get('order');
 
         if (!$request->query->get('sorting')) {
-            $request->query->set('sorting', 'c.last_transaction');
+            $request->query->set('sorting', 'c.name');
         }
 
         $params['sorting'] = $request->query->get('sorting');
@@ -65,7 +65,7 @@ class CustomerController extends AbstractController
             'order'              => $request->query->get('order'),
         );
 
-        $pagination = $customers = $paginator->paginate(
+        $pagination = $paginator->paginate(
             $customerRepository->findByFilter($filter_data),
             $request->query->getInt('page', $request->query->get('page')),
             5
@@ -73,7 +73,7 @@ class CustomerController extends AbstractController
 
         $data['customer'] = array();
 
-        foreach ($customers as $customer) {
+        foreach ($pagination->getItems() as $customer) {
             $href = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])
                 ->setAll($params)
                 ->generateUrl();
@@ -97,7 +97,7 @@ class CustomerController extends AbstractController
         $sorts = array();
 
         $sorts[] = array(
-            'text'  => 'По клиентам А-Я',
+            'text'  => 'По клиентам (А - Я)',
             'sorting' => 'c.name',
             'order' => 'ASC',
             'href'  => $this->adminUrlGenerator
@@ -109,7 +109,7 @@ class CustomerController extends AbstractController
         );
 
         $sorts[] = array(
-            'text'  => 'По адресам А-Я',
+            'text'  => 'По адресам (А - Я)',
             'sorting' => 'c.place',
             'order' => 'ASC',
             'href'  => $this->adminUrlGenerator
@@ -121,7 +121,7 @@ class CustomerController extends AbstractController
         );
 
         $sorts[] = array(
-            'text'  => 'По сумме реализации',
+            'text'  => 'По реализации',
             'sorting' => 'c.total',
             'order' => 'DESC',
             'href'  => $this->adminUrlGenerator
@@ -133,7 +133,7 @@ class CustomerController extends AbstractController
         );
 
         $sorts[] = array(
-            'text'  => 'По оплате',
+            'text'  => 'По приходу',
             'sorting' => 'c.last_transaction',
             'order' => 'ASC',
             'href'  => $this->adminUrlGenerator
