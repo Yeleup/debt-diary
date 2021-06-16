@@ -27,7 +27,9 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
             // Filter users.
             ->where('c.id < :order')
+            ->andWhere('c.customer = :customer')
             ->setParameter(':order', $order)
+            ->setParameter(':customer', $order->getCustomer())
 
             // Order by id.
             ->orderBy('c.id', 'DESC')
@@ -47,7 +49,9 @@ class CustomerOrderRepository extends ServiceEntityRepository
 
             // Filter users.
             ->where('c.id > :order')
+            ->andWhere('c.customer = :customer')
             ->setParameter(':order', $order)
+            ->setParameter(':customer', $order->getCustomer())
 
             // Order by id.
             ->orderBy('c.id', 'ASC')
@@ -241,6 +245,14 @@ class CustomerOrderRepository extends ServiceEntityRepository
             $entityManager->flush();
 
             $entityManager->getConnection()->commit();
+
+            // Получаем следующий заказ
+            $nextOrder = $this->getNextOrder($customerOrder);
+
+            // Рекурсивно изменяем следующие заказы
+            if ($nextOrder) {
+                $this->editOrder($nextOrder);
+            }
         } catch (\Exception $exception) {
             $entityManager->getConnection()->rollBack();
             throw $exception;
