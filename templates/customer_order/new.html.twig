@@ -13,6 +13,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 {% endblock head_javascript %}
 
+{% block body_javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(function() {
+            // Current day
+            var today = new Date();
+
+            $('.js-datepicker').datepicker({
+                endDate: today,
+                disableTouchKeyboard: true,
+                clearBtn:false,
+                format: 'yyyy-mm-dd ' + (today.getHours().toString().length < 2 ? '0' : '') + today.getHours() + ':' + (today.getMinutes().toString().length < 2 ? '0' : '') + today.getMinutes() + ':' + (today.getSeconds().toString().length < 2 ? '0' : '') + today.getSeconds()
+            });
+        });
+    </script>
+{% endblock %}
+
 
 {% block content_header %}
     <section class="content-header">

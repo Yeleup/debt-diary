@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -228,7 +229,10 @@ class CustomerOrderController extends AbstractController
             'widget' => 'single_text',
             'html5' => false,
             'format' => 'yyyy-MM-dd HH:mm:ss',
-            'attr' => ['class' => 'js-datepicker'],
+            'attr' => ['class' => 'js-datepicker', 'readonly' => true],
+            'constraints' => array(
+                new NotBlank(array('message' => 'Не должно быть пустым')),
+            ),
         ]);
 
         $form->handleRequest($request);

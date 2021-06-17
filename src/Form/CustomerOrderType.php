@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CustomerOrderType extends AbstractType
@@ -27,8 +28,16 @@ class CustomerOrderType extends AbstractType
                 'currency' => 'KZT',
                 'label_format' => $this->translator->trans('customer_order.amount'),
                 'attr' => ['autocomplete' => 'off'],
+                'constraints' => array(
+                    new NotBlank(array('message' => 'Не должно быть пустым')),
+                ),
             ])
-            ->add('type', null, ['label_format' => $this->translator->trans('customer_order.type')])
+            ->add('type', null, [
+                'label_format' => $this->translator->trans('customer_order.type'),
+                'constraints' => array(
+                    new NotBlank(array('message' => 'Не должно быть пустым')),
+                ),
+            ])
             ->add('payment', null, ['label_format' => $this->translator->trans('customer_order.payment')])
         ;
     }
