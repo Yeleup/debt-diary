@@ -6,10 +6,10 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
@@ -30,15 +30,15 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
     private $entityManager;
     private $urlGenerator;
     private $csrfTokenManager;
-    private $passwordEncoder;
+    private $passwordHasher;
     private $authChecker;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, AuthorizationCheckerInterface $authChecker)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordHasherInterface $passwordHasher, AuthorizationCheckerInterface $authChecker)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
+        $this->passwordHasher = $passwordHasher;
         $this->authChecker = $authChecker;
     }
 
@@ -82,7 +82,7 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $this->passwordHasher->isPasswordValid($user, $credentials['password']);
     }
 
     /**
@@ -95,11 +95,11 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator implements Passwor
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
-        if ($this->authChecker->isGranted("ROLE_USER")) {
+        if ($this->authChecker->isGranted('ROLE_USER')) {
             return new RedirectResponse($this->urlGenerator->generate('user'));
-        } elseif ($this->authChecker->isGranted("ROLE_CONTROL")) {
+        } elseif ($this->authChecker->isGranted('ROLE_CONTROL')) {
             return new RedirectResponse($this->urlGenerator->generate('control'));
-        } elseif ($this->authChecker->isGranted("ROLE_ADMIN")) {
+        } elseif ($this->authChecker->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->urlGenerator->generate('admin'));
         } elseif ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);

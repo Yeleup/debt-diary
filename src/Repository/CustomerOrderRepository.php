@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -68,7 +67,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
     {
         // Плюсуем или минусуем, смотря по префиксу
         if ($customerOrder->getType()) {
-            $amount = (float) (abs($customerOrder->getAmount()));
+            $amount = (float) abs($customerOrder->getAmount());
             if ($customerOrder->getType()->getPrefix() == '-') {
                 $amount = -1 * $amount;
                 $customerOrder->setAmount($amount);
@@ -77,12 +76,12 @@ class CustomerOrderRepository extends ServiceEntityRepository
             }
         }
 
-        $criteria = array(
+        $criteria = [
             'amount' => $customerOrder->getAmount(),
             'customer' => $customerOrder->getCustomer(),
             'user' => $customerOrder->getUser(),
             'created' => $customerOrder->getCreated(),
-        );
+        ];
 
         if ($customerOrder->getType()) {
             $criteria['type'] = $customerOrder->getType();
@@ -98,7 +97,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
     public function addOrder(CustomerOrder $customerOrder)
     {
         if ($customerOrder->getType()) {
-            $amount = (float) (abs($customerOrder->getAmount()));
+            $amount = (float) abs($customerOrder->getAmount());
 
             // Плюсуем или минусуем, смотря по префиксу
             if ($customerOrder->getType()->getPrefix() == '-') {
@@ -155,7 +154,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
     public function editOrder(CustomerOrder $customerOrder)
     {
         if ($customerOrder->getType()) {
-            $amount = (float) (abs($customerOrder->getAmount()));
+            $amount = (float) abs($customerOrder->getAmount());
 
             // Плюсуем или минусуем, смотря по префиксу
             if ($customerOrder->getType()->getPrefix() == '-') {
@@ -259,17 +258,17 @@ class CustomerOrderRepository extends ServiceEntityRepository
         }
     }
 
-    public function getByDate(\Datetime $date, $user, $customer = 0)
+    public function getByDate(\DateTime $date, $user, $customer = 0)
     {
-        $from = new \DateTime($date->format("Y-m-d")." 00:00:00");
-        $to   = new \DateTime($date->format("Y-m-d")." 23:59:59");
+        $from = new \DateTime($date->format('Y-m-d').' 00:00:00');
+        $to = new \DateTime($date->format('Y-m-d').' 23:59:59');
 
-        $qb = $this->createQueryBuilder("e");
+        $qb = $this->createQueryBuilder('e');
         $qb
             ->andWhere('e.user = :user')
             ->andWhere('e.created BETWEEN :from AND :to')
             ->setParameter('user', $user)
-            ->setParameter('from', $from )
+            ->setParameter('from', $from)
             ->setParameter('to', $to)
         ;
 

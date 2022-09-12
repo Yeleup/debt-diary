@@ -31,7 +31,7 @@ class CustomerCrudController extends AbstractCrudController
 
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        if ($this->isGranted("ROLE_USER")) {
+        if ($this->isGranted('ROLE_USER')) {
             $queryBuilder->join('entity.market', 'm');
             $queryBuilder->join('m.users', 'u');
             $queryBuilder->andWhere(':user MEMBER OF m.users')->setParameter('user', $user_id);

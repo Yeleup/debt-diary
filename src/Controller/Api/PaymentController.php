@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Payment;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PaymentController extends AbstractController
@@ -17,15 +18,15 @@ class PaymentController extends AbstractController
      *     }
      * )
      */
-    public function getPayments($data)
+    public function getPayments($data): Response
     {
         $payments = [];
         if (!empty($data)) {
             foreach ($data as $payment) {
-                $payments[] = array(
+                $payments[] = [
                     'id' => $payment->getId(),
                     'title' => $payment->getTitle(),
-                );
+                ];
             }
         }
 

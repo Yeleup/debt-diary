@@ -6,6 +6,7 @@ use App\Entity\CustomerOrder;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -15,9 +16,9 @@ class UserController extends AbstractController
      * defaults={"_api_resource_class"=User::class, "_api_collection_operation_name"="get_current_orders"}
      * )
      */
-    public function getCurrentOrders()
+    public function getCurrentOrders(): Response
     {
-        $orders = array();
+        $orders = [];
 
         if ($this->getUser()) {
             $now = new \DateTime();
@@ -27,12 +28,12 @@ class UserController extends AbstractController
             $currentOrders = $repo->getByDate($now, $this->getUser());
 
             foreach ($currentOrders as $order) {
-                $attr = array(
-                    'username'=> $order->getUser()->getUsername(),
+                $attr = [
+                    'username' => $order->getUser()->getUsername(),
                     'amount' => $order->getAmount(),
                     'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
-                );
+                ];
 
                 if ($order->getType()) {
                     $attr['type'] = $order->getType()->getId();
@@ -53,6 +54,7 @@ class UserController extends AbstractController
                 $orders[] = $attr;
             }
         }
+
         return new JsonResponse($orders);
     }
 
@@ -64,24 +66,24 @@ class UserController extends AbstractController
      *     }
      * )
      */
-    public function getCurrentUser()
+    public function getCurrentUser(): Response
     {
-        $user = array(
+        $user = [
             'id' => $this->getUser()->getId(),
             'username' => $this->getUser()->getUsername(),
             'role' => $this->getUser()->getRoles(),
-        );
+        ];
 
         // Виды оплаты
-        if ($this->isGranted("ROLE_CONTROL")) {
+        if ($this->isGranted('ROLE_CONTROL')) {
             $payments = [];
 
             if (!empty($this->getUser()->getPayments())) {
                 foreach ($this->getUser()->getPayments()->toArray() as $payment) {
-                    $payments[] = array(
+                    $payments[] = [
                         'id' => $payment->getId(),
                         'title' => $payment->getTitle(),
-                    );
+                    ];
                 }
             }
 
@@ -89,15 +91,15 @@ class UserController extends AbstractController
         }
 
         // Точки продаж
-        if ($this->isGranted("ROLE_USER")) {
+        if ($this->isGranted('ROLE_USER')) {
             $markets = [];
 
             if (!empty($this->getUser()->getMarkets())) {
                 foreach ($this->getUser()->getMarkets()->toArray() as $market) {
-                    $markets[] = array(
+                    $markets[] = [
                         'id' => $market->getId(),
                         'title' => $market->getTitle(),
-                    );
+                    ];
                 }
             }
 

@@ -28,10 +28,10 @@ class CustomerOrderCrudController extends AbstractCrudController
     {
         return $actions
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
-            ->setPermissions([Action::EDIT => "ROLE_ADMIN", Action::EDIT => "ROLE_CONTROL"])
-            ->setPermission(Action::DETAIL, "ROLE_ADMIN")
-            ->setPermission(Action::DELETE, "ROLE_ADMIN")
-            ->setPermission(Action::NEW, "ROLE_ADMIN");
+            ->setPermissions([Action::EDIT => 'ROLE_ADMIN', Action::EDIT => 'ROLE_CONTROL'])
+            ->setPermission(Action::DETAIL, 'ROLE_ADMIN')
+            ->setPermission(Action::DELETE, 'ROLE_ADMIN')
+            ->setPermission(Action::NEW, 'ROLE_ADMIN');
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -40,11 +40,11 @@ class CustomerOrderCrudController extends AbstractCrudController
 
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        if ($this->isGranted("ROLE_CONTROL")) {
+        if ($this->isGranted('ROLE_CONTROL')) {
             // Показывать ROLE_CONTROL только те заказы которые привязаны к оплате
             $queryBuilder->join('entity.payment', 'p');
             $queryBuilder->andWhere(':user MEMBER OF p.users')->setParameter('user', $user_id);
-        } elseif ($this->isGranted("ROLE_USER")) {
+        } elseif ($this->isGranted('ROLE_USER')) {
             // Показывать ROLE_USER только те заказы которые привязаны к нему
             $queryBuilder->andWhere('entity.user = :user')->setParameter('user', $user_id);
         }
@@ -54,7 +54,7 @@ class CustomerOrderCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        $crud->setDefaultSort(['updated' => "ASC"]);
+        $crud->setDefaultSort(['updated' => 'ASC']);
 
         if (!$this->isGranted('ROLE_CONTROL')) {
             $crud->setEntityPermission('ROLE_ADMIN');
@@ -67,19 +67,18 @@ class CustomerOrderCrudController extends AbstractCrudController
     {
         $confirmed = BooleanField::new('confirmed', 'customer_order.confirmed')->onlyOnIndex();
 
-        yield TextField::new('amount','customer_order.amount');
-        yield AssociationField::new('payment','customer_order.payment');
-        yield AssociationField::new('type','customer_order.type');
-        yield AssociationField::new('customer','customer_order.customer');
-        yield AssociationField::new('user','customer_order.user');
+        yield TextField::new('amount', 'customer_order.amount');
+        yield AssociationField::new('payment', 'customer_order.payment');
+        yield AssociationField::new('type', 'customer_order.type');
+        yield AssociationField::new('customer', 'customer_order.customer');
+        yield AssociationField::new('user', 'customer_order.user');
 
-        if ($this->isGranted("ROLE_USER")) {
+        if ($this->isGranted('ROLE_USER')) {
             yield $confirmed->renderAsSwitch(false);
         } else {
             yield $confirmed;
         }
 
-        yield DateField::new('updated','customer_order.updated')->setFormat('y-MM-dd HH:mm:ss');
+        yield DateField::new('updated', 'customer_order.updated')->setFormat('y-MM-dd HH:mm:ss');
     }
-
 }

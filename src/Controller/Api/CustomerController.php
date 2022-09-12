@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Customer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CustomerController extends AbstractController
@@ -17,20 +18,20 @@ class CustomerController extends AbstractController
      *     }
      * )
      */
-    public function getCustomer(Customer $data)
+    public function getCustomer(Customer $data): Response
     {
         $customer_orders = [];
         if ($data->getCustomerOrders()) {
             foreach ($data->getCustomerOrders()->toArray() as $customer_order) {
-                $customer_orders[] = array(
-                    'username'=> $customer_order->getUser()->getUsername(),
+                $customer_orders[] = [
+                    'username' => $customer_order->getUser()->getUsername(),
                     'amount' => $customer_order->getAmount(),
                     'type' => ($customer_order->getType() ? $customer_order->getType()->getId() : 'null'),
                     'payment' => ($customer_order->getPayment() ? $customer_order->getPayment()->getId() : 'null'),
                     'created' => ($customer_order->getCreated() ? $customer_order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($customer_order->getUpdated() ? $customer_order->getUpdated()->format('Y-m-d H:i:s') : ''),
                     'confirmed' => $customer_order->getConfirmed(),
-                );
+                ];
             }
         }
 
@@ -56,9 +57,9 @@ class CustomerController extends AbstractController
      *     }
      * )
      */
-    public function postCustomer(Customer $data)
+    public function postCustomer(Customer $data): Response
     {
-        $repository =$this->getDoctrine()->getRepository(Customer::class);
+        $repository = $this->getDoctrine()->getRepository(Customer::class);
 
         if ($data->getMarket()) {
             $check = $repository->checkCustomer($data);
@@ -68,12 +69,13 @@ class CustomerController extends AbstractController
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($data);
                 $em->flush();
-                return new JsonResponse(['success' => 'Success'], 200,[]);
+
+                return new JsonResponse(['success' => 'Success'], Response::HTTP_OK, []);
             } else {
-                return new JsonResponse(['success' => 'Dupicate'], 200,[]);
+                return new JsonResponse(['success' => 'Dupicate'], Response::HTTP_OK, []);
             }
         } else {
-            return new JsonResponse(['error' => 'Error'], 200,[]);
+            return new JsonResponse(['error' => 'Error'], Response::HTTP_OK, []);
         }
     }
 
@@ -88,13 +90,13 @@ class CustomerController extends AbstractController
      *     }
      * )
      */
-    public function patchCustomer(Customer $data)
+    public function patchCustomer(Customer $data): Response
     {
         // Update Customer
         $em = $this->getDoctrine()->getManager();
         $em->persist($data);
         $em->flush();
 
-        return new JsonResponse(['success' => 'Success'], 200,[]);
+        return new JsonResponse(['success' => 'Success'], Response::HTTP_OK, []);
     }
 }

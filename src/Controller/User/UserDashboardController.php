@@ -27,7 +27,7 @@ class UserDashboardController extends AbstractDashboardController
      */
     public function index(): Response
     {
-        if ($this->isGranted("ROLE_USER")) {
+        if ($this->isGranted('ROLE_USER')) {
             $market = $this->getDoctrine()->getRepository(Market::class)->findByUserMarket($this->getUser())[0];
 
             return $this->redirect($this->adminUrlGenerator->setRoute('user_customer', ['id' => $market->getId()])->generateUrl());
@@ -38,7 +38,6 @@ class UserDashboardController extends AbstractDashboardController
 
     public function configureDashboard(): Dashboard
     {
-
         $title = $this->translator->trans('header.name');
 
         return Dashboard::new()->setTitle($title);

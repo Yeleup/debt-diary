@@ -20,8 +20,8 @@ class MarketRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Market[] Returns an array of Market objects
-    */
+     * @return Market[] Returns an array of Market objects
+     */
     public function findByUserMarket($user)
     {
         return $this->createQueryBuilder('m')
@@ -43,7 +43,7 @@ class MarketRepository extends ServiceEntityRepository
             ->orderBy('c.id', 'DESC')
             ->getQuery()
             ->getResult()
-            ;
+        ;
     }
 
     /*

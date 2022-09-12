@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+
 use function Symfony\Component\String\u;
 
 /**
@@ -22,11 +23,11 @@ class CustomerRepository extends ServiceEntityRepository
 
     public function checkCustomer(Customer $customer)
     {
-        $criteria = array(
-            'name'   => $customer->getName(),
-            'place'  => $customer->getPlace(),
-            'market' => $customer->getMarket()
-        );
+        $criteria = [
+            'name' => $customer->getName(),
+            'place' => $customer->getPlace(),
+            'market' => $customer->getMarket(),
+        ];
 
         return $this->findOneBy($criteria);
     }
@@ -43,21 +44,21 @@ class CustomerRepository extends ServiceEntityRepository
 
         $sort = 'c.last_transaction';
 
-        $sort_data = array(
+        $sort_data = [
             'c.last_transaction',
             'c.total',
             'c.place',
             'c.name',
-        );
+        ];
 
         if (isset($filter['sort']) && in_array($filter['sort'], $sort_data)) {
             $sort = $filter['sort'];
         }
 
         if (isset($filter['order']) && ($filter['order'] == 'DESC')) {
-            $order = "DESC";
+            $order = 'DESC';
         } else {
-            $order = "ASC";
+            $order = 'ASC';
         }
 
         $queryBuilder = $this->createQueryBuilder('c');
@@ -82,7 +83,6 @@ class CustomerRepository extends ServiceEntityRepository
 
     private function extractSearchTerms(string $searchQuery): array
     {
-
         $searchQuery = u($searchQuery)->replaceMatches('/[[:space:]]+/', ' ')->trim();
         $terms = array_unique($searchQuery->split(' '));
 

@@ -15,12 +15,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class CustomerController extends AbstractController
 {
-    private $repository;
     private $adminUrlGenerator;
 
-    public function __construct( MarketRepository $repository, AdminUrlGenerator $adminUrlGenerator)
+    public function __construct(AdminUrlGenerator $adminUrlGenerator)
     {
-        $this->repository = $repository;
         $this->adminUrlGenerator = $adminUrlGenerator;
     }
 
@@ -58,12 +56,12 @@ class CustomerController extends AbstractController
         $params['page'] = $request->query->get('page');
 
         // Список клиентов
-        $filter_data = array(
-            'market'             => $market,
-            'search'             => $request->query->get('search'),
-            'sort'               => $request->query->get('sorting'),
-            'order'              => $request->query->get('order'),
-        );
+        $filter_data = [
+            'market' => $market,
+            'search' => $request->query->get('search'),
+            'sort' => $request->query->get('sorting'),
+            'order' => $request->query->get('order'),
+        ];
 
         $pagination = $paginator->paginate(
             $customerRepository->findByFilter($filter_data),
@@ -71,14 +69,14 @@ class CustomerController extends AbstractController
             5
         );
 
-        $data['customer'] = array();
+        $data['customer'] = [];
 
         foreach ($pagination->getItems() as $customer) {
             $href = $this->adminUrlGenerator->setRoute('customer_order_index', ['id' => $customer->getId()])
                 ->setAll($params)
                 ->generateUrl();
 
-            $data['customer'][] = array(
+            $data['customer'][] = [
                 'id' => $customer->getId(),
                 'name' => $customer->getName(),
                 'place' => $customer->getPlace(),
@@ -86,7 +84,7 @@ class CustomerController extends AbstractController
                 'total' => $customer->getTotal(),
                 'lastTransaction' => $customer->getLastTransaction(),
                 'href' => $href,
-            );
+            ];
         }
 
         $lang['add'] = new TranslatableMessage('add');
@@ -94,58 +92,57 @@ class CustomerController extends AbstractController
         $lang['customerHistory'] = new TranslatableMessage('customer.history');
 
         // Список сортировки
-        $sorts = array();
+        $sorts = [];
 
-        $sorts[] = array(
-            'text'  => 'По клиентам (А - Я)',
+        $sorts[] = [
+            'text' => 'По клиентам (А - Я)',
             'sorting' => 'c.name',
             'order' => 'ASC',
-            'href'  => $this->adminUrlGenerator
+            'href' => $this->adminUrlGenerator
                 ->setRoute('user_customer', ['id' => $market->getId()])
                 ->setAll($params)
                 ->set('sorting', 'c.name')
                 ->set('order', 'ASC')
                 ->generateUrl(),
-        );
+        ];
 
-        $sorts[] = array(
-            'text'  => 'По адресам (А - Я)',
+        $sorts[] = [
+            'text' => 'По адресам (А - Я)',
             'sorting' => 'c.place',
             'order' => 'ASC',
-            'href'  => $this->adminUrlGenerator
+            'href' => $this->adminUrlGenerator
                 ->setRoute('user_customer', ['id' => $market->getId()])
                 ->setAll($params)
                 ->set('sorting', 'c.place')
                 ->set('order', 'ASC')
                 ->generateUrl(),
-        );
+        ];
 
-        $sorts[] = array(
-            'text'  => 'По реализации',
+        $sorts[] = [
+            'text' => 'По реализации',
             'sorting' => 'c.total',
             'order' => 'DESC',
-            'href'  => $this->adminUrlGenerator
+            'href' => $this->adminUrlGenerator
                 ->setRoute('user_customer', ['id' => $market->getId()])
                 ->setAll($params)
                 ->set('sorting', 'c.total')
                 ->set('order', 'DESC')
                 ->generateUrl(),
-        );
+        ];
 
-        $sorts[] = array(
-            'text'  => 'По приходу',
+        $sorts[] = [
+            'text' => 'По приходу',
             'sorting' => 'c.last_transaction',
             'order' => 'ASC',
-            'href'  => $this->adminUrlGenerator
+            'href' => $this->adminUrlGenerator
                 ->setRoute('user_customer', ['id' => $market->getId()])
                 ->setAll($params)
                 ->set('sorting', 'c.last_transaction')
                 ->set('order', 'ASC')
                 ->generateUrl(),
-        );
+        ];
 
         $referer = $this->adminUrlGenerator->setRoute('user_customer', ['id' => $market->getId()])->generateUrl();
-
 
         return $this->render('user/customer/index.html.twig', [
             'referer' => $referer,

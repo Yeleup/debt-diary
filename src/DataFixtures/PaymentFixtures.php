@@ -2,10 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Market;
 use App\Entity\Payment;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class PaymentFixtures extends Fixture

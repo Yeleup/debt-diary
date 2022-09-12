@@ -2,16 +2,15 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\CustomerOrder;
 use App\Entity\Customer;
+use App\Entity\CustomerOrder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Handler\CustomerOrderPublishingHandler;
 
 class CustomerOrderController extends AbstractController
 {
-
     /**
      * @Route(
      *     name="api_customer_order_collection",
@@ -23,7 +22,7 @@ class CustomerOrderController extends AbstractController
      *     }
      * )
      */
-    public function postCustomerOrder(CustomerOrder $data)
+    public function postCustomerOrder(CustomerOrder $data): Response
     {
         $user = $this->getUser();
         if ($data->getCustomer()) {
@@ -32,12 +31,13 @@ class CustomerOrderController extends AbstractController
             $checkOrder = $this->getDoctrine()->getRepository(CustomerOrder::class)->checkOrder($data);
             if (!$checkOrder) {
                 $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($data);
-                return new JsonResponse(['status' => 'success', 'text' => 'success', 'customer' => $data->getCustomer()->getId(), 'total' => $data->getCustomer()->getTotal()], 200,[]);
+
+                return new JsonResponse(['status' => 'success', 'text' => 'success', 'customer' => $data->getCustomer()->getId(), 'total' => $data->getCustomer()->getTotal()], Response::HTTP_OK, []);
             } else {
-                return new JsonResponse(['status' => 'error', 'text' => 'duplicate', 'customer' => $data->getCustomer()->getId(), 'total' => $data->getCustomer()->getTotal()], 400,[]);
+                return new JsonResponse(['status' => 'error', 'text' => 'duplicate', 'customer' => $data->getCustomer()->getId(), 'total' => $data->getCustomer()->getTotal()], Response::HTTP_BAD_REQUEST, []);
             }
         } else {
-            return new JsonResponse(['status' => 'error'], 400,[]);
+            return new JsonResponse(['status' => 'error'], Response::HTTP_BAD_REQUEST, []);
         }
     }
 
@@ -49,9 +49,9 @@ class CustomerOrderController extends AbstractController
      *     }
      * )
      */
-    public function getCustomerOrder(Customer $data)
+    public function getCustomerOrder(Customer $data): Response
     {
-        $orders = array();
+        $orders = [];
 
         if ($data) {
             $repo = $this->getDoctrine()->getRepository(CustomerOrder::class);
@@ -59,12 +59,12 @@ class CustomerOrderController extends AbstractController
             $currentOrders = $repo->findBy(['customer' => $data], ['updated' => 'ASC']);
 
             foreach ($currentOrders as $order) {
-                $attr = array(
-                    'username'=> $order->getUser()->getUsername(),
+                $attr = [
+                    'username' => $order->getUser()->getUsername(),
                     'amount' => $order->getAmount(),
                     'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
-                );
+                ];
 
                 if ($order->getType()) {
                     $attr['type']['id'] = $order->getType()->getId();
@@ -87,6 +87,7 @@ class CustomerOrderController extends AbstractController
                 $orders[] = $attr;
             }
         }
+
         return new JsonResponse($orders);
     }
 
@@ -98,9 +99,9 @@ class CustomerOrderController extends AbstractController
      *     }
      * )
      */
-    public function getCustomerOrderCurrent(Customer $data)
+    public function getCustomerOrderCurrent(Customer $data): Response
     {
-        $orders = array();
+        $orders = [];
 
         if ($data) {
             $now = new \DateTime();
@@ -110,12 +111,12 @@ class CustomerOrderController extends AbstractController
             $currentOrders = $repo->getByDate($now, $this->getUser(), $data);
 
             foreach ($currentOrders as $order) {
-                $attr = array(
-                    'username'=> $order->getUser()->getUsername(),
-                    'amount' =>  $order->getAmount(),
+                $attr = [
+                    'username' => $order->getUser()->getUsername(),
+                    'amount' => $order->getAmount(),
                     'created' => ($order->getCreated() ? $order->getCreated()->format('Y-m-d H:i:s') : ''),
                     'updated' => ($order->getUpdated() ? $order->getUpdated()->format('Y-m-d H:i:s') : ''),
-                );
+                ];
 
                 if ($order->getType()) {
                     $attr['type']['id'] = $order->getType()->getId();
@@ -138,6 +139,7 @@ class CustomerOrderController extends AbstractController
                 $orders[] = $attr;
             }
         }
+
         return new JsonResponse($orders);
     }
 }

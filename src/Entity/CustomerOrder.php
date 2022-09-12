@@ -46,12 +46,14 @@ class CustomerOrder
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     *
      * @var DateTime
      */
     private $created;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @var DateTime
      */
     private $updated;

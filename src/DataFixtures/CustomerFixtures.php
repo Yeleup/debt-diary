@@ -35,7 +35,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
             ->getQuery()
             ->getSingleScalarResult();
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $market = $this->em->getRepository(Market::class)->find($this->faker->numberBetween($min, $max));
             $customer = new Customer();
             $customer->setName($this->faker->name);
@@ -50,7 +50,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
 
     /**
      * This method must return an array of fixtures classes
-     * on which the implementing class depends on
+     * on which the implementing class depends on.
      *
      * @psalm-return array<class-string<FixtureInterface>>
      */

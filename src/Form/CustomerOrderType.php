@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\CustomerOrder;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,15 +27,15 @@ class CustomerOrderType extends AbstractType
                 'currency' => 'KZT',
                 'label_format' => $this->translator->trans('customer_order.amount'),
                 'attr' => ['autocomplete' => 'off'],
-                'constraints' => array(
-                    new NotBlank(array('message' => 'Не должно быть пустым')),
-                ),
+                'constraints' => [
+                    new NotBlank(['message' => 'Не должно быть пустым']),
+                ],
             ])
             ->add('type', null, [
                 'label_format' => $this->translator->trans('customer_order.type'),
-                'constraints' => array(
-                    new NotBlank(array('message' => 'Не должно быть пустым')),
-                ),
+                'constraints' => [
+                    new NotBlank(['message' => 'Не должно быть пустым']),
+                ],
             ])
             ->add('payment', null, ['label_format' => $this->translator->trans('customer_order.payment')])
         ;

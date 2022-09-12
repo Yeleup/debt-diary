@@ -10,7 +10,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -18,7 +17,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     private $faker;
     private $em;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $em)
+    public function __construct(\Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface $passwordEncoder, EntityManagerInterface $em)
     {
         $this->passwordEncoder = $passwordEncoder;
         $this->faker = Factory::create();
@@ -29,7 +28,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         // Admin
         $user = new User();
-        $user->setRoles(["ROLE_ADMIN"]);
+        $user->setRoles(['ROLE_ADMIN']);
         $user->setUsername('admin');
         $user->setPassword($this->passwordEncoder->encodePassword($user, '147896'));
         $manager->persist($user);
@@ -50,7 +49,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $market = $this->em->getRepository(Market::class)->find($this->faker->numberBetween($min, $max));
 
         $user = new User();
-        $user->setRoles(["ROLE_USER"]);
+        $user->setRoles(['ROLE_USER']);
         $user->setUsername('magzhan');
         $user->setPassword($this->passwordEncoder->encodePassword($user, '147896'));
         $user->addMarket($market);
@@ -72,7 +71,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $payment = $this->em->getRepository(Payment::class)->find($this->faker->numberBetween($min, $max));
 
         $user = new User();
-        $user->setRoles(["ROLE_CONTROL"]);
+        $user->setRoles(['ROLE_CONTROL']);
         $user->setUsername('arman');
         $user->addPayment($payment);
         $user->setPassword($this->passwordEncoder->encodePassword($user, '147896'));
@@ -83,7 +82,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     /**
      * This method must return an array of fixtures classes
-     * on which the implementing class depends on
+     * on which the implementing class depends on.
      *
      * @psalm-return array<class-string<FixtureInterface>>
      */

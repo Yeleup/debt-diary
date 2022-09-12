@@ -12,7 +12,6 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class UserCrudController extends AbstractCrudController
 {
-
     public static function getEntityFqcn(): string
     {
         return User::class;
@@ -36,8 +35,10 @@ class UserCrudController extends AbstractCrudController
                 if (Crud::PAGE_NEW === $pageName) {
                     $field->setRequired(true);
                 }
+
                 return $field;
             }
+
             return $f;
         }, $fields);
     }

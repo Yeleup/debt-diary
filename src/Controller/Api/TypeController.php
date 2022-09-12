@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TypeController extends AbstractController
@@ -17,17 +18,17 @@ class TypeController extends AbstractController
      *     }
      * )
      */
-    public function getTypes($data)
+    public function getTypes($data): Response
     {
         $types = [];
         if (!empty($data)) {
             foreach ($data as $type) {
-                $types[] = array(
+                $types[] = [
                     'id' => $type->getId(),
                     'title' => $type->getTitle(),
                     'prefix' => $type->getPrefix(),
                     'paymentStatus' => $type->getPaymentStatus(),
-                );
+                ];
             }
         }
 

@@ -21,7 +21,7 @@ class TypeCrudController extends AbstractCrudController
         return [
             TextField::new('title', 'type.title'),
             ChoiceField::new('prefix', 'type.prefix')->setChoices(['type.minus' => '-', 'type.plus' => '+']),
-            BooleanField::new('payment_status', 'type.payment_status')->onlyOnForms()
+            BooleanField::new('payment_status', 'type.payment_status')->onlyOnForms(),
         ];
     }
 

@@ -8,16 +8,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class EasyAdminSubscriber implements EventSubscriberInterface
 {
-    private $passwordEncoder;
+    private $passwordHasher;
     private $flashBag;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, FlashBagInterface $flashBag)
+    public function __construct(UserPasswordHasherInterface $passwordHasher, FlashBagInterface $flashBag)
     {
-        $this->passwordEncoder = $passwordEncoder;
+        $this->passwordHasher = $passwordHasher;
         $this->flashBag = $flashBag;
     }
 
@@ -27,13 +27,12 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         $instance = $event->getEntityInstance();
 
         if (($instance instanceof User) && $instance->getPlainPassword()) {
-            $instance->setPassword($this->passwordEncoder->encodePassword($instance, $instance->getPlainPassword()));
+            $instance->setPassword($this->passwordHasher->hashPassword($instance, $instance->getPlainPassword()));
         }
-
 
         // События при добавления клиента
         if ($instance instanceof Customer) {
-            $this->flashBag->add('success', '<b>'. $instance->getName() .'</b> успешно добавлен или изменен');
+            $this->flashBag->add('success', '<b>'.$instance->getName().'</b> успешно добавлен или изменен');
         }
     }
 
