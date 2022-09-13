@@ -2,6 +2,7 @@
 
 namespace App\Controller\Control;
 
+use App\Controller\Admin\CustomerOrderCrudController;
 use App\Entity\CustomerOrder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -13,11 +14,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ControlDashboardController extends AbstractDashboardController
 {
-    private $translator;
-    /**
-     * @var \EasyCorp\Bundle\EasyAdminBundle\Router\CrudUrlGenerator
-     */
-    private $crudUrlGenerator;
+    private TranslatorInterface $translator;
+    private CrudUrlGenerator $crudUrlGenerator;
 
     public function __construct(TranslatorInterface $translator, CrudUrlGenerator $crudUrlGenerator)
     {
@@ -31,9 +29,9 @@ class ControlDashboardController extends AbstractDashboardController
     public function index(): Response
     {
         if ($this->isGranted('ROLE_CONTROL')) {
-            $routeBuilder = $this->crudUrlGenerator->build();
+            $routeBuilder = $this->get(CrudUrlGenerator::class)->build();
 
-            return $this->redirectToRoute(null);
+            return $this->redirect($routeBuilder->setController(CustomerOrderCrudController::class)->generateUrl());
         }
 
         return parent::index();

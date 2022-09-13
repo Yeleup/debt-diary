@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Controller\Admin\CustomerCrudController;
+use App\Controller\Admin\CustomerOrderCrudController;
 use App\Entity\Customer;
 use App\Entity\CustomerOrder;
 use App\Entity\Type;
@@ -244,9 +245,14 @@ class CustomerOrderController extends AbstractController
             $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($customerOrder);
 
             if ($this->isGranted('ROLE_ADMIN')) {
-                $redirect = $this->redirectToRoute(null);
+                $redirect = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
             } else {
-                $redirect = $this->redirectToRoute(null);
+                $redirect = $this->redirect(
+                    $this->adminUrlGenerator
+                        ->setRoute('customer_order_index', ['id'=> $customer->getId()])
+                        ->setAll($params)
+                        ->generateUrl()
+                );
             }
 
             return $redirect;
@@ -327,9 +333,14 @@ class CustomerOrderController extends AbstractController
             $this->getDoctrine()->getRepository(CustomerOrder::class)->editOrder($customerOrder);
 
             if ($this->isGranted('ROLE_ADMIN')) {
-                $redirect = $this->redirectToRoute(null);
+                $redirect = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
             } else {
-                $redirect = $this->redirectToRoute(null);
+                $redirect = $this->redirect(
+                    $this->adminUrlGenerator
+                        ->setRoute('customer_order_index', ['id'=> $customer->getId()])
+                        ->setAll($params)
+                        ->generateUrl()
+                );
             }
 
             return $redirect;
@@ -376,9 +387,15 @@ class CustomerOrderController extends AbstractController
         }
 
         if ($this->isGranted('ROLE_ADMIN')) {
-            $return = $this->redirectToRoute(null);
+            $return = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
         } else {
-            $return = $this->redirectToRoute(null);
+            $return = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])
+                ->set('market', $customer->getMarket()->getId())
+                ->set('search', $request->query->get('search'))
+                ->set('order', $request->query->get('order'))
+                ->set('sorting', $request->query->get('sorting'))
+                ->set('page', $request->query->get('page'))
+                ->generateUrl());
         }
 
         return $return;

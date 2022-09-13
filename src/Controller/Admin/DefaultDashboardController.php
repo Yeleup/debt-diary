@@ -18,11 +18,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DefaultDashboardController extends AbstractDashboardController
 {
-    private $translator;
-    /**
-     * @var \EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator
-     */
-    private $adminUrlGenerator;
+    private TranslatorInterface $translator;
+    private AdminUrlGenerator $adminUrlGenerator;
 
     public function __construct(TranslatorInterface $translator, AdminUrlGenerator $adminUrlGenerator)
     {

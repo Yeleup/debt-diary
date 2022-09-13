@@ -38,7 +38,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
             ->setMaxResults(1)
         ;
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getFirstResult();
     }
 
     public function getNextOrder(CustomerOrder $order)
@@ -60,7 +60,7 @@ class CustomerOrderRepository extends ServiceEntityRepository
             ->setMaxResults(1)
         ;
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getFirstResult();
     }
 
     public function checkOrder(CustomerOrder $customerOrder)

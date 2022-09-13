@@ -3,127 +3,35 @@
 
 {% block page_title customer.name %}
 
-{% block content_header %}
-    <section class="content-header">
-        <div class="d-flex flex-row justify-content-between align-content-center w-100">
-            <div class="content-header-title">
-                <h1 class="title">
-                    {{ customer.name }} <small>({{ customer.place }})</small>
-                </h1>
-            </div>
+{% block content_title %}
+    {{ customer.name }} <small>({{ customer.place }})</small>
+{% endblock %}
 
-            <div class="page-actions">
-                <a href="{{ link.back }}">{{ lang.back|trans }}</a>
+{% block page_actions %}
+    <a class="me-2" href="{{ link.back }}">{{ lang.back|trans }}</a>
 
-                <a class="btn btn-success" href="{{ link.add }}">
-                    {{ lang.add|trans }}
-                </a>
+    <a class="btn btn-success" href="{{ link.add }}">
+        {{ lang.add|trans }}
+    </a>
 
-                <a class="btn btn-primary" href="{{ link.edit }}">
-                    <span class="btn-label"><i class="action-icon far fa-edit"></i></span>
-                </a>
-            </div>
-        </div>
-    </section>
+    <a class="btn btn-primary" href="{{ link.edit }}">
+        <span class="btn-label"><i class="action-icon far fa-edit"></i></span>
+    </a>
 {% endblock %}
 
 {% block main %}
-    <style>
-        .rwd-table {
-            margin: 1em 0;
-            min-width: 100%;
-        }
-        .rwd-table tr {
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-        }
-        .rwd-table th {
-            display: none;
-        }
-        .rwd-table td {
-            display: block;
-        }
-        .rwd-table td:first-child {
-            padding-top: 0.5em;
-        }
-        .rwd-table td:last-child {
-            padding-bottom: 0.5em;
-        }
-        .rwd-table td:before {
-            content: attr(data-th) ": ";
-            font-weight: bold;
-            width: 8.5em;
-            display: inline-block;
-        }
-        .rwd-table td.empty:before {
-            display: none;
-        }
-        @media (min-width: 480px) {
-            .rwd-table td:before {
-                display: none;
-            }
-        }
-        .rwd-table th,
-        .rwd-table td {
-            text-align: left;
-        }
-        @media (min-width: 480px) {
-            .rwd-table th,
-            .rwd-table td {
-                display: table-cell;
-                padding: 0.25em 0.5em;
-            }
-            .rwd-table th:first-child,
-            .rwd-table td:first-child {
-                padding-left: 0;
-            }
-            .rwd-table th:last-child,
-            .rwd-table td:last-child {
-                padding-right: 0;
-            }
-        }
-
-        h1 {
-            font-weight: normal;
-            letter-spacing: -1px;
-            color: #34495e;
-        }
-
-        .rwd-table {
-            border-radius: 0.4em;
-            overflow: hidden;
-        }
-        .rwd-table tr {
-            border-color: #46637f;
-        }
-        .rwd-table th,
-        .rwd-table td {
-            margin: 0.5em 1em;
-        }
-        @media (min-width: 480px) {
-            .rwd-table th,
-            .rwd-table td {
-                padding: 1em !important;
-            }
-        }
-        .rwd-table th,
-        .rwd-table td:before {
-            font-weight: 700;
-        }
-    </style>
-    <table class="table table-light rwd-table">
+    <table class="table datagrid">
         <thead>
             <tr>
-                <th>{{ lang.user|trans }}</th>
-                <th>{{ lang.created|trans }}</th>
-                <th>{{ lang.type|trans }}</th>
-                <th>{{ lang.payment|trans }}</th>
-                <th>{{ lang.amount|trans }}</th>
-                <th>Стало</th>
-                <th>{{ lang.action|trans }}</th>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <th>{{ lang.action|trans }}</th>
-                {% endif %}
+                <th class="header-for-field-text text-left"><a href="#">{{ lang.user|trans }}</a></th>
+                <th class="header-for-field-text text-left"><a href="#">{{ lang.created|trans }}</a></th>
+                <th class="header-for-field-text text-left"><a href="#">{{ lang.type|trans }}</a></th>
+                <th class="header-for-field-text text-left"><a href="#">{{ lang.payment|trans }}</a></th>
+                <th class="header-for-field-text text-left"><a href="#">{{ lang.amount|trans }}</a></th>
+                <th class="header-for-field-text text-left"><a href="#">Стало</a></th>
+                <th width="10px">
+                    <span class="sr-only">{{ lang.action|trans }}</span>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -136,17 +44,31 @@
                 <td data-th="{{ lang.amount|trans }}">{{ customer_order.amount }}</td>
                 <td data-th="Стало">{{ customer_order.total }}</td>
                 <td data-th="{{ lang.action|trans }}">
-                    <a class="btn btn-primary mr-1" href="{{ customer_order.edit }}"><i class="fa fa-edit"></i> {{ lang.edit|trans }}</a>
-                </td>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <td data-th="{{ lang.action|trans }}">
-                        <form style="display:contents" method="post" action="{{ customer_order.delete }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <div class="dropdown dropdown-actions">
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="21" width="21" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                            </svg>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 24px);" data-popper-placement="bottom-end">
+                            <a class="dropdown-item action-edit text-info" href="{{ customer_order.edit }}">{{ lang.edit|trans }}</a>
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <button class="dropdown-item text-danger" form="delete-form-customer-order-{{ customer_order.id }}">
+                                    <span class="btn-label">{{ lang.delete|trans }}</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <form id="delete-form-customer-order-{{ customer_order.id }}" method="post" action="{{ customer_order.delete }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ customer_order.id) }}">
-                            <button class="btn btn-danger"><i class="fa fa-trash"></i> {{ lang.delete|trans }}</button>
                         </form>
-                    </td>
-                {% endif %}
+                    {% endif %}
+                </td>
             </tr>
         {% else %}
             <tr>
