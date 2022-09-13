@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use function _PHPStan_1a8f07040\RingCentral\Psr7\str;
 
 /**
  * @ApiResource(
@@ -19,7 +21,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -132,9 +134,9 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
+        return null;
     }
 
     /**
@@ -197,5 +199,10 @@ class User implements UserInterface
         $this->payments->removeElement($payment);
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
     }
 }

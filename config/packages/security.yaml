@@ -1,5 +1,6 @@
 security:
-    encoders:
+    enable_authenticator_manager: true
+    password_hashers:
         App\Entity\User:
             algorithm: auto
 
@@ -17,13 +18,9 @@ security:
         api:
             pattern: ^/api/
             stateless: true
-            anonymous: true
             provider: app_user_provider
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            jwt: ~
         main:
-            anonymous: true
             lazy: true
             json_login:
                 check_path: api_login
@@ -32,11 +29,9 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             provider: app_user_provider
-            guard:
-                authenticators:
-                    - App\Security\AppAuthenticator
             logout:
                 path: app_logout
+            custom_authenticator: App\Security\AppCustomAuthenticator
                 # where to redirect after logout
                 # target: app_any_route
 
@@ -52,7 +47,7 @@ security:
          - { path: ^/admin, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/user, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/control, roles: IS_AUTHENTICATED_FULLY }
-         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-         - { path: ^/api_login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/login, roles: PUBLIC_ACCESS }
+         - { path: ^/api_login, roles: PUBLIC_ACCESS }
          - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/profile, roles: ROLE_USER }
