@@ -10,16 +10,17 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
-    private $passwordEncoder;
+    private $passwordHasher;
     private $faker;
     private $em;
 
-    public function __construct(\Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface $passwordEncoder, EntityManagerInterface $em)
+    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em)
     {
-        $this->passwordEncoder = $passwordEncoder;
+        $this->passwordHasher = $passwordHasher;
         $this->faker = Factory::create();
         $this->em = $em;
     }
@@ -30,7 +31,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user = new User();
         $user->setRoles(['ROLE_ADMIN']);
         $user->setUsername('admin');
-        $user->setPassword($this->passwordEncoder->encodePassword($user, '147896'));
+        $user->setPassword($this->passwordHasher->hashPassword($user, '147896'));
         $manager->persist($user);
 
         // User
@@ -51,7 +52,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user = new User();
         $user->setRoles(['ROLE_USER']);
         $user->setUsername('magzhan');
-        $user->setPassword($this->passwordEncoder->encodePassword($user, '147896'));
+        $user->setPassword($this->passwordHasher->hashPassword($user, '147896'));
         $user->addMarket($market);
         $manager->persist($user);
 
@@ -74,7 +75,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->setRoles(['ROLE_CONTROL']);
         $user->setUsername('arman');
         $user->addPayment($payment);
-        $user->setPassword($this->passwordEncoder->encodePassword($user, '147896'));
+        $user->setPassword($this->passwordHasher->hashPassword($user, '147896'));
         $manager->persist($user);
 
         $manager->flush();

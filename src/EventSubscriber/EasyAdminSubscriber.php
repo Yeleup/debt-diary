@@ -12,8 +12,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class EasyAdminSubscriber implements EventSubscriberInterface
 {
-    private $passwordHasher;
-    private $flashBag;
+    private UserPasswordHasherInterface $passwordHasher;
+    private FlashBagInterface $flashBag;
 
     public function __construct(UserPasswordHasherInterface $passwordHasher, FlashBagInterface $flashBag)
     {
@@ -36,7 +36,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             BeforeEntityPersistedEvent::class => 'BeforeEntityEvent',
