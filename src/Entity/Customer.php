@@ -7,6 +7,7 @@ use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(itemOperations={"get_customer"={"method"="GET", "route_name"="api_get_customer"}, "patch"={"method"="PATCH","route_name"="api_patch_customer"}}, collectionOperations={"get","post"={"method"="POST","route_name"="api_post_customer"}})
@@ -22,6 +23,7 @@ class Customer
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -37,6 +39,7 @@ class Customer
     private $contact;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\ManyToOne(targetEntity=Market::class, inversedBy="customers")
      */
     private $market;
