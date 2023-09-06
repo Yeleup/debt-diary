@@ -15,8 +15,7 @@ use function _PHPStan_1a8f07040\RingCentral\Psr7\str;
  * @ApiResource(
  *     attributes={"pagination_enabled"=false},
  *     collectionOperations={
- *      "get_current_user"={"method"="GET","route_name"="api_get_current_user"},
- *      "get_current_orders"={"method"="GET","route_name"="api_get_current_orders"}
+ *      "get_current_user"={"method"="GET","route_name"="api_get_current_user"}
  *     }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)

@@ -7,6 +7,7 @@ use App\Repository\PaymentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(attributes={"pagination_enabled"=false},collectionOperations={"get", "get_payments"={"method"="GET", "route_name"="api_get_payments"}}, itemOperations={"get"})
@@ -18,10 +19,12 @@ class Payment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"customer_order.read"})
      */
     private $id;
 
     /**
+     * @Groups({"customer_order.read"})
      * @ORM\Column(type="string", length=255)
      */
     private $title;

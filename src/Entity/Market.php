@@ -7,9 +7,16 @@ use App\Repository\MarketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(attributes={"pagination_enabled"=false}, itemOperations={"get_market"={"method"="GET", "route_name"="api_get_market"}})
+ * @ApiResource(
+ *     normalizationContext={"groups"={"market.read"}},
+ *     denormalizationContext={"groups"={"market.write"}},
+ *     attributes={"pagination_enabled"=false},
+ *     itemOperations={
+ *          "get"
+ *     })
  * @ORM\Entity(repositoryClass=MarketRepository::class)
  */
 class Market
@@ -18,11 +25,13 @@ class Market
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"market.read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"market.read", "market.write"})
      */
     private $title;
 

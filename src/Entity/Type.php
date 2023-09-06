@@ -7,6 +7,7 @@ use App\Repository\TypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(attributes={"pagination_enabled"=false}, collectionOperations={"get_types"={"method"="GET","route_name"="api_get_types"}})
@@ -18,11 +19,13 @@ class Type
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"customer_order.read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customer_order.read"})
      */
     private $title;
 

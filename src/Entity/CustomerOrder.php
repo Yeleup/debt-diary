@@ -3,15 +3,25 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\CustomerOrderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     collectionOperations={"get","post"={"method"="POST","route_name"="api_customer_order_collection"}},
- *     itemOperations={"get_customer_order"={"method"="GET", "route_name"="api_get_customer_order"}, "get_customer_order_current"={"method"="GET", "route_name"="api_get_customer_order_current"}}
+ *     normalizationContext={"groups"={"customer_order.read"}},
+ *     denormalizationContext={"groups"={"customer_order.write"}},
+ *     collectionOperations={
+ *          "get"={"normalization_context"={"groups"={"customer_order.read", "customer_order_detail.read"}}},
+ *          "post"
+ *     },
+ *     itemOperations={
+ *          "get"={"normalization_context"={"groups"={"customer_order.read", "customer_order_detail.read"}}}
+ *     }
  * )
  * @ORM\Entity(repositoryClass=CustomerOrderRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class CustomerOrder
 {
@@ -19,41 +29,50 @@ class CustomerOrder
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"customer_order.read"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=0)
+     * @Groups({"customer_order.read", "customer_order.write"})
+     * @ORM\Column(type="float", precision=10, scale=0)
      */
     private $amount;
 
     /**
+     * @Groups({"customer_order.write", "customer_order.read"})
      * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="customerOrders")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $type;
 
     /**
+     * @Groups({"customer_order.read", "customer_order.write"})
      * @ORM\ManyToOne(targetEntity=Payment::class, inversedBy="customerOrders")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $payment;
 
     /**
+     * @Groups({"customer_order_detail.read", "customer_order.write"})
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="customerOrders")
      */
     private $customer;
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
-     *
      * @var DateTime
      */
     private $created;
 
     /**
+     * @Groups({"customer_order.read"})
+     * @var string
+     */
+    private $createdAt;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
-     *
      * @var DateTime
      */
     private $updated;
@@ -68,22 +87,17 @@ class CustomerOrder
      */
     private $confirmed;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
-    private $total;
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getAmount(): ?string
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(string $amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 
@@ -143,6 +157,14 @@ class CustomerOrder
         return $this->created;
     }
 
+    /**
+     * @return string
+     */
+    public function getCreatedAt(): string
+    {
+        return $this->created->format('d.m.y');
+    }
+
     public function setCreated(?\DateTimeInterface $created): self
     {
         $this->created = $created;
@@ -176,18 +198,6 @@ class CustomerOrder
     public function setConfirmed(?bool $confirmed): self
     {
         $this->confirmed = $confirmed;
-
-        return $this;
-    }
-
-    public function getTotal(): ?string
-    {
-        return $this->total;
-    }
-
-    public function setTotal(?string $total): self
-    {
-        $this->total = $total;
 
         return $this;
     }

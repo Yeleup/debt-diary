@@ -114,7 +114,6 @@ class CustomerOrderController extends AbstractController
                 'type' => $customerOrder->getType(),
                 'payment' => $customerOrder->getPayment(),
                 'amount' => $customerOrder->getAmount(),
-                'total' => $customerOrder->getTotal(),
                 'edit' => $edit,
                 'delete' => $delete,
             ];

@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CustomerOrderCrudController extends AbstractCrudController
@@ -67,7 +68,7 @@ class CustomerOrderCrudController extends AbstractCrudController
     {
         $confirmed = BooleanField::new('confirmed', 'customer_order.confirmed')->onlyOnIndex();
 
-        yield TextField::new('amount', 'customer_order.amount');
+        yield NumberField::new('amount', 'customer_order.amount');
         yield AssociationField::new('payment', 'customer_order.payment');
         yield AssociationField::new('type', 'customer_order.type');
         yield AssociationField::new('customer', 'customer_order.customer');

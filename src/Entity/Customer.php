@@ -3,14 +3,27 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(itemOperations={"get_customer"={"method"="GET", "route_name"="api_get_customer"}, "patch"={"method"="PATCH","route_name"="api_patch_customer"}}, collectionOperations={"get","post"={"method"="POST","route_name"="api_post_customer"}})
+ * @ApiResource(
+ *     normalizationContext={"groups"={"customer.read"}},
+ *     denormalizationContext={"groups"={"customer.write"}},
+ *     itemOperations={
+ *          "get",
+ *          "patch"
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post"
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
 class Customer
@@ -19,37 +32,44 @@ class Customer
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"customer_order.read", "customer.read"})
      */
     private $id;
 
     /**
      * @Assert\NotBlank()
+     * @Groups({"customer_order.read", "customer.read", "customer.write"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"customer_order.read", "customer.read", "customer.write"})
      */
     private $place;
 
     /**
+     * @Groups({"customer_order.read", "customer.read", "customer.write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $contact;
 
     /**
      * @Assert\NotBlank()
+     * @Groups({"customer.write"})
      * @ORM\ManyToOne(targetEntity=Market::class, inversedBy="customers")
      */
     private $market;
 
     /**
      * @ORM\OneToMany(targetEntity=CustomerOrder::class, mappedBy="customer", cascade={"remove"})
+     * @ApiSubresource()
      */
     private $customerOrders;
 
     /**
+     * @Groups({"customer.read"})
      * @ORM\Column(type="float", nullable=true)
      */
     private $total;
@@ -58,6 +78,12 @@ class Customer
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $last_transaction;
+
+    /**
+     * @Groups({"customer.read"})
+     * @var string
+     */
+    private $lastTransactionAt;
 
     public function __construct()
     {
@@ -175,5 +201,10 @@ class Customer
         $this->last_transaction = $last_transaction;
 
         return $this;
+    }
+
+    public function getLastTransactionAt(): ?string
+    {
+        return $this->last_transaction ? $this->last_transaction->format('d.m.y') : null;
     }
 }

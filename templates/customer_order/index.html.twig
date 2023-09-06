@@ -28,7 +28,6 @@
                 <th class="header-for-field-text text-left"><a href="#">{{ lang.type|trans }}</a></th>
                 <th class="header-for-field-text text-left"><a href="#">{{ lang.payment|trans }}</a></th>
                 <th class="header-for-field-text text-left"><a href="#">{{ lang.amount|trans }}</a></th>
-                <th class="header-for-field-text text-left"><a href="#">Стало</a></th>
                 <th width="10px">
                     <span class="sr-only">{{ lang.action|trans }}</span>
                 </th>
@@ -42,7 +41,6 @@
                 <td data-th="{{ lang.type|trans }}" class="{{ customer_order.type ? '' : 'd-none d-sm-table-cell' }}">{{ customer_order.type ? customer_order.type.title : '' }}</td>
                 <td data-th="{{ lang.payment|trans }}" class="{{ customer_order.payment ? '' : 'd-none d-sm-table-cell' }}">{{ customer_order.payment ? customer_order.payment.title : '' }}</td>
                 <td data-th="{{ lang.amount|trans }}">{{ customer_order.amount }}</td>
-                <td data-th="Стало">{{ customer_order.total }}</td>
                 <td data-th="{{ lang.action|trans }}">
                     <div class="dropdown dropdown-actions">
                         <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -72,7 +70,7 @@
             </tr>
         {% else %}
             <tr>
-                <td class="text-center empty" colspan="6">{{ lang.no_records_found|trans }}</td>
+                <td class="text-center empty" colspan="5">{{ lang.no_records_found|trans }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td class="d-none d-sm-block"></td>
                 {% endif %}
@@ -81,7 +79,7 @@
         </tbody>
         <tfoot class="{{ customer.total ? '' : 'd-none' }}">
             <tr>
-                <td colspan="5" class="d-none d-sm-table-cell"></td>
+                <td colspan="4" class="d-none d-sm-table-cell"></td>
                 <td data-th="Долг"><span>{{ customer.total }}</span></td>
                 <td class="d-none d-sm-table-cell"></td>
                 {% if is_granted('ROLE_ADMIN') %}

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Entity\CustomerOrder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,15 +22,16 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
-    public function checkCustomer(Customer $customer)
+    public function updateCustomerTotalAndLastTransaction(Customer $customer)
     {
-        $criteria = [
-            'name' => $customer->getName(),
-            'place' => $customer->getPlace(),
-            'market' => $customer->getMarket(),
-        ];
+        // Assuming you have a sumAmountByCustomer method in your CustomerOrder repository
+        $total = $this->_em->getRepository(CustomerOrder::class)->sumAmountByCustomer($customer);
 
-        return $this->findOneBy($criteria);
+        $customer->setTotal($total);
+        $customer->setLastTransaction(new \DateTime('now'));
+
+        $this->_em->persist($customer);
+        $this->_em->flush();
     }
 
     public function findByFilter(array $filter): array
