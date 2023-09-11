@@ -66,12 +66,6 @@ class CustomerOrder
     private $created;
 
     /**
-     * @Groups({"customer_order.read"})
-     * @var string
-     */
-    private $createdAt;
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      * @var DateTime
      */
@@ -155,14 +149,6 @@ class CustomerOrder
     public function getCreated(): ?\DateTimeInterface
     {
         return $this->created;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreatedAt(): string
-    {
-        return $this->created->format('d.m.y');
     }
 
     public function setCreated(?\DateTimeInterface $created): self
