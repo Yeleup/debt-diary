@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\CustomerRepository;
@@ -10,6 +11,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\ApiPlatform\CustomerSearchFilter;
 
 /**
  * @ApiResource(
@@ -24,6 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"
  *     }
  * )
+ * @ApiFilter(CustomerSearchFilter::class, properties={"search": SearchFilter::STRATEGY_START})
+ * @ApiFilter(OrderFilter::class, properties={"place", "name", "total", "last_transaction"})
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
 class Customer
@@ -78,12 +84,6 @@ class Customer
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $last_transaction;
-
-    /**
-     * @Groups({"customer.read"})
-     * @var string
-     */
-    private $lastTransactionAt;
 
     public function __construct()
     {
@@ -201,10 +201,5 @@ class Customer
         $this->last_transaction = $last_transaction;
 
         return $this;
-    }
-
-    public function getLastTransactionAt(): ?string
-    {
-        return $this->last_transaction ? $this->last_transaction->format('d.m.y') : null;
     }
 }
