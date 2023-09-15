@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class CustomerOrderNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
+class TransactionNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
 {
     private $normalizer;
     private $moneyFormatter;
@@ -31,7 +31,7 @@ class CustomerOrderNormalizer implements NormalizerInterface, CacheableSupportsM
 
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
-        return $data instanceof \App\Entity\CustomerOrder;
+        return $data instanceof \App\Entity\Transaction;
     }
 
     public function hasCacheableSupportsMethod(): bool

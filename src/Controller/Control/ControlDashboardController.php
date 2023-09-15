@@ -3,7 +3,7 @@
 namespace App\Controller\Control;
 
 use App\Controller\Admin\CustomerOrderCrudController;
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -46,6 +46,6 @@ class ControlDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud('dashboard.order', 'fas fa-shopping-cart', CustomerOrder::class);
+        yield MenuItem::linkToCrud('dashboard.order', 'fas fa-shopping-cart', Transaction::class);
     }
 }

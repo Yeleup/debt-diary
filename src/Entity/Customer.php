@@ -38,25 +38,25 @@ class Customer
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"customer_order.read", "customer.read"})
+     * @Groups({"transaction.read", "customer.read"})
      */
     private $id;
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"customer_order.read", "customer.read", "customer.write"})
+     * @Groups({"transaction.read", "customer.read", "customer.write"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"customer_order.read", "customer.read", "customer.write"})
+     * @Groups({"transaction.read", "customer.read", "customer.write"})
      */
     private $place;
 
     /**
-     * @Groups({"customer_order.read", "customer.read", "customer.write"})
+     * @Groups({"transaction.read", "customer.read", "customer.write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $contact;
@@ -69,10 +69,10 @@ class Customer
     private $market;
 
     /**
-     * @ORM\OneToMany(targetEntity=CustomerOrder::class, mappedBy="customer", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="customer", cascade={"remove"})
      * @ApiSubresource()
      */
-    private $customerOrders;
+    private $transactions;
 
     /**
      * @Groups({"customer.read"})
@@ -87,7 +87,7 @@ class Customer
 
     public function __construct()
     {
-        $this->customerOrders = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,29 +144,29 @@ class Customer
     }
 
     /**
-     * @return Collection|CustomerOrder[]
+     * @return Collection|Transaction[]
      */
-    public function getCustomerOrders(): Collection
+    public function getTransactions(): Collection
     {
-        return $this->customerOrders;
+        return $this->transactions;
     }
 
-    public function addCustomerOrder(CustomerOrder $customerOrder): self
+    public function addTransaction(Transaction $transaction): self
     {
-        if (!$this->customerOrders->contains($customerOrder)) {
-            $this->customerOrders[] = $customerOrder;
-            $customerOrder->setCustomer($this);
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setCustomer($this);
         }
 
         return $this;
     }
 
-    public function removeCustomerOrder(CustomerOrder $customerOrder): self
+    public function removeTransaction(Transaction $transaction): self
     {
-        if ($this->customerOrders->removeElement($customerOrder)) {
+        if ($this->transactions->removeElement($transaction)) {
             // set the owning side to null (unless already changed)
-            if ($customerOrder->getCustomer() === $this) {
-                $customerOrder->setCustomer(null);
+            if ($transaction->getCustomer() === $this) {
+                $transaction->setCustomer(null);
             }
         }
 
@@ -184,7 +184,7 @@ class Customer
         return $this->total;
     }
 
-    public function setTotal(float $total): self
+    public function setTotal(?float $total): self
     {
         $this->total = $total;
 

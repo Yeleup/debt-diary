@@ -4,15 +4,15 @@ namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use ApiPlatform\Core\DataPersister\ResumableDataPersisterInterface;
-use App\Entity\CustomerOrder;
-use App\Repository\CustomerOrderRepository;
+use App\Entity\Transaction;
+use App\Repository\TransactionRepository;
 use Symfony\Component\Security\Core\Security;
 
-final class CustomerOrderDataPersister implements ContextAwareDataPersisterInterface, ResumableDataPersisterInterface
+final class TransactionDataPersister implements ContextAwareDataPersisterInterface, ResumableDataPersisterInterface
 {
     private Security $security;
-    private CustomerOrderRepository $repository;
-    public function __construct(Security $security, CustomerOrderRepository $repository)
+    private TransactionRepository $repository;
+    public function __construct(Security $security, TransactionRepository $repository)
     {
         $this->security = $security;
         $this->repository = $repository;
@@ -23,7 +23,7 @@ final class CustomerOrderDataPersister implements ContextAwareDataPersisterInter
      */
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof CustomerOrder; // Add your custom conditions here
+        return $data instanceof Transaction; // Add your custom conditions here
     }
 
     /**
@@ -37,9 +37,9 @@ final class CustomerOrderDataPersister implements ContextAwareDataPersisterInter
     /**
      * {@inheritdoc}
      */
-    public function persist($data, array $context = []): CustomerOrder
+    public function persist($data, array $context = []): Transaction
     {
-        /** @var CustomerOrder $customerOrder */
+        /** @var Transaction $customerOrder */
         $customerOrder = $data;
 
         $customerOrder = $this->repository->plusOrMinusDependingType($customerOrder);

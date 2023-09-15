@@ -2,7 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -19,20 +19,20 @@ class Type
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"customer_order.read"})
+     * @Groups({"transaction.read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"customer_order.read"})
+     * @Groups({"transaction.read"})
      */
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity=CustomerOrder::class, mappedBy="type")
+     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="type")
      */
-    private $customerOrders;
+    private $transactions;
 
     /**
      * @ORM\Column(type="string", length=3, nullable=true)
@@ -46,7 +46,7 @@ class Type
 
     public function __construct()
     {
-        $this->customerOrders = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,29 +67,29 @@ class Type
     }
 
     /**
-     * @return Collection|CustomerOrder[]
+     * @return Collection|Transaction[]
      */
-    public function getCustomerOrders(): Collection
+    public function getTransactions(): Collection
     {
-        return $this->customerOrders;
+        return $this->transactions;
     }
 
-    public function addCustomerOrder(CustomerOrder $customerOrder): self
+    public function addTransaction(Transaction $transaction): self
     {
-        if (!$this->customerOrders->contains($customerOrder)) {
-            $this->customerOrders[] = $customerOrder;
-            $customerOrder->setType($this);
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setType($this);
         }
 
         return $this;
     }
 
-    public function removeCustomerOrder(CustomerOrder $customerOrder): self
+    public function removeTransaction(Transaction $transaction): self
     {
-        if ($this->customerOrders->removeElement($customerOrder)) {
+        if ($this->transactions->removeElement($transaction)) {
             // set the owning side to null (unless already changed)
-            if ($customerOrder->getType() === $this) {
-                $customerOrder->setType(null);
+            if ($transaction->getType() === $this) {
+                $transaction->setType(null);
             }
         }
 

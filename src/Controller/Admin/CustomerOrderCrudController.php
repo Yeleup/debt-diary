@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -22,7 +22,7 @@ class CustomerOrderCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return CustomerOrder::class;
+        return Transaction::class;
     }
 
     public function configureActions(Actions $actions): Actions

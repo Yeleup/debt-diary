@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Customer;
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
@@ -22,7 +22,7 @@ class EntityLifecycleListener implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        if ($entity instanceof CustomerOrder) {
+        if ($entity instanceof Transaction) {
             $customer = $entity->getCustomer();
             $this->entityManager->getRepository(Customer::class)->updateCustomerTotalAndLastTransaction($customer);
         }
@@ -32,7 +32,7 @@ class EntityLifecycleListener implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        if ($entity instanceof CustomerOrder) {
+        if ($entity instanceof Transaction) {
             $customer = $entity->getCustomer();
             $this->entityManager->getRepository(Customer::class)->updateCustomerTotalAndLastTransaction($customer);
         }
@@ -42,7 +42,7 @@ class EntityLifecycleListener implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        if ($entity instanceof CustomerOrder) {
+        if ($entity instanceof Transaction) {
             $customer = $entity->getCustomer();
             $this->entityManager->getRepository(Customer::class)->updateCustomerTotalAndLastTransaction($customer);
         }

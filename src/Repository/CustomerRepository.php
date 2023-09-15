@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -24,8 +24,8 @@ class CustomerRepository extends ServiceEntityRepository
 
     public function updateCustomerTotalAndLastTransaction(Customer $customer)
     {
-        // Assuming you have a sumAmountByCustomer method in your CustomerOrder repository
-        $total = $this->_em->getRepository(CustomerOrder::class)->sumAmountByCustomer($customer);
+        // Assuming you have a sumAmountByCustomer method in your Transaction repository
+        $total = $this->_em->getRepository(Transaction::class)->sumAmountByCustomer($customer);
 
         $customer->setTotal($total);
         $customer->setLastTransaction(new \DateTime('now'));

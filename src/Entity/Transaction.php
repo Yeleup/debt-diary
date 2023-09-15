@@ -4,58 +4,58 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use App\Repository\CustomerOrderRepository;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     normalizationContext={"groups"={"customer_order.read"}},
- *     denormalizationContext={"groups"={"customer_order.write"}},
+ *     normalizationContext={"groups"={"transaction.read"}},
+ *     denormalizationContext={"groups"={"transaction.write"}},
  *     collectionOperations={
- *          "get"={"normalization_context"={"groups"={"customer_order.read", "customer_order_detail.read"}}},
+ *          "get"={"normalization_context"={"groups"={"transaction.read", "transaction_detail.write"}}},
  *          "post"
  *     },
  *     itemOperations={
- *          "get"={"normalization_context"={"groups"={"customer_order.read", "customer_order_detail.read"}}}
+ *          "get"={"normalization_context"={"groups"={"transaction.read", "transaction_detail.write"}}}
  *     }
  * )
- * @ORM\Entity(repositoryClass=CustomerOrderRepository::class)
+ * @ORM\Entity(repositoryClass=TransactionRepository::class)
  * @ORM\HasLifecycleCallbacks()
  */
-class CustomerOrder
+class Transaction
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"customer_order.read"})
+     * @Groups({"transaction.read"})
      */
     private $id;
 
     /**
-     * @Groups({"customer_order.read", "customer_order.write"})
+     * @Groups({"transaction.read", "transaction.write"})
      * @ORM\Column(type="float", precision=10, scale=0)
      */
     private $amount;
 
     /**
-     * @Groups({"customer_order.write", "customer_order.read"})
-     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="customerOrders")
+     * @Groups({"transaction.write", "transaction.read"})
+     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="transactions")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $type;
 
     /**
-     * @Groups({"customer_order.read", "customer_order.write"})
-     * @ORM\ManyToOne(targetEntity=Payment::class, inversedBy="customerOrders")
+     * @Groups({"transaction.read", "transaction.write"})
+     * @ORM\ManyToOne(targetEntity=Payment::class, inversedBy="transactions")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $payment;
 
     /**
-     * @Groups({"customer_order_detail.read", "customer_order.write"})
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="customerOrders")
+     * @Groups({"transaction_detail.write", "transaction.write"})
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="transactions")
      */
     private $customer;
 

@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Controller\Admin\CustomerCrudController;
 use App\Controller\Admin\CustomerOrderCrudController;
 use App\Entity\Customer;
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use App\Entity\Type;
 use App\Form\CustomerOrderType;
-use App\Repository\CustomerOrderRepository;
+use App\Repository\TransactionRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +36,7 @@ class CustomerOrderController extends AbstractController
     /**
      * @Route("/{id}", name="_index", requirements={"id"="\d+"})
      */
-    public function index(Request $request, Customer $customer, CustomerOrderRepository $customerOrderRepository): Response
+    public function index(Request $request, Customer $customer, TransactionRepository $customerOrderRepository): Response
     {
         // GET
         $params = [];
@@ -216,7 +216,7 @@ class CustomerOrderController extends AbstractController
         $lang['create'] = $this->translator->trans('create');
         $lang['return'] = $this->translator->trans('return');
 
-        $customerOrder = new CustomerOrder();
+        $customerOrder = new Transaction();
         $customerOrder->setCustomer($customer);
         $customerOrder->setUser($this->getUser());
         $form = $this->createForm(CustomerOrderType::class, $customerOrder);
@@ -241,7 +241,7 @@ class CustomerOrderController extends AbstractController
             $customerOrder->setCustomer($customer);
 
             // Добавления реализации
-            $this->getDoctrine()->getRepository(CustomerOrder::class)->addOrder($customerOrder);
+            $this->getDoctrine()->getRepository(Transaction::class)->addOrder($customerOrder);
 
             if ($this->isGranted('ROLE_ADMIN')) {
                 $redirect = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
@@ -289,7 +289,7 @@ class CustomerOrderController extends AbstractController
     /**
      * @Route("/edit/{id}", name="_edit", requirements={"id"="\d+"}, methods={"GET","POST"})
      */
-    public function edit(Request $request, CustomerOrder $customerOrder): Response
+    public function edit(Request $request, Transaction $customerOrder): Response
     {
         $customer = $customerOrder->getCustomer();
 
@@ -329,7 +329,7 @@ class CustomerOrderController extends AbstractController
             $customerOrder->setCustomer($customer);
 
             // Редактирование реализации
-            $this->getDoctrine()->getRepository(CustomerOrder::class)->editOrder($customerOrder);
+            $this->getDoctrine()->getRepository(Transaction::class)->editOrder($customerOrder);
 
             if ($this->isGranted('ROLE_ADMIN')) {
                 $redirect = $this->redirect($this->adminUrlGenerator->setRoute('customer_order_index', ['id'=> $customer->getId()])->generateUrl());
@@ -377,12 +377,12 @@ class CustomerOrderController extends AbstractController
     /**
      * @Route("/delete/{id}", name="_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, CustomerOrder $customerOrder): Response
+    public function delete(Request $request, Transaction $customerOrder): Response
     {
         $customer = $customerOrder->getCustomer();
 
         if ($this->isCsrfTokenValid('delete'.$customerOrder->getId(), $request->request->get('_token'))) {
-            $this->getDoctrine()->getRepository(CustomerOrder::class)->deleteOrder($customerOrder);
+            $this->getDoctrine()->getRepository(Transaction::class)->deleteOrder($customerOrder);
         }
 
         if ($this->isGranted('ROLE_ADMIN')) {

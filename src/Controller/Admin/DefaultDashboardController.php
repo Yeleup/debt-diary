@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Customer;
-use App\Entity\CustomerOrder;
+use App\Entity\Transaction;
 use App\Entity\Market;
 use App\Entity\Payment;
 use App\Entity\Type;
@@ -51,7 +51,7 @@ class DefaultDashboardController extends AbstractDashboardController
         yield MenuItem::linktoDashboard('dashboard.home', 'fa fa-home');
         yield MenuItem::linkToCrud('dashboard.market', 'fas fa-sitemap', Market::class);
         yield MenuItem::linkToCrud('dashboard.customer', 'fas fa-users', Customer::class);
-        yield MenuItem::linkToCrud('dashboard.order', 'fas fa-shopping-cart', CustomerOrder::class);
+        yield MenuItem::linkToCrud('dashboard.order', 'fas fa-shopping-cart', Transaction::class);
         yield MenuItem::linkToCrud('dashboard.payment', 'fas fa-credit-card', Payment::class);
         yield MenuItem::linkToCrud('dashboard.type', 'fas fa-check-square', Type::class);
         yield MenuItem::linkToCrud('dashboard.user', 'fas fa-user', User::class);

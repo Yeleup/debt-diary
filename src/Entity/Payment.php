@@ -19,20 +19,20 @@ class Payment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"customer_order.read"})
+     * @Groups({"transaction.read"})
      */
     private $id;
 
     /**
-     * @Groups({"customer_order.read"})
+     * @Groups({"transaction.read"})
      * @ORM\Column(type="string", length=255)
      */
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity=CustomerOrder::class, mappedBy="payment")
+     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="payment")
      */
-    private $customerOrders;
+    private $transactions;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="payments")
@@ -41,7 +41,7 @@ class Payment
 
     public function __construct()
     {
-        $this->customerOrders = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -63,29 +63,29 @@ class Payment
     }
 
     /**
-     * @return Collection|CustomerOrder[]
+     * @return Collection|Transaction[]
      */
-    public function getCustomerOrders(): Collection
+    public function getTransactions(): Collection
     {
-        return $this->customerOrders;
+        return $this->transactions;
     }
 
-    public function addCustomerOrder(CustomerOrder $customerOrder): self
+    public function addTransaction(Transaction $transaction): self
     {
-        if (!$this->customerOrders->contains($customerOrder)) {
-            $this->customerOrders[] = $customerOrder;
-            $customerOrder->setPayment($this);
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setPayment($this);
         }
 
         return $this;
     }
 
-    public function removeCustomerOrder(CustomerOrder $customerOrder): self
+    public function removeTransaction(Transaction $transaction): self
     {
-        if ($this->customerOrders->removeElement($customerOrder)) {
+        if ($this->transactions->removeElement($transaction)) {
             // set the owning side to null (unless already changed)
-            if ($customerOrder->getPayment() === $this) {
-                $customerOrder->setPayment(null);
+            if ($transaction->getPayment() === $this) {
+                $transaction->setPayment(null);
             }
         }
 
