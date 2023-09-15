@@ -1,13 +1,27 @@
-version: '3.7'
+version: '2'
+
 services:
-    database:
-        image: 'mariadb:latest'
-        environment:
-            MYSQL_ROOT_PASSWORD: password
-            MYSQL_DATABASE: main
+    myapp:
+        image: 'bitnami/symfony:5.4'
         ports:
-            # To allow the host machine to access the ports below, modify the lines below.
-            # For example, to allow the host to connect to port 3306 on the container, you would change
-            # "3306" to "3306:3306". Where the first port is exposed to the host and the second is the container port.
-            # See https://docs.docker.com/compose/compose-file/#ports for more information.
-            - '3306'
+            - '${SYMFONY_APP_PORT-8000}:8000'
+        volumes:
+            - '.:/app'
+        environment:
+            SYMFONY_DATABASE_HOST: '${SYMFONY_DATABASE_HOST}'
+            SYMFONY_DATABASE_PORT_NUMBER: 3306
+            SYMFONY_DATABASE_USER: '${SYMFONY_DATABASE_USER}'
+            SYMFONY_DATABASE_PASSWORD: '${SYMFONY_DATABASE_PASSWORD}'
+            SYMFONY_DATABASE_NAME: '${SYMFONY_DATABASE_NAME}'
+            SYMFONY_PROJECT_SKELETON: 'symfony/skeleton'
+        depends_on:
+            - mariadb
+    mariadb:
+        image: 'bitnami/mariadb:10.11'
+        environment:
+            ALLOW_EMPTY_PASSWORD: 'yes'
+            MARIADB_USER: '${SYMFONY_DATABASE_USER}'
+            MARIADB_PASSWORD: '${SYMFONY_DATABASE_PASSWORD}'
+            MARIADB_DATABASE: '${SYMFONY_DATABASE_NAME}'
+        ports:
+            - '${SYMFONY_DATABASE_PORT:-3306}:3306'
