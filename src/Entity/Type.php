@@ -2,15 +2,22 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
- * @ApiResource(attributes={"pagination_enabled"=false}, collectionOperations={"get_types"={"method"="GET","route_name"="api_get_types"}})
+ * @ApiResource(attributes={"pagination_enabled"=false},
+ *     collectionOperations={
+ *      "get"={"normalization_context"={"groups"={"type.read"}}},
+ *     }
+ * )
+ * @ApiFilter(OrderFilter::class, properties={"sort"})
  * @ORM\Entity(repositoryClass=TypeRepository::class)
  */
 class Type
@@ -19,13 +26,13 @@ class Type
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"transaction.read"})
+     * @Groups({"transaction.read", "type.read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"transaction.read"})
+     * @Groups({"transaction.read", "type.read"})
      */
     private $title;
 
@@ -35,6 +42,7 @@ class Type
     private $transactions;
 
     /**
+     * @Groups({"type.read"})
      * @ORM\Column(type="string", length=3, nullable=true)
      */
     private $prefix;
@@ -43,6 +51,18 @@ class Type
      * @ORM\Column(type="boolean")
      */
     private $payment_status;
+
+    /**
+     * @Groups({"type.read"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $sort;
+
+    /**
+     * @Groups({"type.read"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $color;
 
     public function __construct()
     {
@@ -122,6 +142,30 @@ class Type
     public function setPaymentStatus(bool $payment_status): self
     {
         $this->payment_status = $payment_status;
+
+        return $this;
+    }
+
+    public function getSort(): ?int
+    {
+        return $this->sort;
+    }
+
+    public function setSort(?int $sort): self
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
 
         return $this;
     }
