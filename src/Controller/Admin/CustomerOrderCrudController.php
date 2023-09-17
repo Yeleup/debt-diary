@@ -73,6 +73,7 @@ class CustomerOrderCrudController extends AbstractCrudController
         yield AssociationField::new('type', 'customer_order.type');
         yield AssociationField::new('customer', 'customer_order.customer');
         yield AssociationField::new('user', 'customer_order.user');
+        yield TextField::new('comment');
 
         if ($this->isGranted('ROLE_USER')) {
             yield $confirmed->renderAsSwitch(false);
