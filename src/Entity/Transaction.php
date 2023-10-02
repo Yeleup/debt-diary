@@ -4,13 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Repository\TransactionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Controller\Api\GetTransactionStatistic;
 
 /**
  * @ApiResource(
@@ -18,7 +16,8 @@ use App\Controller\Api\GetTransactionStatistic;
  *     denormalizationContext={"groups"={"transaction.write"}},
  *     collectionOperations={
  *          "get"={"normalization_context"={"groups"={"transaction.read", "transaction_detail.write"}}},
- *          "post"
+ *          "post",
+ *          "get_statistic"={"method"="GET","route_name"="api_get_statistic"}
  *     },
  *     itemOperations={
  *          "get"={"normalization_context"={"groups"={"transaction.read", "transaction_detail.write"}}}

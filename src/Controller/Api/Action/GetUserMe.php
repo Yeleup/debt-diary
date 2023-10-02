@@ -1,26 +1,26 @@
 <?php
+namespace App\Controller\Api\Action;
 
-namespace App\Controller\Api;
-
-use App\Entity\Transaction;
 use App\Entity\User;
+use App\Repository\TransactionRepository;
+use App\Repository\TypeRepository;
+use Carbon\Carbon;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends AbstractController
+class GetUserMe extends AbstractController
 {
-
     /**
-     * @Route(name="api_get_current_user", path="/api/user", methods={"GET"},
+     * @Route(name="api_get_current_user", path="/api/users/me", methods={"GET"},
      * defaults={
      *      "_api_resource_class"=User::class,
      *      "_api_collection_operation_name"="get_current_user"
      *     }
      * )
      */
-    public function getCurrentUser(): Response
+    public function __invoke(): JsonResponse
     {
         $user = [
             'id' => $this->getUser()->getId(),

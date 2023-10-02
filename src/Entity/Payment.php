@@ -10,7 +10,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(attributes={"pagination_enabled"=false},collectionOperations={"get", "get_payments"={"method"="GET", "route_name"="api_get_payments"}}, itemOperations={"get"})
+ * @ApiResource(
+ *     normalizationContext={"groups"={"payment.read"}},
+ *     attributes={
+ *      "pagination_enabled"=false},
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=PaymentRepository::class)
  */
 class Payment
@@ -19,12 +25,12 @@ class Payment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"transaction.read"})
+     * @Groups({"payment.read","transaction.read"})
      */
     private $id;
 
     /**
-     * @Groups({"transaction.read"})
+     * @Groups({"payment.read","transaction.read"})
      * @ORM\Column(type="string", length=255)
      */
     private $title;
