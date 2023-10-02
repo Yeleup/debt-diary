@@ -25,7 +25,7 @@ class TransactionNormalizer implements NormalizerInterface, CacheableSupportsMet
     {
         $data = $this->normalizer->normalize($object, $format, $context);
         $data['amount'] = $this->moneyFormatter->format($object->getAmount());
-        $data['createdAt'] = $this->dateFormatter->format($object->getCreated());
+        $data['createdAt'] = $this->dateFormatter->format($object->getCreatedAt());
         return $data;
     }
 

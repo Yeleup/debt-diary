@@ -95,7 +95,7 @@ class CustomerOrderController extends AbstractController
              * если заказ добавлен пользователем
              * если дата заказа совпадает с текущей
              */
-            if ($this->getUser() == $customerOrder->getUser() && $customerOrder->getCreated() && date('Y-m-d') == $customerOrder->getCreated()->format('Y-m-d')) {
+            if ($this->getUser() == $customerOrder->getUser() && $customerOrder->getCreatedAt() && date('Y-m-d') == $customerOrder->getCreatedAt()->format('Y-m-d')) {
                 $edit = $this->adminUrlGenerator
                     ->setRoute('customer_order_edit', ['id' => $customerOrder->getId()])
                     ->setAll($params)
@@ -110,7 +110,7 @@ class CustomerOrderController extends AbstractController
             $data['customer_orders'][] = [
                 'id' => $customerOrder->getId(),
                 'user' => $customerOrder->getUser(),
-                'updated' => $customerOrder->getUpdated(),
+                'updated' => $customerOrder->getUpdatedAt(),
                 'type' => $customerOrder->getType(),
                 'payment' => $customerOrder->getPayment(),
                 'amount' => $customerOrder->getAmount(),

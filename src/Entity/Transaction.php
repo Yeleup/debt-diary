@@ -2,11 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Repository\TransactionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\Api\GetTransactionStatistic;
 
 /**
  * @ApiResource(
@@ -20,6 +24,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "get"={"normalization_context"={"groups"={"transaction.read", "transaction_detail.write"}}}
  *     }
  * )
+ * @ApiFilter(DateFilter::class, properties={"createdAt"})
+ * @ApiFilter(OrderFilter::class, properties={"createdAt"})
  * @ORM\Entity(repositoryClass=TransactionRepository::class)
  * @ORM\HasLifecycleCallbacks()
  */
@@ -60,16 +66,16 @@ class Transaction
     private $customer;
 
     /**
-     * @ORM\Column(type="datetime", nullable=false)
+     * @ORM\Column(type="datetime", nullable=false, name="created_at")
      * @var DateTime
      */
-    private $created;
+    private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true, name="updated_at")
      * @var DateTime
      */
-    private $updated;
+    private $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
@@ -140,34 +146,34 @@ class Transaction
         return $this;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->updated;
+        return $this->updatedAt;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): self
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
-        $this->updated = $updated;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    public function getCreated(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->created;
+        return $this->createdAt;
     }
 
-    public function setCreated(?\DateTimeInterface $created): self
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
-        $this->created = $created;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
     public function __construct()
     {
-        $this->created = new \DateTime();
-        $this->updated = new \DateTime();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getUser(): ?User
