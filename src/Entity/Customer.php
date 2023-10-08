@@ -63,7 +63,7 @@ class Customer
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"customer.write"})
+     * @Groups({"customer.read","customer.write"})
      * @ORM\ManyToOne(targetEntity=Market::class, inversedBy="customers")
      */
     private $market;

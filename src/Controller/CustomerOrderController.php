@@ -80,7 +80,7 @@ class CustomerOrderController extends AbstractController
 
         $data['customer_orders'] = [];
 
-        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['created' => 'DESC'], $request->query->get('limit'));
+        $customer_orders = $customerOrderRepository->findBy(['customer' => $customer], ['createdAt' => 'DESC'], $request->query->get('limit'));
         $customer_orders = array_reverse($customer_orders);
 
         foreach ($customer_orders as $customerOrder) {

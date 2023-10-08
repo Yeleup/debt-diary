@@ -55,7 +55,7 @@ class CustomerOrderCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        $crud->setDefaultSort(['updated' => 'ASC']);
+        $crud->setDefaultSort(['updatedAt' => 'ASC']);
 
         if (!$this->isGranted('ROLE_CONTROL')) {
             $crud->setEntityPermission('ROLE_ADMIN');
@@ -81,6 +81,6 @@ class CustomerOrderCrudController extends AbstractCrudController
             yield $confirmed;
         }
 
-        yield DateField::new('updated', 'customer_order.updated')->setFormat('y-MM-dd HH:mm:ss');
+        yield DateField::new('updatedAt', 'customer_order.updated')->setFormat('y-MM-dd HH:mm:ss');
     }
 }

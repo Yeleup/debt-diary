@@ -87,7 +87,7 @@ class Transaction
     private $confirmed;
 
     /**
-     * @Groups({"transaction.write"})
+     * @Groups({"transaction.read","transaction.write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $comment;

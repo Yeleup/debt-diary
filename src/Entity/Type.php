@@ -48,6 +48,7 @@ class Type
     private $prefix;
 
     /**
+     * @Groups({"type.read"})
      * @ORM\Column(type="boolean")
      */
     private $payment_status;
