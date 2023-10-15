@@ -38,25 +38,14 @@ class EntityLifecycleListener implements EventSubscriber
         }
     }
 
-    public function postRemove(LifecycleEventArgs $args)
-    {
-        $entity = $args->getObject();
-
-        if ($entity instanceof Transaction) {
-            $customer = $entity->getCustomer();
-            $this->entityManager->getRepository(Customer::class)->updateCustomerTotalAndLastTransaction($customer);
-        }
-    }
-
     /**
      * @inheritDoc
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postPersist,
             Events::postUpdate,
-            Events::postRemove,
         ];
     }
 }

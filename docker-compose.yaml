@@ -17,6 +17,8 @@ services:
         depends_on:
             - mariadb
     mariadb:
+        #BEFORE_START: sudo chown -R 1001:1001 docker/database-volume/
+        #BEFORE_START: sudo chmod 777 -R docker/database-volume/
         image: 'bitnami/mariadb:10.11'
         environment:
             ALLOW_EMPTY_PASSWORD: 'yes'
@@ -25,3 +27,5 @@ services:
             MARIADB_DATABASE: '${SYMFONY_DATABASE_NAME}'
         ports:
             - '${SYMFONY_DATABASE_PORT:-3306}:3306'
+        volumes:
+            - ./docker/database-volume:/bitnami
