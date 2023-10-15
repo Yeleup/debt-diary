@@ -221,7 +221,7 @@ class CustomerOrderController extends AbstractController
         $customerOrder->setUser($this->getUser());
         $form = $this->createForm(CustomerOrderType::class, $customerOrder);
 
-        $form->add('updated', DateTimeType::class, [
+        $form->add('updatedAt', DateTimeType::class, [
             'label_format' => $this->translator->trans('customer_order.updated'),
             'widget' => 'single_text',
             'html5' => false,
