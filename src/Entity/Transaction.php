@@ -28,6 +28,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiFilter(OrderFilter::class, properties={"createdAt"})
  * @ORM\Entity(repositoryClass=TransactionRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @ORM\Table(indexes={
+ *     @ORM\Index(name="transaction__type_id__idx", columns={"type_id"}),
+ *     @ORM\Index(name="transaction__payment_id__idx", columns={"payment_id"}),
+ *     @ORM\Index(name="transaction__customer_id__idx", columns={"customer_id"}),
+ *     @ORM\Index(name="transaction__user_id__idx", columns={"user_id"})
+ * })
  */
 class Transaction
 {

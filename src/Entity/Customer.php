@@ -31,6 +31,9 @@ use App\ApiPlatform\CustomerSearchFilter;
  * @ApiFilter(CustomerSearchFilter::class, properties={"search": SearchFilter::STRATEGY_START})
  * @ApiFilter(OrderFilter::class, properties={"place", "name", "total", "last_transaction"})
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
+ * @ORM\Table(indexes={
+ *      @ORM\Index(name="customer__market_id__idx", columns={"market_id"})
+ *  })
  */
 class Customer
 {
