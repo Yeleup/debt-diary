@@ -79,6 +79,7 @@ class Transaction
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
+     * @Groups({"transaction.read"})
      */
     private $user;
 

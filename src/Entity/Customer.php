@@ -26,6 +26,9 @@ use App\ApiPlatform\CustomerSearchFilter;
  *     collectionOperations={
  *          "get",
  *          "post"
+ *     },
+ *     attributes={
+ *          "order"={"place"="ASC"}
  *     }
  * )
  * @ApiFilter(CustomerSearchFilter::class, properties={"search": SearchFilter::STRATEGY_START})

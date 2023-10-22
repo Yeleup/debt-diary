@@ -24,6 +24,7 @@ class GetUserMe extends AbstractController
     {
         $user = [
             'id' => $this->getUser()->getId(),
+            'fullName' => $this->getUser()->getFullName() ?? '',
             'username' => $this->getUser()->getUsername(),
             'role' => $this->getUser()->getRoles(),
         ];
