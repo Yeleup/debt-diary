@@ -13,6 +13,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     paginationItemsPerPage=10,
+ *     paginationClientItemsPerPage=true,
  *     normalizationContext={"groups"={"transaction.read"}},
  *     denormalizationContext={"groups"={"transaction.write"}},
  *     collectionOperations={

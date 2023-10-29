@@ -4,11 +4,12 @@ namespace App\ApiPlatform;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Customer;
+use App\Entity\Market;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
-class CustomersByUserMarketsExtension implements QueryCollectionExtensionInterface
+class MarketsByUserExtension implements QueryCollectionExtensionInterface
 {
     private Security $security;
     public function __construct(Security $security)
@@ -18,7 +19,7 @@ class CustomersByUserMarketsExtension implements QueryCollectionExtensionInterfa
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($resourceClass !== Customer::class) {
+        if ($resourceClass !== Market::class) {
             return;
         }
 
@@ -26,8 +27,7 @@ class CustomersByUserMarketsExtension implements QueryCollectionExtensionInterfa
 
         if ($this->security->getUser()) {
             $queryBuilder
-                ->join(sprintf('%s.market', $alias), 'm')
-                ->join('m.users', 'u')
+                ->join(sprintf('%s.users', $alias), 'u')
                 ->where('u = :user')
                 ->setParameter('user', $this->security->getUser());
         }

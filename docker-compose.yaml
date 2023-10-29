@@ -28,4 +28,8 @@ services:
         ports:
             - '${SYMFONY_DATABASE_PORT:-3306}:3306'
         volumes:
-            - ./docker/database-volume:/bitnami
+#            - ./docker/database-volume:/bitnami/mariadb
+            - mariadb_data:/bitnami/mariadb
+volumes:
+    mariadb_data:
+        driver: local

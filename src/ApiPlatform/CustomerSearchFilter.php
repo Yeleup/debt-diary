@@ -11,7 +11,7 @@ class CustomerSearchFilter extends AbstractFilter
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ('search' !== $property) {
+        if ('search' !== $property || empty($value)) {
             return;
         }
 
