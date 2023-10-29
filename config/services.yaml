@@ -38,3 +38,7 @@ services:
     App\EventListener\EntityLifecycleListener:
         tags:
             - { name: doctrine.event_subscriber }
+
+    App\Service\AuthService:
+        arguments:
+            $tokenTTL: '%env(JWT_TTL_SEC)%'
