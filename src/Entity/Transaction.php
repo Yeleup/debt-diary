@@ -13,6 +13,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     attributes={
+ *          "defaultOrder"={"createdAt", "desc"}
+ *      },
  *     paginationItemsPerPage=10,
  *     paginationClientItemsPerPage=true,
  *     normalizationContext={"groups"={"transaction.read"}},
