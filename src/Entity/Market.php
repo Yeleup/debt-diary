@@ -6,44 +6,38 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MarketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     normalizationContext={"groups"={"market.read"}},
- *     denormalizationContext={"groups"={"market.write"}},
- *     attributes={"pagination_enabled"=false},
- *     itemOperations={
- *          "get"
- *     })
- * @ORM\Entity(repositoryClass=MarketRepository::class)
- */
+#[ApiResource(
+    itemOperations: ['get'],
+    denormalizationContext: ['groups' => ['market.write']],
+    normalizationContext: ['groups' => ['market.read']],
+    paginationEnabled: false
+)]
+#[Entity(repositoryClass: MarketRepository::class)]
 class Market
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"market.read"})
-     */
-    private $id;
+    #[Id]
+    #[GeneratedValue]
+    #[Column(type: 'integer')]
+    #[Groups(['market.read'])]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"market.read", "market.write"})
-     */
-    private $title;
+    #[Column(type: 'string', length: 255)]
+    #[Groups(['market.read', 'market.write'])]
+    private ?string $title = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="market")
-     */
-    private $customers;
+    #[OneToMany(targetEntity: Customer::class, mappedBy: 'market')]
+    private Collection $customers;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="markets")
-     */
-    private $users;
+    #[ManyToMany(targetEntity: User::class, mappedBy: 'markets')]
+    private Collection $users;
 
     public function __construct()
     {

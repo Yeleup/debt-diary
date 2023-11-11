@@ -6,44 +6,38 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PaymentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     normalizationContext={"groups"={"payment.read"}},
- *     attributes={
- *      "pagination_enabled"=false},
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
- * )
- * @ORM\Entity(repositoryClass=PaymentRepository::class)
- */
+#[ApiResource(
+    collectionOperations: ['get'],
+    itemOperations: ['get'],
+    normalizationContext: ['groups' => ['payment.read']],
+    paginationEnabled: false
+)]
+#[Entity(repositoryClass: PaymentRepository::class)]
 class Payment
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"payment.read","transaction.read"})
-     */
-    private $id;
+    #[Id]
+    #[GeneratedValue]
+    #[Column(type: 'integer')]
+    #[Groups(['payment.read', 'transaction.read'])]
+    private ?int $id = null;
 
-    /**
-     * @Groups({"payment.read","transaction.read"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
+    #[Column(type: 'string', length: 255)]
+    #[Groups(['payment.read', 'transaction.read'])]
+    private ?string $title = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="payment")
-     */
-    private $transactions;
+    #[OneToMany(mappedBy: 'payment', targetEntity: Transaction::class)]
+    private Collection $transactions;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="payments")
-     */
-    private $users;
+    #[ManyToMany(targetEntity: User::class, mappedBy: 'payments')]
+    private Collection $users;
 
     public function __construct()
     {

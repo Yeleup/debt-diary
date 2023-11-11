@@ -11,59 +11,44 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
-/**
- * @ApiResource(attributes={"pagination_enabled"=false},
- *     collectionOperations={
- *      "get"={"normalization_context"={"groups"={"type.read"}}},
- *     }
- * )
- * @ApiFilter(OrderFilter::class, properties={"sort"})
- * @ORM\Entity(repositoryClass=TypeRepository::class)
- */
+#[ApiResource(
+    collectionOperations: [
+        'get' => ['normalization_context' => ['groups' => ['type.read']]]
+    ],
+    attributes: ['pagination_enabled' => false]
+)]
+#[ApiFilter(OrderFilter::class, properties: ['sort'])]
+#[ORM\Entity(repositoryClass: TypeRepository::class)]
 class Type
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"transaction.read", "type.read"})
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    #[Groups(['transaction.read', 'type.read'])]
+    private $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"transaction.read", "type.read"})
-     */
-    private $title;
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['transaction.read', 'type.read'])]
+    private ?string $title = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="type")
-     */
+    #[ORM\OneToMany(mappedBy: 'type', targetEntity: Transaction::class)]
     private $transactions;
 
-    /**
-     * @Groups({"type.read"})
-     * @ORM\Column(type="string", length=3, nullable=true)
-     */
-    private $prefix;
+    #[ORM\Column(type: 'string', length: 3, nullable: true)]
+    #[Groups(['type.read'])]
+    private ?string $prefix = null;
 
-    /**
-     * @Groups({"type.read"})
-     * @ORM\Column(type="boolean")
-     */
-    private $payment_status;
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['type.read'])]
+    private bool $payment_status;
 
-    /**
-     * @Groups({"type.read"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $sort;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['type.read'])]
+    private ?int $sort = null;
 
-    /**
-     * @Groups({"type.read"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $color;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['type.read'])]
+    private ?string $color = null;
 
     public function __construct()
     {

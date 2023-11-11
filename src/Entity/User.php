@@ -6,63 +6,49 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     attributes={"pagination_enabled"=false},
- *     collectionOperations={
- *      "get_current_user"={"method"="GET","route_name"="api_get_current_user"}
- *     }
- * )
- * @ORM\Entity(repositoryClass=UserRepository::class)
- */
+#[ApiResource(
+    collectionOperations: [
+        "get_current_user" => ["method" => "GET", "route_name" => "api_get_current_user"]
+    ],
+    attributes: ["pagination_enabled" => false]
+)]
+#[Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ['username'], message: 'This username is already taken.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Id]
+    #[GeneratedValue]
+    #[Column(type: 'integer')]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
-    private $username;
+    #[Column(type: 'string', length: 180, unique: true)]
+    private string $username;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    #[Column(type: 'json')]
+    private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     *
-     * @ORM\Column(type="string")
-     */
-    private $password;
+    #[Column(type: 'string')]
+    private string $password;
 
-    private $plainPassword = null;
+    #[ManyToMany(targetEntity: Market::class, inversedBy: 'users', cascade: ['persist'])]
+    private Collection $markets;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Market::class, inversedBy="users", cascade={"persist"})
-     */
-    private $markets;
+    #[ManyToMany(targetEntity: Payment::class, inversedBy: 'users')]
+    private Collection $payments;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Payment::class, inversedBy="users")
-     */
-    private $payments;
-
-    /**
-     * @ORM\Column(type="string", length=180, name="full_name", nullable=true)
-     * @Groups({"transaction.read"})
-     */
-    private $fullName;
+    #[Column(name: 'full_name', type: 'string', length: 180, nullable: true)]
+    #[Groups(['transaction.read'])]
+    private ?string $fullName = null;
 
     public function __construct()
     {
