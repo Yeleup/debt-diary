@@ -6,13 +6,14 @@ use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use ApiPlatform\Core\DataPersister\ResumableDataPersisterInterface;
 use App\Entity\Transaction;
 use App\Repository\TransactionRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\Security;
 
 final class TransactionDataPersister implements ContextAwareDataPersisterInterface, ResumableDataPersisterInterface
 {
     private Security $security;
     private TransactionRepository $repository;
-    public function __construct(Security $security, TransactionRepository $repository)
+    public function __construct(Security $security, TransactionRepository $repository, protected UserRepository $userRepository)
     {
         $this->security = $security;
         $this->repository = $repository;
@@ -46,7 +47,8 @@ final class TransactionDataPersister implements ContextAwareDataPersisterInterfa
 
         // Call your persistence layer to save $data
         if ($this->security->getUser()) {
-            $customerOrder->setUser($this->security->getUser());
+            $user = $this->userRepository->findOneBy(['username' => $this->security->getUser()->getUserIdentifier()]);
+            $customerOrder->setUser($user);
         }
 
         return $customerOrder;

@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Api\v1;
 
+use App\Repository\UserRepository;
 use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,22 +12,27 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route(path: '/api/v1/token')]
 class TokenController extends AbstractController
 {
-    public function __construct(private readonly AuthService $authService)
+    public function __construct(private readonly AuthService $authService, protected UserRepository $userRepository)
     {
     }
 
     #[Route(path: '', methods: ['POST'])]
     public function getTokenAction(Request $request): Response
     {
-        $user = $request->getUser();
+        $userIdentifier = $request->getUser();
         $password = $request->getPassword();
-        if (!$user || !$password) {
+        if (!$userIdentifier || !$password) {
             return new JsonResponse(['message' => 'Authorization required'], Response::HTTP_UNAUTHORIZED);
         }
-        if (!$this->authService->isCredentialsValid($user, $password)) {
+        if (!$this->authService->isCredentialsValid($userIdentifier, $password)) {
             return new JsonResponse(['message' => 'Invalid password or username'], Response::HTTP_FORBIDDEN);
         }
 
-        return new JsonResponse(['token' => $this->authService->getToken($user)]);
+        $user = $this->userRepository->findOneBy(['username' => $userIdentifier]);
+        return new JsonResponse([
+            'username' => $user->getUsername(),
+            'fullName' => $user->getFullName(),
+            'token' => $this->authService->getToken($userIdentifier),
+        ]);
     }
 }
