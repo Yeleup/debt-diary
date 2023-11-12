@@ -47,8 +47,7 @@ final class TransactionDataPersister implements ContextAwareDataPersisterInterfa
 
         // Call your persistence layer to save $data
         if ($this->security->getUser()) {
-            $user = $this->userRepository->findOneBy(['username' => $this->security->getUser()->getUserIdentifier()]);
-            $customerOrder->setUser($user);
+            $customerOrder->setUser($this->security->getUser());
         }
 
         return $customerOrder;

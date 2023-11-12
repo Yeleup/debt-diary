@@ -28,8 +28,8 @@ class CustomersByUserMarketsExtension implements QueryCollectionExtensionInterfa
             $queryBuilder
                 ->join(sprintf('%s.market', $alias), 'm')
                 ->join('m.users', 'u')
-                ->where('u.username = :userIdentifier')
-                ->setParameter('userIdentifier', $this->security->getUser()->getUserIdentifier());
+                ->where('u = :user')
+                ->setParameter('user', $this->security->getUser());
         }
     }
 }

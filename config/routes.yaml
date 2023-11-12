@@ -12,3 +12,7 @@ homepage:
 admin:
     path: /admin
     controller: App\Controller\Admin\DefaultDashboardController::index
+
+token:
+    path: /token
+    methods: POST

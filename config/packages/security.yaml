@@ -15,16 +15,20 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        token:
-            pattern: ^/api/v1/token
-            security: false
         api:
             pattern: ^/api/
             stateless: true
-            custom_authenticator: App\Security\JWTTokenAuthenticator
+            provider: app_user_provider
+            jwt: ~
         main:
             lazy: true
             provider: app_user_provider
+            json_login:
+                check_path: token
+                username_path: username
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
             logout:
                 path: app_logout
             custom_authenticator: App\Security\AppCustomAuthenticator
@@ -44,5 +48,6 @@ security:
          - { path: ^/user, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/control, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/login, roles: PUBLIC_ACCESS }
+         - { path: ^/token, roles: PUBLIC_ACCESS }
          - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/profile, roles: ROLE_USER }
