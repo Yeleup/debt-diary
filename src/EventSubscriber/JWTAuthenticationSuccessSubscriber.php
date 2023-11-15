@@ -19,6 +19,7 @@ class JWTAuthenticationSuccessSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
         if ($user instanceof User) {
             $data['fullName'] = $user->getFullName();
+            $data['roles'] = $user->getRoles();
         }
 
         $event->setData($data);
