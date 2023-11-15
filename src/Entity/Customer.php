@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
+use App\ApiPlatform\CustomerSearchFilter;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -39,7 +40,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
     denormalizationContext: ['groups' => ['customer.write']],
     normalizationContext: ['groups' => ['customer.read']]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
+#[ApiFilter(CustomerSearchFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
 #[ApiFilter(OrderFilter::class, properties: ['place', 'name', 'total', 'last_transaction'])]
 #[Entity(repositoryClass: CustomerRepository::class)]
 class Customer
