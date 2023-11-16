@@ -26,7 +26,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         "paginationClientItemsPerPage" => true,
     ],
     denormalizationContext: ["groups" => ["transaction.write"]],
-    normalizationContext: ["groups" => ["transaction.read"]]
+    normalizationContext: ["groups" => ["transaction.read"]],
+    order: ['createdAt' => 'DESC']
 )]
 #[ApiFilter(DateFilter::class, properties: ["createdAt"])]
 #[ApiFilter(OrderFilter::class, properties: ["createdAt"])]
