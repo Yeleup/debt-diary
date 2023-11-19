@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Link;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -20,7 +22,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     collectionOperations: [
         "get_current_user" => ["method" => "GET", "route_name" => "api_get_current_user"]
     ],
-    attributes: ["pagination_enabled" => false]
+    attributes: ["pagination_enabled" => false],
+    denormalizationContext: ["groups" => ["user.write"]],
+    normalizationContext: ["groups" => ["user.read"]]
 )]
 #[Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'This username is already taken.')]
@@ -29,15 +33,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
+    #[Groups(['user.read', 'expense.read', 'user.expense.read'])]
     private ?int $id = null;
 
     #[Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['user.read', 'user.write'])]
     private string $username;
 
     #[Column(type: 'json')]
+    #[Groups(['user.read', 'user.write'])]
     private array $roles = [];
 
     #[Column(type: 'string')]
+    #[Groups(['user.write'])]
     private string $password;
 
     #[ManyToMany(targetEntity: Market::class, inversedBy: 'users', cascade: ['persist'])]
@@ -47,13 +55,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $payments;
 
     #[Column(name: 'full_name', type: 'string', length: 180, nullable: true)]
-    #[Groups(['transaction.read'])]
+    #[Groups(['transaction.read', 'expense.read', 'user.expense.read'])]
     private ?string $fullName = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Expense::class, cascade: ['remove'])]
+    #[Link(toProperty: 'user')]
+    private Collection $expenses;
 
     public function __construct()
     {
         $this->markets = new ArrayCollection();
         $this->payments = new ArrayCollection();
+        $this->expenses = new ArrayCollection();
     }
 
     public function getPlainPassword(): ?string
@@ -205,6 +218,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFullName(?string $fullName): self
     {
         $this->fullName = $fullName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Expense[]
+     */
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
+
+    public function addExpense(Expense $expense): self
+    {
+        if (!$this->expenses->contains($expense)) {
+            $this->expenses[] = $expense;
+            $expense->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expense $expense): self
+    {
+        if ($this->expenses->removeElement($expense)) {
+            // set the owning side to null (unless already changed)
+            if ($expense->getUser() === $this) {
+                $expense->setUser(null);
+            }
+        }
 
         return $this;
     }
