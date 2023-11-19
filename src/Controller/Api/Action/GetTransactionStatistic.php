@@ -35,14 +35,7 @@ class GetTransactionStatistic
         $this->security = $security;
     }
 
-    /**
-     * @Route(name="api_get_statistic", path="/api/transactions/statistic", methods={"GET"},
-     * defaults={
-     *      "_api_resource_class"=Transaction::class,
-     *      "_api_collection_operation_name"="get_statistic"
-     *     }
-     * )
-     */
+    #[Route(path: '/api/transactions/statistic', name: 'api_get_statistic', methods: ['GET'])]
     public function __invoke(Request $request): JsonResponse
     {
         $startDate = null;
@@ -86,7 +79,7 @@ class GetTransactionStatistic
             $statistics = [];
             $value = 0;
             foreach ($types as $type) {
-                $qb = $this->typeRepository->createQueryBuilder('p');
+                $qb = $this->paymentRepository->createQueryBuilder('p');
                 $qb->select('p.id', 'p.title', 'SUM(transaction.amount) as value')
                     ->join('p.transactions', 'transaction')
                     ->join('transaction.type', 'type')
