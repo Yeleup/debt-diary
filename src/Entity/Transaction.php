@@ -25,7 +25,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ["groups" => ["transaction.read"]],
     denormalizationContext: ["groups" => ["transaction.write"]],
     order: ['createdAt' => 'DESC'],
-    paginationItemsPerPage: 10,
     processor: TransactionStateProcessor::class
 )]
 #[ApiResource(
@@ -35,7 +34,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'customerId' => new Link(toProperty: 'customer', fromClass: Customer::class),
     ],
     normalizationContext: ["groups" => ["customer.transaction.read"]],
-    denormalizationContext: ["groups" => ["customer.transaction.write"]]
+    denormalizationContext: ["groups" => ["customer.transaction.write"]],
+    order: ['createdAt' => 'DESC'],
+    paginationItemsPerPage: 10
 )]
 #[ApiFilter(DateFilter::class, properties: ["createdAt"])]
 #[ApiFilter(OrderFilter::class, properties: ["createdAt"])]
@@ -46,7 +47,7 @@ class Transaction
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['transaction.read'])]
+    #[Groups(['transaction.read', 'customer.transaction.read'])]
     private $id;
 
     #[Groups(['transaction.read', 'transaction.write', 'customer.transaction.read'])]
