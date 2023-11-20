@@ -24,11 +24,11 @@ class Type
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['customer.transaction.read', 'type.read'])]
+    #[Groups(['type.read', 'transaction.read', 'customer.transaction.read'])]
     private $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['customer.transaction.read', 'type.read'])]
+    #[Groups(['type.read', 'transaction.read', 'customer.transaction.read'])]
     private ?string $title = null;
 
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Transaction::class)]
