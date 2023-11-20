@@ -13,7 +13,7 @@ class ExpenseStateProcessor implements ProcessorInterface
     {
     }
 
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
         $data->setUser($this->security->getUser());
 

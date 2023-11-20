@@ -3,31 +3,39 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
 use App\Repository\TransactionRepository;
+use App\State\TransactionStateProcessor;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    collectionOperations: [
-        "get" => ["normalization_context" => ["groups" => ["transaction.read", "transaction_detail.write"]]],
-        "post",
-        "get_statistic" => ["method" => "GET", "route_name" => "api_get_statistic"]
+    operations: [
+        new Get(),
+        new Post(),
+        new GetCollection(),
     ],
-    itemOperations: [
-        "get" => ["normalization_context" => ["groups" => ["transaction.read", "transaction_detail.write"]]]
-    ],
-    attributes: [
-        "defaultOrder" => ["createdAt" => "desc"],
-        "paginationItemsPerPage" => 10,
-        "paginationClientItemsPerPage" => true,
-    ],
-    denormalizationContext: ["groups" => ["transaction.write"]],
     normalizationContext: ["groups" => ["transaction.read"]],
-    order: ['createdAt' => 'DESC']
+    denormalizationContext: ["groups" => ["transaction.write"]],
+    order: ['createdAt' => 'DESC'],
+    paginationItemsPerPage: 10,
+    processor: TransactionStateProcessor::class
+)]
+#[ApiResource(
+    uriTemplate: '/customers/{customerId}/transactions',
+    operations: [ new GetCollection() ],
+    uriVariables: [
+        'customerId' => new Link(toProperty: 'customer', fromClass: Customer::class),
+    ],
+    normalizationContext: ["groups" => ["customer.transaction.read"]],
+    denormalizationContext: ["groups" => ["customer.transaction.write"]]
 )]
 #[ApiFilter(DateFilter::class, properties: ["createdAt"])]
 #[ApiFilter(OrderFilter::class, properties: ["createdAt"])]
@@ -41,21 +49,21 @@ class Transaction
     #[Groups(['transaction.read'])]
     private $id;
 
-    #[Groups(['transaction.read', 'transaction.write'])]
+    #[Groups(['transaction.read', 'transaction.write', 'customer.transaction.read'])]
     #[ORM\Column(type: 'float', precision: 10, scale: 0)]
     private $amount;
 
-    #[Groups(['transaction.write', 'transaction.read'])]
+    #[Groups(['transaction.write', 'transaction.read', 'customer.transaction.read'])]
     #[ORM\ManyToOne(targetEntity: Type::class, inversedBy: 'transactions')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private $type;
 
-    #[Groups(['transaction.read', 'transaction.write'])]
+    #[Groups(['transaction.read', 'transaction.write', 'customer.transaction.read'])]
     #[ORM\ManyToOne(targetEntity: Payment::class, inversedBy: 'transactions')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private $payment;
 
-    #[Groups(['transaction_detail.write', 'transaction.write'])]
+    #[Groups(['transaction_detail.write', 'transaction.write', 'customer.transaction.read'])]
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'transactions')]
     private $customer;
 
@@ -66,13 +74,13 @@ class Transaction
     private ?\DateTime $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[Groups(['transaction.read'])]
+    #[Groups(['transaction.read', 'customer.transaction.read'])]
     private $user;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $confirmed;
 
-    #[Groups(['transaction.read', 'transaction.write'])]
+    #[Groups(['transaction.read', 'transaction.write', 'customer.transaction.read'])]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $comment;
 

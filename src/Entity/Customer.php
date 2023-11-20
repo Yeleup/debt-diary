@@ -3,10 +3,14 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
-use App\ApiPlatform\CustomerSearchFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\ApiPlatform\Filter\CustomerFilter;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,33 +18,20 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
-    collectionOperations: [
-        'get' => [
-            'method' => 'GET'
-        ],
-        'post' => [
-            'method' => 'POST'
-        ]
+    operations: [
+        new Get(),
+        new Post(),
+        new Patch(),
+        new GetCollection(),
     ],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET'
-        ],
-        'patch' => [
-            'method' => 'PATCH',
-        ]
-    ],
-    attributes: [
-        'order' => ['place' => 'ASC'],
-    ],
+    normalizationContext: ['groups' => ['customer.read']],
     denormalizationContext: ['groups' => ['customer.write']],
-    normalizationContext: ['groups' => ['customer.read']]
+    order: ['place' => 'ASC']
 )]
-#[ApiFilter(CustomerSearchFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
+#[ApiFilter(CustomerFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
 #[ApiFilter(OrderFilter::class, properties: ['place', 'name', 'total', 'last_transaction'])]
 #[Entity(repositoryClass: CustomerRepository::class)]
 class Customer
@@ -69,8 +60,8 @@ class Customer
     #[ORM\ManyToOne(targetEntity: Market::class, inversedBy: 'customers')]
     private ?Market $market = null;
 
-    #[ApiSubresource]
     #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Transaction::class, cascade: ['remove'])]
+    #[Link(toProperty: 'customer')]
     private Collection $transactions;
 
     #[Groups(['customer.read'])]
