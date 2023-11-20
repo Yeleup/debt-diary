@@ -39,11 +39,11 @@ class Customer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['transaction.read', 'customer.read'])]
+    #[Groups(['customer.read', 'transaction.read', 'customer.transaction.read'])]
     private $id;
 
     #[Assert\NotBlank]
-    #[Groups(['transaction.read', 'customer.read', 'customer.write'])]
+    #[Groups(['customer.read', 'customer.write', 'transaction.read', 'customer.transaction.read'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
