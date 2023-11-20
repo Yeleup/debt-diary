@@ -26,11 +26,11 @@ class Payment
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
-    #[Groups(['payment.read', 'transaction.read'])]
+    #[Groups(['payment.read', 'customer.transaction.read'])]
     private ?int $id = null;
 
     #[Column(type: 'string', length: 255)]
-    #[Groups(['payment.read', 'transaction.read'])]
+    #[Groups(['payment.read', 'customer.transaction.read'])]
     private ?string $title = null;
 
     #[OneToMany(mappedBy: 'payment', targetEntity: Transaction::class)]

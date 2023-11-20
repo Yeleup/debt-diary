@@ -63,7 +63,7 @@ class Transaction
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private $payment;
 
-    #[Groups(['transaction_detail.write', 'transaction.write', 'customer.transaction.read'])]
+    #[Groups(['customer.transaction.write', 'transaction.write'])]
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'transactions')]
     private $customer;
 
