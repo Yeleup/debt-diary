@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\MarketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,9 +17,8 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    itemOperations: ['get'],
-    denormalizationContext: ['groups' => ['market.write']],
     normalizationContext: ['groups' => ['market.read']],
+    denormalizationContext: ['groups' => ['market.write']],
     paginationEnabled: false
 )]
 #[Entity(repositoryClass: MarketRepository::class)]

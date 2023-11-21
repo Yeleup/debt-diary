@@ -12,10 +12,6 @@ class GetUserMe extends AbstractController
     #[Route(
         path: '/api/users/me',
         name: 'api_get_current_user',
-        defaults: [
-            '_api_resource_class' => User::class,
-            '_api_collection_operation_name' => 'get_current_user'
-        ],
         methods: ['GET']
     )]
     public function __invoke(): JsonResponse

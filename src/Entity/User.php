@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Link;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,12 +19,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    collectionOperations: [
-        "get_current_user" => ["method" => "GET", "route_name" => "api_get_current_user"]
-    ],
-    attributes: ["pagination_enabled" => false],
+    normalizationContext: ["groups" => ["user.read"]],
     denormalizationContext: ["groups" => ["user.write"]],
-    normalizationContext: ["groups" => ["user.read"]]
+    paginationEnabled: false,
 )]
 #[Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'This username is already taken.')]

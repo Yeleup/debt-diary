@@ -2,20 +2,19 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\TypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
-    collectionOperations: [
-        'get' => ['normalization_context' => ['groups' => ['type.read']]]
-    ],
-    attributes: ['pagination_enabled' => false]
+    normalizationContext: ['groups' => ['type.read']],
+    paginationEnabled: false
 )]
 #[ApiFilter(OrderFilter::class, properties: ['sort'])]
 #[ORM\Entity(repositoryClass: TypeRepository::class)]
