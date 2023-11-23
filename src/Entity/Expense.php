@@ -41,11 +41,11 @@ class Expense
     #[Groups(groups: ['expense.read'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0)]
+    #[ORM\Column(type: Types::FLOAT, precision: 10, scale: 0)]
     #[Groups(groups: ['expense.read', 'expense.write', 'user.expense.read'])]
     private ?float $amount = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expenses')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: ['expense.read', 'user.expense.read'])]
     private ?User $user = null;

@@ -51,7 +51,7 @@ class Transaction
 
     #[Groups(['transaction.read', 'transaction.write', 'customer.transaction.read'])]
     #[ORM\Column(type: 'float', precision: 10, scale: 0)]
-    private $amount;
+    private ?float $amount;
 
     #[Groups(['transaction.write', 'transaction.read', 'customer.transaction.read'])]
     #[ORM\ManyToOne(targetEntity: Type::class, inversedBy: 'transactions')]
