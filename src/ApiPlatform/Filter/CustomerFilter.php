@@ -11,7 +11,7 @@ use Symfony\Component\PropertyInfo\Type;
 class CustomerFilter extends AbstractFilter
 {
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
     {
         if ('search' !== $property || empty($value)) {
             return;

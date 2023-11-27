@@ -2,15 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\ExpenseRepository;
 use App\State\ExpenseStateProcessor;
 use Doctrine\DBAL\Types\Types;
@@ -21,7 +19,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ["groups" => ["expense.read"]],
     denormalizationContext: ["groups" => ["expense.write"]],
-    processor: ExpenseStateProcessor::class
+    order: ['createdAt' => 'DESC'],
+    processor: ExpenseStateProcessor::class,
 )]
 #[ApiResource(
     uriTemplate: '/users/{userId}/expenses',
@@ -30,8 +29,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'userId' => new Link(toProperty: 'user', fromClass: User::class),
     ],
     normalizationContext: ["groups" => ["user.expense.read"]],
-    denormalizationContext: ["groups" => ["user.expense.write"]]
+    denormalizationContext: ["groups" => ["user.expense.write"]],
+    order: ['createdAt' => 'DESC'],
 )]
+#[ApiFilter(DateFilter::class, properties: ["createdAt"])]
+#[ApiFilter(OrderFilter::class, properties: ["createdAt"])]
 class Expense
 {
     #[ORM\Id]
@@ -58,6 +60,18 @@ class Expense
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: ['expense.read', 'expense.write', 'user.expense.read'])]
     private ?ExpenseType $expenseType = null;
+
+    #[ORM\Column(type: 'datetime', nullable: false, name: 'created_at')]
+    private \DateTime $createdAt;
+
+    #[ORM\Column(type: 'datetime', nullable: true, name: 'updated_at')]
+    private ?\DateTime $updatedAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -108,6 +122,30 @@ class Expense
     public function setExpenseType(?ExpenseType $expenseType): static
     {
         $this->expenseType = $expenseType;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
