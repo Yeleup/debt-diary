@@ -34,6 +34,10 @@ class ExpenseType
     #[Groups(['expense_type.read', 'expense_type.write'])]
     private ?string $color = null;
 
+    #[ORM\Column]
+    #[Groups(['expense_type.read', 'expense_type.write'])]
+    private ?bool $is_add_expense = true;
+
     public function __construct()
     {
         $this->expenses = new ArrayCollection();
@@ -94,6 +98,18 @@ class ExpenseType
     public function setColor(?string $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function isAddExpense(): ?bool
+    {
+        return $this->is_add_expense;
+    }
+
+    public function setAddExpense(bool $is_add_expense): static
+    {
+        $this->is_add_expense = $is_add_expense;
 
         return $this;
     }

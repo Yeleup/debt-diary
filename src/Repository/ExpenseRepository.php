@@ -21,6 +21,20 @@ class ExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, Expense::class);
     }
 
+    public function plusOrMinusDependingType(Expense $expense): Expense
+    {
+        if ($expense->getExpenseType()) {
+            $amount = (float) abs($expense->getAmount());
+            // Плюсуем или минусуем
+            if (!$expense->getExpenseType()->isAddExpense()) {
+                $amount = -1 * $amount;
+            }
+            $expense->setAmount($amount);
+        }
+
+        return $expense;
+    }
+
 //    /**
 //     * @return Expense[] Returns an array of Expense objects
 //     */
