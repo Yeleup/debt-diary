@@ -24,3 +24,4 @@
 /tools/php-cs-fixer/vendor/
 /.php-cs-fixer.cache
 /docker/database-volume/mariadb
+/docker/cron/backup

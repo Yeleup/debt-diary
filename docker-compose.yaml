@@ -2,7 +2,7 @@ version: '2'
 
 services:
     myapp:
-        image: 'bitnami/symfony:5.4'
+        image: 'bitnami/symfony:5.4.33'
         ports:
             - '${SYMFONY_APP_PORT-8000}:8000'
         volumes:
@@ -30,6 +30,21 @@ services:
         volumes:
 #            - ./docker/database-volume:/bitnami/mariadb
             - mariadb_data:/bitnami/mariadb
+    cron:
+        build:
+            context: '.'
+            dockerfile: 'docker/cron/Dockerfile'
+        volumes:
+            - '.:/app'
+        environment:
+            SYMFONY_DATABASE_HOST: '${SYMFONY_DATABASE_HOST}'
+            SYMFONY_DATABASE_PORT_NUMBER: 3306
+            SYMFONY_DATABASE_USER: '${SYMFONY_DATABASE_USER}'
+            SYMFONY_DATABASE_PASSWORD: '${SYMFONY_DATABASE_PASSWORD}'
+            SYMFONY_DATABASE_NAME: '${SYMFONY_DATABASE_NAME}'
+            SYMFONY_PROJECT_SKELETON: 'symfony/skeleton'
+        depends_on:
+            - mariadb
 volumes:
     mariadb_data:
         driver: local
