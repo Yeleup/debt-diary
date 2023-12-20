@@ -20,7 +20,7 @@ final class Version20231219135305 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE expense_type ADD is_add_expense TINYINT(1) NOT NULL DEFAULT 1');
+        $this->addSql('ALTER TABLE expense_type ADD is_add_expense TINYINT(1) NOT NULL');
     }
 
     public function down(Schema $schema): void
