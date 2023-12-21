@@ -59,6 +59,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Link(toProperty: 'user')]
     private Collection $expenses;
 
+    #[Column(type: 'string', length: 4, nullable: true)]
+    private $confirmationCode;
+
     public function __construct()
     {
         $this->markets = new ArrayCollection();
@@ -245,6 +248,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $expense->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getConfirmationCode(): ?string
+    {
+        return $this->confirmationCode;
+    }
+
+    public function setConfirmationCode(?string $confirmationCode): self
+    {
+        $this->confirmationCode = $confirmationCode;
 
         return $this;
     }

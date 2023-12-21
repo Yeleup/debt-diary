@@ -1,0 +1,57 @@
+{# templates/email/confirmation_code.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            color: #333333;
+        }
+        p {
+            color: #666666;
+            margin-top: 10px;
+        }
+        .code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Код подтверждения</h2>
+    <p>Введите следующий код для завершения процесса:</p>
+    <div class="code">{{ confirmationCode }}</div>
+    <div class="footer">
+        <p>Если вы не запрашивали код подтверждения, проигнорируйте это письмо.</p>
+        <p><a href="#">Свяжитесь с нами</a>, если у вас есть вопросы.</p>
+    </div>
+</div>
+</body>
+</html>

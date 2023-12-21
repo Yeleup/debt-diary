@@ -49,5 +49,8 @@ security:
          - { path: ^/control, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/login, roles: PUBLIC_ACCESS }
          - { path: ^/token, roles: PUBLIC_ACCESS }
+         - { path: ^/send-confirmation-code, roles: PUBLIC_ACCESS }
+         - { path: ^/email-by-code, roles: PUBLIC_ACCESS }
+         - { path: ^/confirm, roles: PUBLIC_ACCESS }
          - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/profile, roles: ROLE_USER }
