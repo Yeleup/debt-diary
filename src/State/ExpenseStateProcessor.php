@@ -22,7 +22,11 @@ class ExpenseStateProcessor implements ProcessorInterface
     {
         $data = $this->expenseRepository->plusOrMinusDependingType($data);
 
-        $data->setUser($this->security->getUser());
+        if ($this->security->isGranted('ROLE_CONTROL')) {
+            $data->setControlUser($this->security->getUser());
+        } else {
+            $data->setUser($this->security->getUser());
+        }
 
         return $this->decorated->process($data, $operation, $uriVariables, $context);
     }

@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use App\Repository\ExpenseRepository;
 use App\State\ExpenseStateProcessor;
+use App\Validator\User\IsRoleControl;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -49,7 +50,8 @@ class Expense
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expenses')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(groups: ['expense.read', 'user.expense.read'])]
+    #[IsRoleControl]
+    #[Groups(groups: ['expense.read', 'expense.write', 'user.expense.read'])]
     private ?User $user = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -66,6 +68,10 @@ class Expense
 
     #[ORM\Column(type: 'datetime', nullable: true, name: 'updated_at')]
     private ?\DateTime $updatedAt;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expenses')]
+    #[Groups(['expense.read', 'user.expense.read'])]
+    private ?User $controlUser = null;
 
     public function __construct()
     {
@@ -146,6 +152,18 @@ class Expense
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getControlUser(): ?User
+    {
+        return $this->controlUser;
+    }
+
+    public function setControlUser(?User $controlUser): static
+    {
+        $this->controlUser = $controlUser;
 
         return $this;
     }
