@@ -24,8 +24,10 @@ class CustomerFilter extends AbstractFilter
         $queryBuilder
             ->andWhere(sprintf('%s.name LIKE :name', $alias))
             ->orWhere(sprintf('%s.place LIKE :place', $alias))
+            ->orWhere(sprintf('%s.contact LIKE :contact', $alias))
             ->setParameter('name', '%' . $value . '%')
             ->setParameter('place', '%' . $value . '%')
+            ->setParameter('contact', '%' . $value . '%')
         ;
     }
 
