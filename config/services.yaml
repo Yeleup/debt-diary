@@ -38,3 +38,9 @@ services:
     App\EventListener\EntityLifecycleListener:
         tags:
             - { name: doctrine.event_subscriber }
+
+    App\Command\DatabaseBackupCommand:
+        arguments:
+            - { $container: service_container }
+        tags:
+            - name: 'console.command'
