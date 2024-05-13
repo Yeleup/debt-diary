@@ -3,8 +3,15 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\State\UserStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ["groups" => ["user.read"]],
     denormalizationContext: ["groups" => ["user.write"]],
-    paginationEnabled: false,
+    processor: UserStateProcessor::class
 )]
 #[Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'This username is already taken.')]
@@ -52,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $payments;
 
     #[Column(name: 'full_name', type: 'string', length: 180, nullable: true)]
-    #[Groups(['transaction.read', 'expense.read', 'user.expense.read'])]
+    #[Groups(['transaction.read', 'expense.read', 'user.expense.read', 'user.read', 'user.write'])]
     private ?string $fullName = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Expense::class, cascade: ['remove'])]
