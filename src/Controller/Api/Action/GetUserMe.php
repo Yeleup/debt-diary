@@ -20,7 +20,7 @@ class GetUserMe extends AbstractController
             'id' => $this->getUser()->getId(),
             'fullName' => $this->getUser()->getFullName() ?? '',
             'username' => $this->getUser()->getUsername(),
-            'role' => $this->getUser()->getRoles(),
+            'roles' => $this->getUser()->getRoles(),
         ];
 
         // Виды оплаты
@@ -40,7 +40,7 @@ class GetUserMe extends AbstractController
         }
 
         // Точки продаж
-        if ($this->isGranted('ROLE_USER')) {
+//        if ($this->isGranted('ROLE_USER')) {
             $markets = [];
 
             if (!empty($this->getUser()->getMarkets())) {
@@ -53,7 +53,7 @@ class GetUserMe extends AbstractController
             }
 
             $user['markets'] = $markets;
-        }
+//        }
 
         return new JsonResponse($user);
     }
