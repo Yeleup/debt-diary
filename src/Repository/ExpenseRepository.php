@@ -25,11 +25,11 @@ class ExpenseRepository extends ServiceEntityRepository
     {
         if ($expense->getExpenseType()) {
             $amount = (float) abs($expense->getAmount());
-            // Плюсуем или минусуем
-            if (!$expense->getExpenseType()->isAddExpense()) {
-                $amount = -1 * $amount;
+            if ($expense->getExpenseType()->isAddAmountToEmployee()) {
+                $expense->setAmount($amount);
+            } else {
+                $expense->setAmount(-1 * $amount);
             }
-            $expense->setAmount($amount);
         }
 
         return $expense;

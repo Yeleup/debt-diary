@@ -21,13 +21,7 @@ class ExpenseStateProcessor implements ProcessorInterface
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
         $data = $this->expenseRepository->plusOrMinusDependingType($data);
-
-        if ($this->security->isGranted('ROLE_CONTROL')) {
-            $data->setControlUser($this->security->getUser());
-        } else {
-            $data->setUser($this->security->getUser());
-        }
-
+        $data->setUser($this->security->getUser());
         return $this->decorated->process($data, $operation, $uriVariables, $context);
     }
 }

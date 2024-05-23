@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Common\Filter\SearchFilterInterface;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use App\ApiPlatform\Filter\ExpenseTypeFilter;
 use App\Repository\ExpenseTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ["groups" => ["expense_type.read"]],
     denormalizationContext: ["groups" => ["expense_type.write"]],
 )]
+#[ApiFilter(ExpenseTypeFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
 class ExpenseType
 {
     #[ORM\Id]
@@ -30,13 +34,9 @@ class ExpenseType
     #[Groups(['expense_type.read', 'expense_type.write', 'expense.read', 'user.expense.read'])]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column('is_add_amount')]
     #[Groups(['expense_type.read', 'expense_type.write'])]
-    private ?string $color = null;
-
-    #[ORM\Column]
-    #[Groups(['expense_type.read', 'expense_type.write'])]
-    private ?bool $is_add_expense = true;
+    private ?bool $addAmountToEmployee = null;
 
     public function __construct()
     {
@@ -90,26 +90,14 @@ class ExpenseType
         return $this;
     }
 
-    public function getColor(): ?string
+    public function isAddAmountToEmployee(): ?bool
     {
-        return $this->color;
+        return $this->addAmountToEmployee;
     }
 
-    public function setColor(?string $color): static
+    public function setAddAmountToEmployee(bool $addAmountToEmployee): static
     {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    public function isAddExpense(): ?bool
-    {
-        return $this->is_add_expense;
-    }
-
-    public function setAddExpense(bool $is_add_expense): static
-    {
-        $this->is_add_expense = $is_add_expense;
+        $this->addAmountToEmployee = $addAmountToEmployee;
 
         return $this;
     }
