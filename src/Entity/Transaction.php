@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
@@ -20,6 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(),
         new Post(),
         new GetCollection(),
+        new Delete()
     ],
     normalizationContext: ["groups" => ["transaction.read"]],
     denormalizationContext: ["groups" => ["transaction.write"]],

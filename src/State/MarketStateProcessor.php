@@ -5,14 +5,15 @@ namespace App\State;
 use ApiPlatform\Metadata\DeleteOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\User;
+use Symfony\Component\Security\Core\Security;
 
-class UserStateProcessor implements ProcessorInterface
+class MarketStateProcessor implements ProcessorInterface
 {
     public function __construct(
         protected ProcessorInterface $persistProcessor,
         protected ProcessorInterface $removeProcessor,
-        protected UserPasswordHasherInterface $passwordHasher
+        protected Security $security,
     )
     {
     }
@@ -22,8 +23,9 @@ class UserStateProcessor implements ProcessorInterface
         if ($operation instanceof DeleteOperationInterface) {
             return $this->removeProcessor->process($data, $operation, $uriVariables, $context);
         }
-        $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPassword()));
-        $data->eraseCredentials();
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $user->addMarket($data);
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
     }
 }

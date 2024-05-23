@@ -10,7 +10,9 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Dto\UserMeResetPasswordDto;
 use App\Repository\UserRepository;
+use App\State\UserMeResetPasswordStateProcessor;
 use App\State\UserStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,6 +28,20 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch(),
+        new Delete(),
+        new Post(
+            uriTemplate: '/users/me/change-password',
+            status: 202,
+            input: UserMeResetPasswordDto::class,
+            name: 'change-password',
+            processor: UserMeResetPasswordStateProcessor::class,
+        ),
+    ],
     normalizationContext: ["groups" => ["user.read"]],
     denormalizationContext: ["groups" => ["user.write"]],
     processor: UserStateProcessor::class
@@ -53,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ManyToMany(targetEntity: Market::class, inversedBy: 'users', cascade: ['persist'])]
+    #[Groups(['user.read', 'user.write'])]
     private Collection $markets;
 
     #[ManyToMany(targetEntity: Payment::class, inversedBy: 'users')]
@@ -150,7 +167,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;

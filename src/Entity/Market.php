@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\MarketRepository;
+use App\State\MarketStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -19,7 +20,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['market.read']],
     denormalizationContext: ['groups' => ['market.write']],
-    paginationEnabled: false
+    paginationEnabled: false,
+    processor: MarketStateProcessor::class,
 )]
 #[Entity(repositoryClass: MarketRepository::class)]
 class Market
@@ -34,7 +36,7 @@ class Market
     #[Groups(['market.read', 'market.write'])]
     private ?string $title = null;
 
-    #[OneToMany(targetEntity: Customer::class, mappedBy: 'market')]
+    #[OneToMany(mappedBy: 'market', targetEntity: Customer::class)]
     private Collection $customers;
 
     #[ManyToMany(targetEntity: User::class, mappedBy: 'markets')]
