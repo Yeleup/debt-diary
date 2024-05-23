@@ -154,4 +154,9 @@ class Type
 
         return $this;
     }
+
+    public function isPaymentStatus(): ?bool
+    {
+        return $this->payment_status;
+    }
 }

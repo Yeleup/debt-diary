@@ -35,6 +35,13 @@ class ExpenseRepository extends ServiceEntityRepository
         return $expense;
     }
 
+    public function addExpense(Expense $expense): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($expense);
+        $entityManager->flush();
+    }
+
 //    /**
 //     * @return Expense[] Returns an array of Expense objects
 //     */

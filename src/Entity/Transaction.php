@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use App\Repository\TransactionRepository;
 use App\State\TransactionStateProcessor;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -203,5 +204,10 @@ class Transaction
         $this->comment = $comment;
 
         return $this;
+    }
+
+    public function isConfirmed(): ?bool
+    {
+        return $this->confirmed;
     }
 }
