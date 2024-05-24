@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Expense;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,15 +22,21 @@ class ExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, Expense::class);
     }
 
-    public function plusOrMinusDependingType(Expense $expense): Expense
+    public function plusOrMinusDependingType(Expense $expense, User $currentUser): Expense
     {
         if ($expense->getExpenseType()) {
             $amount = (float) abs($expense->getAmount());
-            if ($expense->getExpenseType()->isAddAmountToEmployee()) {
-                $expense->setAmount($amount);
-            } else {
-                $expense->setAmount(-1 * $amount);
+            if (!$expense->getExpenseType()->isAddAmountToEmployee()) {
+                $amount = -1 * $amount;
             }
+
+            if ($expense->getAssociatedUser()) {
+                if ($expense->getUser() === $currentUser) {
+                    $amount = -1 * $amount;
+                }
+            }
+
+            $expense->setAmount($amount);
         }
 
         return $expense;

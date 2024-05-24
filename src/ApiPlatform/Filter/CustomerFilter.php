@@ -22,9 +22,13 @@ class CustomerFilter extends AbstractFilter
 
         // Добавьте ваш кастомный запрос к QueryBuilder
         $queryBuilder
-            ->andWhere(sprintf('%s.name LIKE :name', $alias))
-            ->orWhere(sprintf('%s.place LIKE :place', $alias))
-            ->orWhere(sprintf('%s.contact LIKE :contact', $alias))
+            ->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like(sprintf('%s.name', $alias), ':name'),
+                    $queryBuilder->expr()->like(sprintf('%s.place', $alias), ':place'),
+                    $queryBuilder->expr()->like(sprintf('%s.contact', $alias), ':contact')
+                )
+            )
             ->setParameter('name', '%' . $value . '%')
             ->setParameter('place', '%' . $value . '%')
             ->setParameter('contact', '%' . $value . '%')
