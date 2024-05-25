@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 #[ApiFilter(DateFilter::class, properties: ["createdAt"])]
 #[ApiFilter(OrderFilter::class, properties: ["createdAt"])]
+#[ORM\HasLifecycleCallbacks]
 class Expense
 {
     #[ORM\Id]

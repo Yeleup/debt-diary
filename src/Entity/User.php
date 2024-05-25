@@ -83,6 +83,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Link(toProperty: 'user')]
     private Collection $expenses;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups(['user.read'])]
+    private ?float $expenseTotal = null;
+
     public function __construct()
     {
         $this->markets = new ArrayCollection();
@@ -269,6 +273,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $expense->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getExpenseTotal(): ?float
+    {
+        return $this->expenseTotal;
+    }
+
+    public function setExpenseTotal(?float $expenseTotal): static
+    {
+        $this->expenseTotal = $expenseTotal;
 
         return $this;
     }

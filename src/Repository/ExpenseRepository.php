@@ -42,11 +42,18 @@ class ExpenseRepository extends ServiceEntityRepository
         return $expense;
     }
 
-    public function addExpense(Expense $expense): void
+    public function updateUserExpenseTotal(User $user): void
     {
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($expense);
-        $entityManager->flush();
+        $totalExpenses = $this->createQueryBuilder('e')
+            ->select('SUM(e.amount) as total')
+            ->where('e.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $user->setExpenseTotal($totalExpenses);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
 //    /**

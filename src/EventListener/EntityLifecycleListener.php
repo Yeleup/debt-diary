@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Customer;
+use App\Entity\Expense;
 use App\Entity\Transaction;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,7 +19,7 @@ class EntityLifecycleListener implements EventSubscriber
         $this->entityManager = $entityManager;
     }
 
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
@@ -26,15 +27,25 @@ class EntityLifecycleListener implements EventSubscriber
             $customer = $entity->getCustomer();
             $this->entityManager->getRepository(Customer::class)->updateCustomerTotalAndLastTransaction($customer);
         }
+
+        if ($entity instanceof Expense) {
+            $user = $entity->getUser();
+            $this->entityManager->getRepository(Expense::class)->updateUserExpenseTotal($user);
+        }
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
+    public function postUpdate(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
         if ($entity instanceof Transaction) {
             $customer = $entity->getCustomer();
             $this->entityManager->getRepository(Customer::class)->updateCustomerTotalAndLastTransaction($customer);
+        }
+
+        if ($entity instanceof Expense) {
+            $user = $entity->getUser();
+            $this->entityManager->getRepository(Expense::class)->updateUserExpenseTotal($user);
         }
     }
 
