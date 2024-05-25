@@ -42,11 +42,10 @@ class ExpenseType
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: "children")]
     #[ORM\JoinColumn(name: "parent_id", referencedColumnName: "id", onDelete: "SET NULL")]
-    #[Groups(['expense_type.read', 'expense_type.write'])]
+    #[Groups(['expense_type.read', 'expense_type.write', 'expense.read'])]
     private ?self $parent = null;
 
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: ExpenseType::class, cascade: ['persist'])]
-    #[Groups(['expense_type.read'])]
     private ?Collection $children;
 
     #[Assert\NotBlank]

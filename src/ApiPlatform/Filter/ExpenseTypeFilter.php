@@ -13,18 +13,23 @@ class ExpenseTypeFilter extends AbstractFilter
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
     {
-        if ('search' !== $property || empty($value)) {
-            return;
+        $alias = $queryBuilder->getRootAliases()[0];
+        if ('search' == $property && !empty($value)) {
+            $queryBuilder
+                ->andWhere(sprintf('%s.title LIKE :searchValue', $alias))
+                ->setParameter('searchValue', '%' . $value . '%');
         }
 
-        // Алиас для вашего основного объекта (например, "o" для "object")
-        $alias = $queryBuilder->getRootAliases()[0];
-
-        // Добавьте ваш кастомный запрос к QueryBuilder
-        $queryBuilder
-            ->andWhere(sprintf('%s.title LIKE :name', $alias))
-            ->setParameter('name', '%' . $value . '%')
-        ;
+        if ('parent' == $property) {
+            if (empty($value)) {
+                $queryBuilder
+                    ->andWhere(sprintf('%s.parent IS NULL', $alias));
+            } else {
+                $queryBuilder
+                    ->andWhere(sprintf('%s.parent = :parentId', $alias))
+                    ->setParameter('parentId', $value);
+            }
+        }
     }
 
     public function getDescription(string $resourceClass): array
