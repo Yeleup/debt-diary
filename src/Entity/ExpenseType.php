@@ -6,11 +6,13 @@ use ApiPlatform\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\ApiPlatform\Filter\ExpenseTypeFilter;
+use App\Enum\Mode;
 use App\Repository\ExpenseTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseTypeRepository::class)]
 #[ApiResource(
@@ -38,9 +40,25 @@ class ExpenseType
     #[Groups(['expense_type.read', 'expense_type.write'])]
     private ?bool $addAmountToEmployee = null;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: "children")]
+    #[ORM\JoinColumn(name: "parent_id", referencedColumnName: "id", onDelete: "SET NULL")]
+    #[Groups(['expense_type.read', 'expense_type.write'])]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(mappedBy: "parent", targetEntity: ExpenseType::class, cascade: ['persist'])]
+    #[Groups(['expense_type.read'])]
+    private ?Collection $children;
+
+    #[Assert\NotBlank]
+    #[Assert\Choice(choices: [Mode::FILE->value, Mode::FOLDER->value], message: "Choose a valid mode.")]
+    #[ORM\Column(type: 'string')]
+    #[Groups(['expense_type.read', 'expense_type.write'])]
+    private string $mode;
+
     public function __construct()
     {
         $this->expenses = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,6 +116,60 @@ class ExpenseType
     public function setAddAmountToEmployee(bool $addAmountToEmployee): static
     {
         $this->addAmountToEmployee = $addAmountToEmployee;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExpenseType>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(ExpenseType $child): static
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(ExpenseType $child): static
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMode(): ?string
+    {
+        return $this->mode;
+    }
+
+    public function setMode(string $mode): static
+    {
+        $this->mode = $mode;
 
         return $this;
     }
