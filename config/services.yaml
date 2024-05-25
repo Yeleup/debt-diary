@@ -76,3 +76,8 @@ services:
             $security: '@security.helper'
             $passwordHasher: '@security.user_password_hasher'
         tags: [ 'api_platform.state_processor' ]
+
+    App\State\UserMeStateProvider:
+        arguments:
+            $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
+        tags: [ 'api_platform.state_provider' ]

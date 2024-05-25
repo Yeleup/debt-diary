@@ -10,9 +10,11 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\Api\Action\GetUserMe;
 use App\Dto\UserMeResetPasswordDto;
 use App\Repository\UserRepository;
 use App\State\UserMeResetPasswordStateProcessor;
+use App\State\UserMeStateProvider;
 use App\State\UserStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -30,6 +32,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(),
+        new Get(
+            uriTemplate: '/users/me',
+            status: 200,
+            normalizationContext: ['groups' => 'user.me'],
+            provider: UserMeStateProvider::class,
+        ),
         new Get(),
         new Post(),
         new Patch(),
@@ -38,7 +46,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/users/me/change-password',
             status: 202,
             input: UserMeResetPasswordDto::class,
-            name: 'change-password',
             processor: UserMeResetPasswordStateProcessor::class,
         ),
     ],
@@ -53,15 +60,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
-    #[Groups(['user.read', 'expense.read', 'user.expense.read'])]
+    #[Groups(['user.read', 'expense.read', 'user.expense.read', 'user.me'])]
     private ?int $id = null;
 
     #[Column(type: 'string', length: 180, unique: true)]
-    #[Groups(['user.read', 'user.write'])]
+    #[Groups(['user.read', 'user.write', 'user.me'])]
     private string $username;
 
     #[Column(type: 'json')]
-    #[Groups(['user.read', 'user.write'])]
+    #[Groups(['user.read', 'user.write', 'user.me'])]
     private array $roles = [];
 
     #[Column(type: 'string')]
@@ -69,14 +76,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ManyToMany(targetEntity: Market::class, inversedBy: 'users', cascade: ['persist'])]
-    #[Groups(['user.read', 'user.write'])]
+    #[Groups(['user.read', 'user.write', 'user.me'])]
     private Collection $markets;
 
     #[ManyToMany(targetEntity: Payment::class, inversedBy: 'users')]
     private Collection $payments;
 
     #[Column(name: 'full_name', type: 'string', length: 180, nullable: true)]
-    #[Groups(['transaction.read', 'expense.read', 'user.expense.read', 'user.read', 'user.write'])]
+    #[Groups(['transaction.read', 'expense.read', 'user.expense.read', 'user.read', 'user.write', 'user.me'])]
     private ?string $fullName = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Expense::class, cascade: ['remove'])]
@@ -84,7 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $expenses;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['user.read'])]
+    #[Groups(['user.read', 'user.me'])]
     private ?float $expenseTotal = null;
 
     public function __construct()
