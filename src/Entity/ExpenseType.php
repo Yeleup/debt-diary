@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Common\Filter\SearchFilterInterface;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\ApiPlatform\Filter\ExpenseTypeFilter;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     shortName: 'Expense-Type',
     normalizationContext: ["groups" => ["expense_type.read"]],
     denormalizationContext: ["groups" => ["expense_type.write"]],
+    order: ['mode' => 'DESC', 'title' => 'ASC']
 )]
 #[ApiFilter(ExpenseTypeFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
 class ExpenseType
