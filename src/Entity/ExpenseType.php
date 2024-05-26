@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\ApiPlatform\Filter\ExpenseTypeFilter;
 use App\Enum\Mode;
 use App\Repository\ExpenseTypeRepository;
+use App\Validator\ExpenseType\ParentNotEqualId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,6 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     order: ['mode' => 'DESC', 'title' => 'ASC']
 )]
 #[ApiFilter(ExpenseTypeFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
+#[ParentNotEqualId]
 class ExpenseType
 {
     #[ORM\Id]

@@ -42,7 +42,7 @@ class Expense
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[ApiProperty(identifier: true)]
-    #[Groups(groups: ['expense.read'])]
+    #[Groups(groups: ['expense.read', 'user.expense.read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::FLOAT, precision: 10, scale: 0)]
