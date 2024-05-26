@@ -38,7 +38,9 @@ class ExpenseReportProvider implements ProviderInterface
         $report = new ExpenseReport();
         $report->setId($expenseType->getId());
         $report->setTitle($expenseType->getTitle());
-        $report->setAmount($this->expenseRepository->sumByExpenseType($expenseType));
+        $amount = $this->expenseRepository->sumByExpenseType($expenseType);
+        $amount += $this->calculateAmountForChildren($expenseType);
+        $report->setAmount($amount);
 
         $childrenReports = [];
         foreach ($expenseType->getChildren() as $child) {
@@ -47,5 +49,15 @@ class ExpenseReportProvider implements ProviderInterface
         $report->setChildren($childrenReports);
 
         return $report;
+    }
+
+    private function calculateAmountForChildren(ExpenseType $expenseType): float
+    {
+        $amount = 0;
+        foreach ($expenseType->getChildren() as $child) {
+            $amount += $this->expenseRepository->sumByExpenseType($child);
+            $amount += $this->calculateAmountForChildren($child); // Recursively calculate amount for grandchildren
+        }
+        return $amount;
     }
 }
