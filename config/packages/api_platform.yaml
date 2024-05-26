@@ -1,7 +1,10 @@
 api_platform:
     metadata_backward_compatibility_layer: false
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity']
+        paths: [
+            '%kernel.project_dir%/src/Entity',
+            '%kernel.project_dir%/src/ApiResource',
+        ]
     patch_formats:
         json: ['application/merge-patch+json', 'application/json']
     swagger:

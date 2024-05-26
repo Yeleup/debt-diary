@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Expense;
+use App\Entity\ExpenseType;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -54,6 +55,18 @@ class ExpenseRepository extends ServiceEntityRepository
         $user->setExpenseTotal($totalExpenses);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    public function sumByExpenseType(ExpenseType $expenseType)
+    {
+        $total = $this->createQueryBuilder('e')
+            ->select('SUM(e.amount) as total')
+            ->where('e.expenseType = :expenseType')
+            ->setParameter('expenseType', $expenseType)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $total;
     }
 
 //    /**
