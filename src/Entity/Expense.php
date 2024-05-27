@@ -69,8 +69,7 @@ class Expense
     #[ORM\Column(type: 'datetime', nullable: true, name: 'updated_at')]
     private ?\DateTime $updatedAt;
 
-    #[IsRoleControl]
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'expenses')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'associatedExpenses')]
     #[Groups(groups: ['expense.read', 'expense.write', 'user.expense.read'])]
     private ?User $associatedUser = null;
 
@@ -162,9 +161,9 @@ class Expense
         return $this->associatedUser;
     }
 
-    public function setAssociatedUser(?User $associatedUser): static
+    public function setAssociatedUser(?User $user): self
     {
-        $this->associatedUser = $associatedUser;
+        $this->associatedUser = $user;
 
         return $this;
     }

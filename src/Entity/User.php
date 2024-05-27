@@ -90,6 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Link(toProperty: 'user')]
     private Collection $expenses;
 
+    #[ORM\OneToMany(mappedBy: 'associatedUser', targetEntity: Expense::class)]
+    private Collection $associatedExpenses;
+
     #[ORM\Column(nullable: true)]
     #[Groups(['user.read', 'user.me'])]
     private ?float $expenseTotal = null;
@@ -99,6 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->markets = new ArrayCollection();
         $this->payments = new ArrayCollection();
         $this->expenses = new ArrayCollection();
+        $this->associatedExpenses = new ArrayCollection();
     }
 
     public function getPlainPassword(): ?string
@@ -294,5 +298,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->expenseTotal = $expenseTotal;
 
         return $this;
+    }
+
+    public function getAssociatedExpenses(): Collection
+    {
+        return $this->associatedExpenses;
     }
 }
