@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     denormalizationContext: ["groups" => ["expense_type.write"]],
     order: ['mode' => 'DESC', 'title' => 'ASC']
 )]
-#[ApiFilter(ExpenseTypeFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START])]
+#[ApiFilter(ExpenseTypeFilter::class, properties: ['search' => SearchFilterInterface::STRATEGY_START, 'parent' => SearchFilterInterface::STRATEGY_EXACT, 'mode' => SearchFilterInterface::STRATEGY_EXACT])]
 #[ParentNotEqualId]
 class ExpenseType
 {

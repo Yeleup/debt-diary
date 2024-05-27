@@ -30,6 +30,12 @@ class ExpenseTypeFilter extends AbstractFilter
                     ->setParameter('parentId', $value);
             }
         }
+
+        if ('mode' == $property && !empty($value)) {
+            $queryBuilder
+                ->andWhere(sprintf('%s.mode = :mode', $alias))
+                ->setParameter('mode', $value);
+        }
     }
 
     public function getDescription(string $resourceClass): array
