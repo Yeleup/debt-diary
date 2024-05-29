@@ -81,3 +81,10 @@ services:
         arguments:
             $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
         tags: [ 'api_platform.state_provider' ]
+
+    App\State\ExpenseStateProcessor:
+        arguments:
+            $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
+            $removeProcessor: '@api_platform.doctrine.orm.state.remove_processor'
+            $security: '@security.helper'
+        tags: [ 'api_platform.state_processor' ]
