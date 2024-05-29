@@ -25,7 +25,7 @@ class ExpenseReportProvider implements ProviderInterface
         $expenseReports = [];
         foreach ($expenseTypes as $expenseType) {
             if ($expenseType->getParent() === null) {
-                $report = $this->convertToExpenseReport($expenseType);
+                $report = $this->convertToExpenseReport($expenseType, $context);
                 $expenseReports[] = $report;
             }
         }
@@ -33,30 +33,33 @@ class ExpenseReportProvider implements ProviderInterface
         return $expenseReports;
     }
 
-    private function convertToExpenseReport(ExpenseType $expenseType): ExpenseReport
+    private function convertToExpenseReport(ExpenseType $expenseType, $context): ExpenseReport
     {
+        $startDate = $context['filter']['startDate'] ?? null;
+        $endDate = $context['filter']['endDate'] ?? null;
+
         $report = new ExpenseReport();
         $report->setId($expenseType->getId());
         $report->setTitle($expenseType->getTitle());
-        $amount = $this->expenseRepository->sumByExpenseType($expenseType);
-        $amount += $this->calculateAmountForChildren($expenseType);
+        $amount = $this->expenseRepository->sumByExpenseTypeAndDateRange($expenseType, $startDate, $endDate);
+        $amount += $this->calculateAmountForChildren($expenseType, $startDate, $endDate);
         $report->setAmount($amount);
 
         $childrenReports = [];
         foreach ($expenseType->getChildren() as $child) {
-            $childrenReports[] = $this->convertToExpenseReport($child);
+            $childrenReports[] = $this->convertToExpenseReport($child, $context);
         }
         $report->setChildren($childrenReports);
 
         return $report;
     }
 
-    private function calculateAmountForChildren(ExpenseType $expenseType): float
+    private function calculateAmountForChildren(ExpenseType $expenseType, $startDate, $endDate): float
     {
         $amount = 0;
         foreach ($expenseType->getChildren() as $child) {
-            $amount += $this->expenseRepository->sumByExpenseType($child);
-            $amount += $this->calculateAmountForChildren($child); // Recursively calculate amount for grandchildren
+            $amount = $this->expenseRepository->sumByExpenseTypeAndDateRange($expenseType, $startDate, $endDate);
+            $amount += $this->calculateAmountForChildren($child, $startDate, $endDate);
         }
         return $amount;
     }
