@@ -26,7 +26,10 @@ class ExpenseReportProvider implements ProviderInterface
         foreach ($expenseTypes as $expenseType) {
             if ($expenseType->getParent() === null) {
                 $report = $this->convertToExpenseReport($expenseType, $context);
-                $expenseReports[] = $report;
+
+                if ($report->getAmount() != 0) {
+                    $expenseReports[] = $report;
+                }
             }
         }
 
@@ -58,7 +61,7 @@ class ExpenseReportProvider implements ProviderInterface
     {
         $amount = 0;
         foreach ($expenseType->getChildren() as $child) {
-            $amount = $this->expenseRepository->sumByExpenseTypeAndDateRange($expenseType, $startDate, $endDate);
+            $amount += $this->expenseRepository->sumByExpenseTypeAndDateRange($child, $startDate, $endDate);
             $amount += $this->calculateAmountForChildren($child, $startDate, $endDate);
         }
         return $amount;
