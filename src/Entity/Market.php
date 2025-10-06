@@ -29,11 +29,11 @@ class Market
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
-    #[Groups(['market.read', 'user.me'])]
+    #[Groups(['market.read', 'user.me', 'customer.read'])]
     private ?int $id = null;
 
     #[Column(type: 'string', length: 255)]
-    #[Groups(['market.read', 'market.write', 'user.me'])]
+    #[Groups(['market.read', 'market.write', 'user.me', 'customer.read'])]
     private ?string $title = null;
 
     #[OneToMany(mappedBy: 'market', targetEntity: Customer::class)]
